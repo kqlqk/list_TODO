@@ -48,6 +48,7 @@ TODO List is a simple way to write down all your plans, tasks, ideas in one plac
 
 ## Get Started
 * project is on developing
+* was hidden application.properties, hibernate.cfg.xml in src/main/resources/
 
 
 ## License

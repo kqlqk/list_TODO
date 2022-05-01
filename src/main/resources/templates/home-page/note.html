@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Note</title>
+</head>
+<body>
+    <h2 th:text="${note.getTitle()} + ' ' + ${note.getDateOfCreation()}">title</h2>
+    <h3 th:text="${note.getBody()}">body</h3>
+
+    <p>
+        <form th:method="get" th:action="@{/home/{id}/edit(id=${note.getId()})}" th:object="${note}">
+            <input type="submit" value="Edit">
+        </form><br>
+
+        <form th:method="delete" th:action="@{/home/{id}(id=${note.getId()})}" th:object="${note}">
+            <input type="submit" value="Delete">
+        </form><br>
+
+        <form th:method="put" th:action="@{/home/{id}(id=${note.getId()})}" th:object="${note}">
+            <input type="submit" value="Back">
+        </form><br>
+    </p>
+</body>
+</html>

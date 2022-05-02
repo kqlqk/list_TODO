@@ -16,7 +16,8 @@ public class SessionUtil {
     }
 
     public Session openSession(){
-        return HibernateUtil.getSessionFactory().openSession();
+        session = HibernateUtil.getSessionFactory().openSession();
+        return session;
     }
 
     public Session openTransactionSession(){

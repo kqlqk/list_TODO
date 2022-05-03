@@ -23,7 +23,7 @@ TODO List is a simple way to write down all your plans, tasks, ideas in one plac
     <li><a href="https://www.oracle.com/java/">Java</a></li>
     <li><a href="https://junit.org/junit5/">JUnit</a></li>
     <li><a href="https://maven.apache.org/">Maven</a></li>
-    <li><a href="#getting-started">Spring</a>
+    <li><a href="https://spring.io/">Spring</a>
       <ul>
         <li><a href="https://spring.io/projects/spring-boot">Spring boot</a></li>
         <li><a href="https://spring.io/projects/spring-data">Spring data</a></li>
@@ -42,6 +42,7 @@ TODO List is a simple way to write down all your plans, tasks, ideas in one plac
   <ol>
     <li><a href="https://getbootstrap.com/">Bootstrap</a></li>
     <li><a href="https://html.com/">HTML</a></li>
+    <li><a href="https://www.javascript.com/">JavaScript</a></li>
   </ol>
 </details>
 

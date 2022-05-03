@@ -30,8 +30,6 @@ public class User {
     @Transient
     private String confirmPassword;
 
-
-
     public User() {}
 
     public long getId() {

@@ -2,13 +2,17 @@ package me.kqlqk.springBootApp.controllers;
 
 import me.kqlqk.springBootApp.models.User;
 import me.kqlqk.springBootApp.service.UserService;
+import me.kqlqk.springBootApp.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/")
@@ -32,16 +36,27 @@ public class MainController {
 
     @GetMapping("/registration")
     public String showRegistrationPage(Model model){
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new UserValidation());
         return "main-page/registration";
     }
 
     @PostMapping("/registration")
-    public String signUp(@ModelAttribute("user") User user){
-        String decryptedPassword = user.getPassword();
-        userService.addNew(user);
+    public String signUp(@ModelAttribute("user") @Valid UserValidation userValidation, BindingResult bindingResult){
+        if(bindingResult.hasErrors() || !userValidation.getConfirmPassword().equals(userValidation.getPassword())){
+            return "main-page/registration";
+        }
 
-        if(userService.tryAutoLoginAfterRegistration(user.getEmail(), decryptedPassword)){ //TODO: here's adding decrypted password but need encrypted
+        User userToDB = new User();
+        userToDB.setEmail(userValidation.getEmail());
+        userToDB.setLogin(userValidation.getLogin());
+        userToDB.setPassword(userValidation.getPassword());
+        userToDB.setConfirmPassword(userValidation.getConfirmPassword());
+
+        String decryptedPassword = userToDB.getPassword();
+
+        userService.addNew(userToDB);
+
+        if(userService.tryAutoLoginAfterRegistration(userToDB.getEmail(), decryptedPassword)){ //TODO: here's adding decrypted password but need encrypted
             return "redirect:/home";
         }
 

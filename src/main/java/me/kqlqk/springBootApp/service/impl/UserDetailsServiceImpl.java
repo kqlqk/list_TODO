@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userDAO.findByEmail(email);//FIXME return null user
+        User user = userDAO.findByEmail(email);
         Set<GrantedAuthority> authorities = new HashSet<>();
 
         user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));

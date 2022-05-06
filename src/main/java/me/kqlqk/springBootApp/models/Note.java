@@ -1,29 +1,36 @@
 package me.kqlqk.springBootApp.models;
 
-import java.util.Date;
+import javax.persistence.*;
+import java.sql.Date;
 
+@Entity
+@Table(name = "notes")
 public class Note {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "body")
     private String body;
+
+    @Column(name = "date")
     private Date dateOfCreation;
 
-    public Note(){
-        this.dateOfCreation = new Date();
-        this.id = (int) (Math.random() * 1000);
-    }
-    public Note(String title, String body) {
-        this.id = (int) (Math.random() * 1000);
-        this.title = title;
-        this.body = body;
-        this.dateOfCreation = new Date();
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_notes",
+            joinColumns = @JoinColumn(name = "note_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private User user;
 
-    public int getId() {
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -49,5 +56,13 @@ public class Note {
 
     public void setDateOfCreation(Date dateOfCreation) {
         this.dateOfCreation = dateOfCreation;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

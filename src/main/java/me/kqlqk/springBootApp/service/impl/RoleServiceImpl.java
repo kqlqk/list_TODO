@@ -6,8 +6,6 @@ import me.kqlqk.springBootApp.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class RoleServiceImpl implements RoleService {
     private RoleDAO roleDAO;
@@ -18,8 +16,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role findById(Long id) {
-        Optional<Role> role = roleDAO.findById(id);
-        return role.get();
+    public Role getById(Long id) {
+        return roleDAO.getById(id);
     }
 }

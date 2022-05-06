@@ -46,12 +46,22 @@ public class UserServiceImpl extends SessionUtil implements UserService {
 
         getSession().persist(user);
         closeTransactionSession();
-
     }
 
     @Override
-    public User findByEmail(String email) {
-        return userDAO.findByEmail(email);
+    public User getByEmail(String email) {
+        return userDAO.getByEmail(email);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        return getByEmail(getCurrentEmail());
+    }
+
+    @Override
+    public String getCurrentEmail() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
     }
 
     @Override

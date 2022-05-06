@@ -2,15 +2,10 @@ package me.kqlqk.springBootApp.DAO;
 
 import me.kqlqk.springBootApp.models.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-public interface NoteDAO {
-    List<Note> getNotes();
-    Note getNote(int id);
-    void saveNote(Note note);
-    boolean existsById(int id);
-    void update(Note note);
-    void deleteNote(int id);
+@Repository
+public interface NoteDAO extends JpaRepository<Note, Long> {
+    Note getById(long id);
 
 }

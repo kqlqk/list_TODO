@@ -1,8 +1,8 @@
 package me.kqlqk.springBootApp.controllers;
 
-import me.kqlqk.springBootApp.DAO.NoteDAO;
 import me.kqlqk.springBootApp.models.Note;
 import me.kqlqk.springBootApp.service.NoteService;
+import me.kqlqk.springBootApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,15 +12,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/home")
 public class HomeController {
     private NoteService noteService;
+    private UserService userService;
 
     @Autowired
-    public HomeController(NoteService noteService){
+    public HomeController(NoteService noteService, UserService userService) {
         this.noteService = noteService;
+        this.userService = userService;
     }
+
 
     @GetMapping
     public String showMainPage(Model model){
-        model.addAttribute("notes", noteService.getNotes());
+        model.addAttribute("notes", noteService.getByUser(userService.getCurrentUser()));
         return "home-page/home";
     }
 
@@ -29,18 +32,18 @@ public class HomeController {
         if(!noteService.existsById(id)){
             return "redirect:/home";
         }
-        model.addAttribute("note", noteService.getNote(id));
+        model.addAttribute("note", noteService.getById(id));
         return "home-page/note";
     }
 
     @DeleteMapping("/{id}")
     public String deleteNote(@PathVariable("id") int id){
-        noteService.deleteNote(id);
+        noteService.delete(id);
         return "redirect:/home";
     }
 
     @PutMapping("/{id}")
-    public String bactToHomePage(){
+    public String backToHomePage(){
         return "redirect:/home";
     }
 
@@ -51,13 +54,13 @@ public class HomeController {
 
     @PostMapping("/new")
     public String createNote(@ModelAttribute("note") Note note){
-        noteService.saveNote(note);
+        noteService.add(note);
         return "redirect:/home";
     }
 
     @GetMapping("/{id}/edit")
     public String editNote(@PathVariable("id") int id, Model model){
-        model.addAttribute("note", noteService.getNote(id));
+        model.addAttribute("note", noteService.getById(id));
         return "home-page/edit";
     }
 

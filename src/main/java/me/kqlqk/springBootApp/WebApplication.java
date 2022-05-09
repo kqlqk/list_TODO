@@ -10,9 +10,4 @@ public class WebApplication extends SessionUtil {
         SpringApplication.run(WebApplication.class, args);
     }
 
-    /**
-    * TODO:auth with google, admin menu, front-end for home page
-    * FIXME:delete hibernate.cfg.xml
-    *
-    * */
 }

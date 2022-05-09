@@ -12,6 +12,7 @@ public interface NoteService{
     void delete(Note note);
     void delete(long id);
     boolean existsById(long id);
+    boolean existsForUser(User user, long noteId);
     Note getById(long id);
     List<Note> getByUser(User user);
     List<Note> getByUserId(long userId);

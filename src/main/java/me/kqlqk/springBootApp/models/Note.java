@@ -1,7 +1,7 @@
 package me.kqlqk.springBootApp.models;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "notes")
@@ -16,13 +16,10 @@ public class Note {
     @Column(name = "body")
     private String body;
 
-    @Column(name = "date")
-    private Date dateOfCreation;
+    @Column(name = "date_of_creation")
+    private Timestamp dateOfCreation;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_notes",
-            joinColumns = @JoinColumn(name = "note_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private User user;
 
 
@@ -50,13 +47,14 @@ public class Note {
         this.body = body;
     }
 
-    public Date getDateOfCreation() {
+    public Timestamp getDateOfCreation() {
         return dateOfCreation;
     }
 
-    public void setDateOfCreation(Date dateOfCreation) {
+    public void setDateOfCreation(Timestamp dateOfCreation) {
         this.dateOfCreation = dateOfCreation;
     }
+
 
     public User getUser() {
         return user;

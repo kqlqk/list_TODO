@@ -13,6 +13,23 @@ import org.springframework.web.bind.annotation.*;
 public class HomeController {
     private NoteService noteService;
     private UserService userService;
+    private String[] greetings = {
+            "Hello",
+            "Hi",
+            "Howdy",
+            "Welcome",
+            "Bonjour",
+            "Good day",
+            "What's up",
+            "Aloha",
+            "Good morning",
+            "Gey",
+            "Hi-ya",
+            "How are you",
+            "How goes it",
+            "Howdy-do",
+            "Shalom",
+            "What's happening"};
 
     @Autowired
     public HomeController(NoteService noteService, UserService userService) {
@@ -23,13 +40,15 @@ public class HomeController {
 
     @GetMapping
     public String showMainPage(Model model){
+        model.addAttribute("greetings", greetings[(int) (Math.random() * greetings.length)]);
+        model.addAttribute("user", userService.getCurrentUser());
         model.addAttribute("notes", noteService.getByUser(userService.getCurrentUser()));
         return "home-page/home";
     }
 
     @GetMapping("/{id}")
-    public String showNote(@PathVariable("id") int id, Model model){
-        if(!noteService.existsById(id)){
+    public String showNote(@PathVariable("id") long id, Model model){
+        if(!(noteService.existsById(id) && noteService.existsForUser(userService.getCurrentUser(), id))){
             return "redirect:/home";
         }
         model.addAttribute("note", noteService.getById(id));

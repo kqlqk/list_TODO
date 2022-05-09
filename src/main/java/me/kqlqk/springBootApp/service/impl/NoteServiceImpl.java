@@ -9,7 +9,8 @@ import me.kqlqk.springBootApp.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,8 +28,8 @@ public class NoteServiceImpl extends SessionUtil implements NoteService {
     @Override
     public void add(Note note) {
         openTransactionSession();
+        note.setDateOfCreation(new Timestamp(new Date().getTime()));
         note.setUser(userService.getCurrentUser());
-        note.setDateOfCreation(new Date(new java.util.Date().getTime()));
         getSession().persist(note);
         closeTransactionSession();
     }
@@ -63,6 +64,14 @@ public class NoteServiceImpl extends SessionUtil implements NoteService {
     }
 
     @Override
+    public boolean existsForUser(User user, long noteId){
+        if(!existsById(noteId)){
+            return false;
+        }
+        return user.getNotes().stream().filter(note -> noteId == note.getId()).findAny().isPresent();
+    }
+
+    @Override
     public Note getById(long id) {
         return noteDAO.getById(id);
     }
@@ -87,7 +96,8 @@ public class NoteServiceImpl extends SessionUtil implements NoteService {
     public void update(Note note) {
         if(existsById(note.getId())){
             openTransactionSession();
-            note.setDateOfCreation(new Date(new java.util.Date().getTime()));
+            note.setUser(userService.getCurrentUser());
+            note.setDateOfCreation(new Timestamp(new Date().getTime()));
             getSession().merge(note);
             closeTransactionSession();
         }

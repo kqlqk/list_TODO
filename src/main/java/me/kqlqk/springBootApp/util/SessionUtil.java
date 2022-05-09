@@ -6,6 +6,9 @@ import org.hibernate.Transaction;
 public class SessionUtil {
     private Session session;
     private Transaction transaction;
+    private HibernateUtil hibernateUtil;
+
+
 
     public Session getSession() {
         return session;

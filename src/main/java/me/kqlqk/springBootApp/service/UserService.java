@@ -5,8 +5,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface UserService{
-    void addNew(User user);
     User getByEmail(String email);
+
+    void addNew(User user);
     String getCurrentEmail();
     User getCurrentUser();
     boolean tryAutoLoginAfterRegistration(String email, String password);

@@ -8,12 +8,14 @@ import java.util.List;
 
 @Component
 public interface NoteService{
-    void add(Note note);
-    void delete(Note note);
-    void delete(long id);
-    boolean existsById(long id);
     Note getById(long id);
     List<Note> getByUser(User user);
     List<Note> getByUserId(long userId);
+    boolean existsById(long id);
+
+
+    void add(Note note);
+    void delete(Note note);
+    void delete(long id);
     void update(Note note);
 }

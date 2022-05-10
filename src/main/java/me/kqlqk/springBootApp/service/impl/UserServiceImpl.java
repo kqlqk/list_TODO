@@ -1,11 +1,10 @@
 package me.kqlqk.springBootApp.service.impl;
 
-import me.kqlqk.springBootApp.DAO.RoleDAO;
-import me.kqlqk.springBootApp.DAO.UserDAO;
+import me.kqlqk.springBootApp.DAO.RoleRepository;
+import me.kqlqk.springBootApp.DAO.UserRepository;
 import me.kqlqk.springBootApp.models.Role;
 import me.kqlqk.springBootApp.models.User;
 import me.kqlqk.springBootApp.service.UserService;
-import me.kqlqk.springBootApp.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,42 +14,44 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class UserServiceImpl extends SessionUtil implements UserService {
-    private UserDAO userDAO;
-    private RoleDAO roleDAO;
+public class UserServiceImpl implements UserService {
+    private UserRepository userRepository;
+    private RoleRepository roleRepository;
     private UserDetailsService userDetailsService;
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO, RoleDAO roleDAO, UserDetailsService userDetailsService, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
-        this.userDAO = userDAO;
-        this.roleDAO = roleDAO;
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, UserDetailsService userDetailsService, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public void addNew(User user) {
-        openTransactionSession();
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-            Set<Role> roles = new HashSet<>();
-            roles.add(roleDAO.findById(1L).isPresent() ? roleDAO.findById(1L).get() : null);
-        user.setRoles(roles);
-
-        getSession().persist(user);
-        closeTransactionSession();
-    }
-
+    //JPA-repository methods
     @Override
     public User getByEmail(String email) {
-        return userDAO.getByEmail(email);
+        return userRepository.getByEmail(email);
+    }
+
+    //UserSerrvice methods
+    @Override
+    @Transactional
+    public void addNew(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+            Set<Role> roles = new HashSet<>();
+            roles.add(roleRepository.findById(1L).isPresent() ? roleRepository.findById(1L).get() : null);
+        user.setRoles(roles);
+
+        userRepository.save(user);
     }
 
     @Override

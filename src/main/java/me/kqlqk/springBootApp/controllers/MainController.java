@@ -56,7 +56,7 @@ public class MainController {
 
         userService.addNew(userToDB);
 
-        if(userService.tryAutoLoginAfterRegistration(userToDB.getEmail(), decryptedPassword)){ //TODO: here's adding decrypted password but need encrypted
+        if(userService.tryAutoLoginAfterRegistration(userToDB.getEmail(), decryptedPassword)){
             return "redirect:/home";
         }
 

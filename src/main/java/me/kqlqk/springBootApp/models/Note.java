@@ -55,6 +55,7 @@ public class Note {
         this.dateOfCreation = dateOfCreation;
     }
 
+
     public User getUser() {
         return user;
     }

@@ -11,7 +11,7 @@
     <section class="py-5 text-center container">
         <div class="row py-lg-5">
             <div class="col-lg-6 col-md-8 mx-auto">
-                <h1 class="fw-light">TODO List b1 by kqlqk</h1>
+                <h1 class="fw-light" th:text="${greetings + ', ' + user.getLogin()}"></h1>
                 <p>
                     <div class="container">
                     <a th:href="@{/home/new}" class="btn btn-primary my-2">Create note</a>

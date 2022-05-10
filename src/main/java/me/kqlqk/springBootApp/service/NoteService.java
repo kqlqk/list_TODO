@@ -17,5 +17,6 @@ public interface NoteService{
     void add(Note note);
     void delete(Note note);
     void delete(long id);
+    boolean existsForUser(User user, long noteId);
     void update(Note note);
 }

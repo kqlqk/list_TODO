@@ -74,6 +74,14 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    public boolean existsForUser(User user, long noteId){
+        if(!existsById(noteId)){
+            return false;
+        }
+        return user.getNotes().stream().filter(note -> noteId == note.getId()).findAny().isPresent();
+    }
+
+    @Override
     @Transactional
     public void update(Note note) {
         if(existsById(note.getId())){

@@ -10,5 +10,5 @@ public interface UserService{
     void addNew(User user);
     String getCurrentEmail();
     User getCurrentUser();
-    boolean tryAutoLoginAfterRegistration(String email, String password);
+    boolean tryAutoLogin(String email, String password);
 }

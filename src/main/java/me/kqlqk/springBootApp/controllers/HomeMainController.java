@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/home")
-public class HomeController {
+public class HomeMainController {
     private NoteService noteService;
     private UserService userService;
     private String[] greetings = {
@@ -32,18 +32,18 @@ public class HomeController {
             "What's happening"};
 
     @Autowired
-    public HomeController(NoteService noteService, UserService userService) {
+    public HomeMainController(NoteService noteService, UserService userService) {
         this.noteService = noteService;
         this.userService = userService;
     }
 
 
     @GetMapping
-    public String showMainPage(Model model){
+    public String showHomeMainPage(Model model){
         model.addAttribute("greetings", greetings[(int) (Math.random() * greetings.length)]);
         model.addAttribute("user", userService.getCurrentUser());
         model.addAttribute("notes", noteService.getByUser(userService.getCurrentUser()));
-        return "home-page/home";
+        return "home-main-page/home";
     }
 
     @GetMapping("/{id}")
@@ -52,7 +52,7 @@ public class HomeController {
             return "redirect:/home";
         }
         model.addAttribute("note", noteService.getById(id));
-        return "home-page/note";
+        return "home-main-page/note";
     }
 
     @DeleteMapping("/{id}")
@@ -68,7 +68,7 @@ public class HomeController {
 
     @GetMapping("/new")
     public String showNewForm(@ModelAttribute("note") Note note){
-        return "home-page/new";
+        return "home-main-page/new";
     }
 
     @PostMapping("/new")
@@ -80,7 +80,7 @@ public class HomeController {
     @GetMapping("/{id}/edit")
     public String editNote(@PathVariable("id") int id, Model model){
         model.addAttribute("note", noteService.getById(id));
-        return "home-page/edit";
+        return "home-main-page/edit";
     }
 
     @PatchMapping("/{id}/edit")

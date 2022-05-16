@@ -26,11 +26,30 @@ public class MainController {
 
     @GetMapping
     public String showMainPage(){
-        return "main-page/mainPage";
+        return "main-page/mainLoginPage";
     }
 
     @GetMapping("/login")
-    public String showLoginPage(){
+    public String showLoginPage(Model model){
+        if(userService.getCurrentUser() != null){
+            return "redirect:/home";
+        }
+        model.addAttribute("user", new UserValidation());
+        return "main-page/login";
+    }
+
+    @PostMapping("/login")
+    public String logIn(@ModelAttribute("user") @Valid UserValidation userValidation, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "main-page/login";
+        }
+
+        if(userService.getByEmail(userValidation.getEmail()) != null){
+            if(userService.tryAutoLogin(userValidation.getEmail(), userValidation.getPassword())){
+                return "redirect:/home";
+            }
+        }
+
         return "main-page/login";
     }
 
@@ -56,7 +75,7 @@ public class MainController {
 
         userService.addNew(userToDB);
 
-        if(userService.tryAutoLoginAfterRegistration(userToDB.getEmail(), decryptedPassword)){
+        if(userService.tryAutoLogin(userToDB.getEmail(), decryptedPassword)){
             return "redirect:/home";
         }
 

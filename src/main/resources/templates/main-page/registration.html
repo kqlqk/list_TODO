@@ -31,7 +31,6 @@
                     <label class="form-label" for="confirm_password">Confirm Password:</label>
                     <input class="form-control" th:style="*{confirmPassword != password} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="password" placeholder="Confirm password" name="password" th:field="*{confirmPassword}" id="confirm_password"/>
                     <div th:style="*{confirmPassword != password} ? 'color: #ff0000' : 'color: #000000'" th:text="*{confirmPassword == password} ? '' : 'Passwords do not match. Try again.'"></div>
-                    <br/>
 
                     <div class="form-check form-switch">
                     <label class="form-check-label" for="showPassword">Show password</label>
@@ -42,7 +41,6 @@
                 <br/>
                 <button type="submit" class="btn btn-primary">Sign up</button>
             </form>
-
         </div>
     </div>
 </div>

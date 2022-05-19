@@ -14,8 +14,6 @@ public class WebApplication {
  * 1.sign up with google
  * 2.add front-end to note's page
  * 3.admin menu
- *
- * FIXME:
- *
+ * 4.note validation
  */
 

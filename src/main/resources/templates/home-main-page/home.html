@@ -13,12 +13,11 @@
             <div class="col-lg-6 col-md-8 mx-auto">
                 <h1 class="fw-light" th:text="${greetings + ', ' + user.getLogin()}"></h1>
                 <p>
-                    <div class="container">
-                    <a th:href="@{/home/new}" class="btn btn-primary my-2">Create note</a>
+                    <a class="btn btn-outline-primary btn-lg" th:href="@{/home/new}">Create note</a>
+
                     <form th:action="@{/logout}"  method="post">
-                        <input class="btn btn-secondary my-2" type="submit" value="Log out"/>
+                        <input class="btn btn-outline-danger" type="submit" value="Log out"/>
                     </form>
-                    </div>
                 </p>
                 <br/>
                 <div class="alert alert-info mt-2" th:each="note : ${notes}">

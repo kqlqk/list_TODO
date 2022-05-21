@@ -19,37 +19,38 @@ TODO List is a simple way to write down all your plans, tasks, ideas in one plac
 <details>
   <summary>Back-end</summary>
   <ol>
-    <li><a href="https://hibernate.org/">Hibernate</a></li>
-    <li><a href="https://www.oracle.com/java/">Java</a></li>
-    <li><a href="https://junit.org/junit5/">JUnit</a></li>
-    <li><a href="https://maven.apache.org/">Maven</a></li>
-    <li><a href="https://spring.io/">Spring</a>
+    <li><p>Hibernate</p></li>
+    <li><p>Java</p></li>
+    <li><p>JUnit</p></li>
+    <li><p>Maven</p></li>
+    <li><p>Spring</p>
       <ul>
-        <li><a href="https://spring.io/projects/spring-boot">Spring boot</a></li>
-        <li><a href="https://spring.io/projects/spring-data">Spring data</a></li>
-        <li><a href="https://spring.io/projects/spring-framework">Spring framework</a></li>
-        <li><a href="https://spring.io/projects/spring-security">Spring security</a></li>
-        <li><a href="https://spring.io/projects/spring-boot">Spring web</a></li>
+        <li><p>Spring boot</p></li>
+        <li><p>Spring data</p></li>
+        <li><p>Spring framework</p></li>
+        <li><p>Spring security</p></li>
+        <li><p>Spring web</p></li>
       </ul>
     </li>
-    <li><a href="https://www.thymeleaf.org/">ThymeLeaf</a></li>
-    <li><a href="https://tomcat.apache.org/">TomCat</a></li>
+    <li><p>ThymeLeaf</p></li>
+    <li><p>TomCat</p></li>
   </ol>
 </details>
 
 <details>
   <summary>Front-end</summary>
   <ol>
-    <li><a href="https://getbootstrap.com/">Bootstrap</a></li>
-    <li><a href="https://html.com/">HTML</a></li>
-    <li><a href="https://www.javascript.com/">JavaScript</a></li>
+    <li><p>Bootstrap</p></li>
+    <li><p>CSS</p></li>
+    <li><p>HTML</p></li>
+    <li><p>JavaScript</p></li>
   </ol>
 </details>
 
 
 ## Get Started
 * project is on developing
-* was hidden application.properties, hibernate.cfg.xml in src/main/resources/
+* was hidden application.properties in src/main/resources/
 
 
 ## License

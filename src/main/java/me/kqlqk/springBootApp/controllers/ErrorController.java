@@ -18,18 +18,21 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
         String message = "";
 
         if((status + "").startsWith("4")){
-            message = status + "(client error)";
+            message = status + " Client error";
         }
         else if((status + "").startsWith("5")){
-            message = status + "(server error)";
+            message = status + " Server error";
+        }
+
+        if(status == 403){
+            return "redirect:/login";
+        }
+
+        if(status == 404 || status == 400){
+            message = status + " Page not found";
         }
 
         model.addAttribute("error", message);
-
-        if(status == 403){
-            //FIXME: add groups of roles
-            return "redirect:/login";
-        }
 
         return "error-pages/errorPage";
     }

@@ -1,7 +1,7 @@
 package me.kqlqk.springBootApp.service.impl;
 
-import me.kqlqk.springBootApp.DAO.RoleRepository;
-import me.kqlqk.springBootApp.DAO.UserRepository;
+import me.kqlqk.springBootApp.repositories.RoleRepository;
+import me.kqlqk.springBootApp.repositories.UserRepository;
 import me.kqlqk.springBootApp.models.Role;
 import me.kqlqk.springBootApp.models.User;
 import me.kqlqk.springBootApp.service.UserService;
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.getByEmail(email);
     }
 
-    //UserSerrvice methods
+    //UserService methods
     @Override
     @Transactional
     public void addNew(User user) {

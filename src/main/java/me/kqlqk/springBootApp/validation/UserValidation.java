@@ -1,6 +1,5 @@
 package me.kqlqk.springBootApp.validation;
 
-import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 
 public class UserValidation {
@@ -15,8 +14,9 @@ public class UserValidation {
             message = "Password must be between 8 and 50 characters, at least 1 number and both lower and uppercase letters")
     private String password;
 
-    @Transient
     private String confirmPassword;
+
+    private boolean formCorrect = true;
 
     public String getEmail() {
         return email;
@@ -48,5 +48,13 @@ public class UserValidation {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public boolean isFormCorrect() {
+        return formCorrect;
+    }
+
+    public void setFormCorrect(boolean formCorrect) {
+        this.formCorrect = formCorrect;
     }
 }

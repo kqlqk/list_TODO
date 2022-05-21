@@ -1,6 +1,6 @@
 package me.kqlqk.springBootApp.service.impl;
 
-import me.kqlqk.springBootApp.DAO.NoteRepository;
+import me.kqlqk.springBootApp.repositories.NoteRepository;
 import me.kqlqk.springBootApp.models.Note;
 import me.kqlqk.springBootApp.models.User;
 import me.kqlqk.springBootApp.service.NoteService;
@@ -45,7 +45,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public boolean existsById(long id) {
-        return noteRepository.existsById(id) ? true : false;
+        return noteRepository.existsById(id);
     }
 
     //NoteService methods

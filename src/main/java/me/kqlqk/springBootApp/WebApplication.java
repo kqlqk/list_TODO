@@ -12,8 +12,8 @@ public class WebApplication {
 /**
  * TODO:
  * 1.sign up with google
- * 2.add front-end to note's page
+ * 2.fix title display
  * 3.admin menu
- * 4.note validation
+ * 4.add groups of roles in ErrorController.java
  */
 

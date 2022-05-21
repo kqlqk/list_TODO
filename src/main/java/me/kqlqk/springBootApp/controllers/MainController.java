@@ -4,6 +4,7 @@ import me.kqlqk.springBootApp.models.User;
 import me.kqlqk.springBootApp.service.UserService;
 import me.kqlqk.springBootApp.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,10 +19,12 @@ import javax.validation.Valid;
 @RequestMapping("/")
 public class MainController {
     private UserService userService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public MainController(UserService userService) {
+    public MainController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -39,15 +42,18 @@ public class MainController {
     }
 
     @PostMapping("/login")
-    public String logIn(@ModelAttribute("user") @Valid UserValidation userValidation, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "main-page/login";
-        }
+    public String logIn(@ModelAttribute("user") UserValidation userValidation){
 
-        if(userService.getByEmail(userValidation.getEmail()) != null){
-            if(userService.tryAutoLogin(userValidation.getEmail(), userValidation.getPassword())){
-                return "redirect:/home";
+        if(userService.getByEmail(userValidation.getEmail()) != null &&
+                passwordEncoder.matches(userValidation.getPassword(), userService.getByEmail(userValidation.getEmail()).getPassword())){
+                if(userService.tryAutoLogin(userValidation.getEmail(), userValidation.getPassword())) {
+                    return "redirect:/home";
+                }
+
+                return "redirect:/error";
             }
+        else {
+            userValidation.setFormCorrect(false);
         }
 
         return "main-page/login";

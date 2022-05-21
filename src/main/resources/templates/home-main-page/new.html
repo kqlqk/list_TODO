@@ -11,15 +11,21 @@
 <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 col-md-8 col-lg-6">
-            <form th:method="post" th:action="@{/home/new}" th:object="${note}">
+
+            <form th:method="post" th:action="@{/home/new}" th:object="${noteValid}">
                 <label class="form-label" for="title">Enter title:</label>
-                <input class="form-control" type="text" th:field="*{title}" id="title">
+                <input class="form-control" th:style="${#fields.hasErrors('title')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" name="title" th:field="*{title}" id="title">
+                <div th:style="${#fields.hasErrors('title')} ? 'color: #ff0000' : 'color: #000000'" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">error</div>
+                <div th:text="${#fields.hasAnyErrors()}"></div>
                 <br/>
+
                 <label class="form-label" for="body">Enter body:</label>
-                <input class="form-control" type="text" th:field="*{body}" id="body">
+                <input class="form-control" th:style="'border-color: #0d6efd'" type="text" th:field="*{body}" id="body">
                 <br/>
+
                 <input class="btn btn-outline-primary btn-lg btn-block" type="submit" value="Create">
             </form>
+
         </div>
     </div>
 </div>

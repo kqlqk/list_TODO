@@ -3,10 +3,14 @@ package me.kqlqk.springBootApp.controllers;
 import me.kqlqk.springBootApp.models.Note;
 import me.kqlqk.springBootApp.service.NoteService;
 import me.kqlqk.springBootApp.service.UserService;
+import me.kqlqk.springBootApp.validation.NoteValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/home")
@@ -67,13 +71,40 @@ public class HomeMainController {
     }
 
     @GetMapping("/new")
-    public String showNewForm(@ModelAttribute("note") Note note){
+    public String showNewForm(Model model){
+        model.addAttribute("noteValid", new NoteValidation());
         return "home-main-page/new";
     }
 
     @PostMapping("/new")
-    public String createNote(@ModelAttribute("note") Note note){
-        noteService.add(note);
+    public String createNote(@ModelAttribute("noteValid") @Valid NoteValidation noteValidation, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "home-main-page/new";
+        }
+
+        Note noteToDB = new Note();
+
+        if(noteValidation.getTitle().length() > 36){
+            noteToDB.setTitle(noteValidation.getTitle().substring(0,37));
+
+//            String[] titleWords = noteValidation.getTitle().split("\\.{1,37}");
+//
+//            System.out.println(titleWords.length);
+//            String completeTitle = null;
+//            for(int i = 0; i < titleWords.length; i++){
+//                completeTitle = titleWords[i] + "\n";
+//            }
+
+            noteToDB.setFullTitle(noteValidation.getTitle());
+        }
+        else {
+            noteToDB.setTitle(noteValidation.getTitle());
+            noteToDB.setFullTitle(noteValidation.getTitle());
+        }
+        noteToDB.setBody(noteValidation.getBody());
+
+        noteService.add(noteToDB);
+
         return "redirect:/home";
     }
 

@@ -22,6 +22,9 @@ public class Note {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
+    @Column(name = "full_title")
+    private String fullTitle;
+
 
     public long getId() {
         return id;
@@ -55,12 +58,19 @@ public class Note {
         this.dateOfCreation = dateOfCreation;
     }
 
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getFullTitle() {
+        return fullTitle;
+    }
+
+    public void setFullTitle(String fullTitle) {
+        this.fullTitle = fullTitle;
     }
 }

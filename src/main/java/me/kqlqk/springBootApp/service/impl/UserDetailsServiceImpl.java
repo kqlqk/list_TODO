@@ -1,6 +1,6 @@
 package me.kqlqk.springBootApp.service.impl;
 
-import me.kqlqk.springBootApp.DAO.UserRepository;
+import me.kqlqk.springBootApp.repositories.UserRepository;
 import me.kqlqk.springBootApp.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

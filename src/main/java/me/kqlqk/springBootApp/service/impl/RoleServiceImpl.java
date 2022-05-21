@@ -1,6 +1,6 @@
 package me.kqlqk.springBootApp.service.impl;
 
-import me.kqlqk.springBootApp.DAO.RoleRepository;
+import me.kqlqk.springBootApp.repositories.RoleRepository;
 import me.kqlqk.springBootApp.models.Role;
 import me.kqlqk.springBootApp.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package me.kqlqk.springBootApp.DAO;
+package me.kqlqk.springBootApp.repositories;
 
 import me.kqlqk.springBootApp.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;

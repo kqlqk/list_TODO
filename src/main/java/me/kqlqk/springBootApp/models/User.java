@@ -33,6 +33,7 @@ public class User {
     @Transient
     private String confirmPassword;
 
+
     public User() {}
 
     public long getId() {
@@ -89,17 +90,5 @@ public class User {
 
     public void setNotes(Set<Note> notes) {
         this.notes = notes;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", roles=" + roles +
-                ", confirmPassword='" + confirmPassword + '\'' +
-                '}';
     }
 }

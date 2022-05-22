@@ -4,7 +4,7 @@ import javax.validation.constraints.Pattern;
 
 public class NoteValidation {
 
-    @Pattern(regexp = "^[\\w]{1,100}$", message = "Title message should be a valid")
+    @Pattern(regexp = "^[^\\s]+(\\s+[^\\s]+){1,100}$", message = "Title message should be a valid")
     private String title;
 
 

@@ -1,0 +1,10 @@
+.buttonsLocation {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.hyphens {
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+}

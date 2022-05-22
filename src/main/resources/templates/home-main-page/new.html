@@ -16,8 +16,8 @@
                 <label class="form-label" for="title">Enter title:</label>
                 <input class="form-control" th:style="${#fields.hasErrors('title')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" name="title" th:field="*{title}" id="title">
                 <div th:style="${#fields.hasErrors('title')} ? 'color: #ff0000' : 'color: #000000'" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">error</div>
-                <div th:text="${#fields.hasAnyErrors()}"></div>
                 <br/>
+
 
                 <label class="form-label" for="body">Enter body:</label>
                 <input class="form-control" th:style="'border-color: #0d6efd'" type="text" th:field="*{body}" id="body">

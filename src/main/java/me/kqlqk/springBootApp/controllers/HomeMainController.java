@@ -86,15 +86,6 @@ public class HomeMainController {
 
         if(noteValidation.getTitle().length() > 36){
             noteToDB.setTitle(noteValidation.getTitle().substring(0,37));
-
-//            String[] titleWords = noteValidation.getTitle().split("\\.{1,37}");
-//
-//            System.out.println(titleWords.length);
-//            String completeTitle = null;
-//            for(int i = 0; i < titleWords.length; i++){
-//                completeTitle = titleWords[i] + "\n";
-//            }
-
             noteToDB.setFullTitle(noteValidation.getTitle());
         }
         else {

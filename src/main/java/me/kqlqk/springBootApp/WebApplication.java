@@ -13,6 +13,5 @@ public class WebApplication {
  * TODO:
  * 1.sign up with google(after 1st release)
  * 3.admin menu(after 1st release)
- * 4.add groups of roles in ErrorController.java
  */
 

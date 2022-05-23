@@ -52,6 +52,12 @@ public class NoteServiceImpl implements NoteService {
     @Override
     @Transactional
     public void add(Note note) {
+        if(note.getFullTitle().length() > 36){
+            note.setTitle(note.getFullTitle().substring(0,37));
+        }
+        else {
+            note.setTitle(note.getFullTitle());
+        }
         note.setUser(userService.getCurrentUser());
         note.setDateOfCreation(new Timestamp(new java.util.Date().getTime()));
         noteRepository.save(note);
@@ -85,6 +91,12 @@ public class NoteServiceImpl implements NoteService {
     @Transactional
     public void update(Note note) {
         if(existsById(note.getId())){
+            if(note.getFullTitle().length() > 36){
+                note.setTitle(note.getFullTitle().substring(0,37));
+            }
+            else {
+                note.setTitle(note.getFullTitle());
+            }
             note.setDateOfCreation(new Timestamp(new java.util.Date().getTime()));
             note.setUser(userService.getCurrentUser());
             noteRepository.save(note);

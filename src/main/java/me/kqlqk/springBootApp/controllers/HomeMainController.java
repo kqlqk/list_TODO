@@ -84,14 +84,7 @@ public class HomeMainController {
 
         Note noteToDB = new Note();
 
-        if(noteValidation.getTitle().length() > 36){
-            noteToDB.setTitle(noteValidation.getTitle().substring(0,37));
-            noteToDB.setFullTitle(noteValidation.getTitle());
-        }
-        else {
-            noteToDB.setTitle(noteValidation.getTitle());
-            noteToDB.setFullTitle(noteValidation.getTitle());
-        }
+        noteToDB.setFullTitle(noteValidation.getTitle().trim());
         noteToDB.setBody(noteValidation.getBody());
 
         noteService.add(noteToDB);

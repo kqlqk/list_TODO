@@ -1,10 +1,13 @@
 package me.kqlqk.springBootApp.validation;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 public class NoteValidation {
 
-    @Pattern(regexp = "^[^\\s]+(\\s+[^\\s]+){1,100}$", message = "Title message should be a valid")
+    //@Pattern(regexp = "^[^\\s]+(.+[^\\s]+){0,100}$", message = "Title message should be a valid(Cannot starts or end with space)")
+    @Size(min = 1, max = 100, message = "Title message should be a valid")
+    @NotBlank(message = "Title message should be a valid")
     private String title;
 
 

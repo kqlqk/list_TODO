@@ -12,7 +12,7 @@
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 col-md-8 col-lg-6">
 
-            <form th:method="post" th:action="@{/registration}" th:object="${user}">
+            <form th:method="post" th:action="@{/registration}" th:object="${userValid}">
                 <div class="form-group">
                     <label class="form-label" for="email">Email:</label>
                     <input class="form-control" th:style="${#fields.hasErrors('email')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" placeholder="Enter email" name="email" th:field="*{email}" id="email"/>

@@ -5,9 +5,8 @@ import javax.validation.constraints.Size;
 
 public class NoteValidation {
 
-    //@Pattern(regexp = "^[^\\s]+(.+[^\\s]+){0,100}$", message = "Title message should be a valid(Cannot starts or end with space)")
-    @Size(min = 1, max = 100, message = "Title message should be a valid")
-    @NotBlank(message = "Title message should be a valid")
+    @Size(min = 1, max = 100, message = "Title message should be a valid(Cannot starts or end with space)")
+    @NotBlank(message = "Title message should be a valid(Cannot starts or end with space)")
     private String title;
 
 

@@ -3,6 +3,8 @@ package me.kqlqk.springBootApp.validation;
 import javax.validation.constraints.Pattern;
 
 public class UserValidation {
+    private String loginObject;
+
     @Pattern(regexp = "^[^\\s@]{3,}@[^\\s@]{2,}\\.[^\\s@]{2,}$", message = "Email must be valid")
     private String email;
 
@@ -17,6 +19,14 @@ public class UserValidation {
     private String confirmPassword;
 
     private boolean formCorrect = true;
+
+    public String getLoginObject() {
+        return loginObject;
+    }
+
+    public void setLoginObject(String loginObject) {
+        this.loginObject = loginObject;
+    }
 
     public String getEmail() {
         return email;

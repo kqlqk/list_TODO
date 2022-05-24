@@ -37,16 +37,15 @@ public class MainController {
         if(userService.getCurrentUser() != null){
             return "redirect:/home";
         }
-        model.addAttribute("user", new UserValidation());
+        model.addAttribute("userValid", new UserValidation());
         return "main-page/login";
     }
 
     @PostMapping("/login")
-    public String logIn(@ModelAttribute("user") UserValidation userValidation){
-
-        if(userService.getByEmail(userValidation.getEmail()) != null &&
-                passwordEncoder.matches(userValidation.getPassword(), userService.getByEmail(userValidation.getEmail()).getPassword())){
-                if(userService.tryAutoLogin(userValidation.getEmail(), userValidation.getPassword())) {
+    public String logIn(@ModelAttribute("userValid") UserValidation userValidation){
+        if(userService.getByEmailOrLogin(userValidation.getLoginObject()) != null &&
+                passwordEncoder.matches(userValidation.getPassword(), userService.getByEmailOrLogin(userValidation.getLoginObject()).getPassword())){
+                if(userService.tryAutoLogin(userValidation.getLoginObject(), userValidation.getPassword())) {
                     return "redirect:/home";
                 }
 
@@ -61,12 +60,12 @@ public class MainController {
 
     @GetMapping("/registration")
     public String showRegistrationPage(Model model){
-        model.addAttribute("user", new UserValidation());
+        model.addAttribute("userValid", new UserValidation());
         return "main-page/registration";
     }
 
     @PostMapping("/registration")
-    public String signUp(@ModelAttribute("user") @Valid UserValidation userValidation, BindingResult bindingResult){
+    public String signUp(@ModelAttribute("userValid") @Valid UserValidation userValidation, BindingResult bindingResult){
         if(bindingResult.hasErrors() || !userValidation.getConfirmPassword().equals(userValidation.getPassword())){
             return "main-page/registration";
         }

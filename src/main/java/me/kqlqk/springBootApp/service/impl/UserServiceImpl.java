@@ -1,9 +1,9 @@
 package me.kqlqk.springBootApp.service.impl;
 
-import me.kqlqk.springBootApp.repositories.RoleRepository;
-import me.kqlqk.springBootApp.repositories.UserRepository;
 import me.kqlqk.springBootApp.models.Role;
 import me.kqlqk.springBootApp.models.User;
+import me.kqlqk.springBootApp.repositories.RoleRepository;
+import me.kqlqk.springBootApp.repositories.UserRepository;
 import me.kqlqk.springBootApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,7 +42,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.getByEmail(email);
     }
 
+    @Override
+    public User getByLogin(String login) {
+        return userRepository.getByLogin(login);
+    }
+
     //UserService methods
+    @Override
+    public User getByEmailOrLogin(String loginObj) {
+        User user = getByEmail(loginObj);
+        return user != null ? user : getByLogin(loginObj);
+    }
+
+
     @Override
     @Transactional
     public void addNew(User user) {
@@ -66,8 +78,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean tryAutoLogin(String email, String password) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+    public boolean tryAutoLogin(String loginObj, String password) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginObj);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
         Authentication auth = authenticationManager.authenticate(token);

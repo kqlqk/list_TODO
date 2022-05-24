@@ -11,16 +11,16 @@
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 col-md-8 col-lg-6">
 
-            <form  th:method="post" th:action="@{/login}" th:object="${user}">
+            <form  th:method="post" th:action="@{/login}" th:object="${userValid}">
                 <div class="form-group">
 
                     <div th:style="'color: #ff0000'" th:text="*{formCorrect == true} ? '' : 'Email or password incorrect, try one more time'"></div>
                     <label class="form-label" for="username">Username or email address:</label>
-                    <input class="form-control" th:style="*{formCorrect == true} ? 'border-color: #0d6efd' : 'border-color: #ff0000'" type="text" placeholder="Enter username" name="username" th:field="*{email}" id="username"/>
+                    <input class="form-control" th:style="*{formCorrect == true} ? 'border-color: #0d6efd' : 'border-color: #ff0000'" type="text" name="username" th:field="*{loginObject}" id="username"/>
                     <br/>
 
                     <label class="form-label" for="password">Password:</label>
-                    <input class="form-control" th:style="*{formCorrect == true} ? 'border-color: #0d6efd' : 'border-color: #ff0000'" type="password" placeholder="Enter password" name="password" th:field="*{password}" id="password"/>
+                    <input class="form-control" th:style="*{formCorrect == true} ? 'border-color: #0d6efd' : 'border-color: #ff0000'" type="password" name="password" th:field="*{password}" id="password"/>
 
                     <div class="form-check form-switch">
                         <label class="form-check-label" for="showPassword">Show password</label>

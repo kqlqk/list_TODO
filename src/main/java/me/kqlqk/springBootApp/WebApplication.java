@@ -11,9 +11,10 @@ public class WebApplication {
 }
 /**
  * TODO:
- * 1.sign up with google(after 1st release)
- * 2.Username in login form
- * 3.admin menu(after 1st release)
- * 5.password recovery
+ * 1.sign up with google v1.2
+ * 2.Username in login form v1.0.1
+ * 3.admin menu(after 1st release) v1.1
+ * 5.password recovery v1.1
+ * 6.remember me button v1.1
  */
 

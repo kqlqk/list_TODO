@@ -23,8 +23,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.getByEmail(email);
+    public UserDetails loadUserByUsername(String obj) throws UsernameNotFoundException {
+        User user = userRepository.getByEmail(obj);
+        if(user == null){
+            user = userRepository.getByLogin(obj);
+        }
         Set<GrantedAuthority> authorities = new HashSet<>();
 
         user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));

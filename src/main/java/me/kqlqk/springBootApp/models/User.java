@@ -34,8 +34,6 @@ public class User {
     private String confirmPassword;
 
 
-    public User() {}
-
     public long getId() {
         return id;
     }

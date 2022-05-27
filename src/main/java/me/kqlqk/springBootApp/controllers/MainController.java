@@ -35,7 +35,7 @@ public class MainController {
         if(userService.getCurrentUser() != null){
             return "redirect:/home";
         }
-        return "main-page/mainLoginPage";
+        return "main-pages/mainLoginPage";
     }
 
     @GetMapping("/login")
@@ -45,7 +45,7 @@ public class MainController {
         }
         model.addAttribute("userValid", new UserValidation());
         model.addAttribute("rememberMe", null);
-        return "main-page/login";
+        return "main-pages/login";
     }
 
     @PostMapping("/login")
@@ -57,19 +57,20 @@ public class MainController {
         if(userService.getByEmailOrLogin(userValidation.getLoginObject()) != null &&
                 passwordEncoder.matches(userValidation.getPassword(), userService.getByEmailOrLogin(userValidation.getLoginObject()).getPassword())){
                 if(userService.tryAutoLogin(userValidation.getLoginObject(), userValidation.getPassword())) {
-                    if(rememberMe.equals("on")){
-                        for(Cookie cookie : request.getCookies()){
-                            if(cookie.getName().equals("JSESSIONID")){
-                                cookie.setMaxAge(60 * 60 * 24 * 7);
-                                response.addCookie(cookie);
+                    if (request.getCookies().length != 0) {
+                        if (rememberMe.equals("on")) {
+                            for (Cookie cookie : request.getCookies()) {
+                                if (cookie.getName().equals("JSESSIONID")) {
+                                    cookie.setMaxAge(60 * 60 * 24 * 7);
+                                    response.addCookie(cookie);
+                                }
                             }
-                        }
-                    }
-                    else{
-                        for(Cookie cookie : request.getCookies()){
-                            if(cookie.getName().equals("JSESSIONID")){
-                                cookie.setMaxAge(-1);
-                                response.addCookie(cookie);
+                        } else {
+                            for (Cookie cookie : request.getCookies()) {
+                                if (cookie.getName().equals("JSESSIONID")) {
+                                    cookie.setMaxAge(-1);
+                                    response.addCookie(cookie);
+                                }
                             }
                         }
                     }
@@ -81,19 +82,19 @@ public class MainController {
         else {
             userValidation.setFormCorrect(false);
         }
-        return "main-page/login";
+        return "main-pages/login";
     }
 
     @GetMapping("/registration")
     public String showRegistrationPage(Model model){
         model.addAttribute("userValid", new UserValidation());
-        return "main-page/registration";
+        return "main-pages/registration";
     }
 
     @PostMapping("/registration")
     public String signUp(@ModelAttribute("userValid") @Valid UserValidation userValidation, BindingResult bindingResult){
         if(bindingResult.hasErrors() || !userValidation.getConfirmPassword().equals(userValidation.getPassword())){
-            return "main-page/registration";
+            return "main-pages/registration";
         }
 
         User userToDB = new User();

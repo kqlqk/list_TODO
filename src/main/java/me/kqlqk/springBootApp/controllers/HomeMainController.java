@@ -47,7 +47,7 @@ public class HomeMainController {
         model.addAttribute("greetings", greetings[(int) (Math.random() * greetings.length)]);
         model.addAttribute("user", userService.getCurrentUser());
         model.addAttribute("notes", noteService.getByUser(userService.getCurrentUser()));
-        return "home-main-page/home";
+        return "home-main-pages/home";
     }
 
     @GetMapping("/{id}")
@@ -56,7 +56,7 @@ public class HomeMainController {
             return "redirect:/home";
         }
         model.addAttribute("note", noteService.getById(id));
-        return "home-main-page/note";
+        return "home-main-pages/note";
     }
 
     @DeleteMapping("/{id}")
@@ -73,13 +73,13 @@ public class HomeMainController {
     @GetMapping("/new")
     public String showNewForm(Model model){
         model.addAttribute("noteValid", new NoteValidation());
-        return "home-main-page/new";
+        return "home-main-pages/new";
     }
 
     @PostMapping("/new")
     public String createNote(@ModelAttribute("noteValid") @Valid NoteValidation noteValidation, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return "home-main-page/new";
+            return "home-main-pages/new";
         }
 
         Note noteToDB = new Note();
@@ -95,7 +95,7 @@ public class HomeMainController {
     @GetMapping("/{id}/edit")
     public String editNote(@PathVariable("id") int id, Model model){
         model.addAttribute("note", noteService.getById(id));
-        return "home-main-page/edit";
+        return "home-main-pages/edit";
     }
 
     @PatchMapping("/{id}/edit")

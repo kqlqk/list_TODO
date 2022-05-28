@@ -18,5 +18,10 @@ public class Init {
         logger.info("App was started");
     }
 }
-//v1.2
+
+/**
+ * TODO:
+ * 1.sign up with google v1.5
+ * 5.password recovery v1.5
+ */
 

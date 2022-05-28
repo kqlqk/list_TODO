@@ -1,7 +1,7 @@
-package me.kqlqk.springBootApp.service;
+package me.kqlqk.todo_list.service;
 
-import me.kqlqk.springBootApp.models.Note;
-import me.kqlqk.springBootApp.models.User;
+import me.kqlqk.todo_list.models.Note;
+import me.kqlqk.todo_list.models.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package me.kqlqk.springBootApp.config;
+package me.kqlqk.todo_list.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

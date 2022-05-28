@@ -1,4 +1,4 @@
-package me.kqlqk.springBootApp.config;
+package me.kqlqk.todo_list.config;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

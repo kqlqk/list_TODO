@@ -1,9 +1,9 @@
-package me.kqlqk.springBootApp.controllers;
+package me.kqlqk.todo_list.controllers;
 
-import me.kqlqk.springBootApp.models.Note;
-import me.kqlqk.springBootApp.service.NoteService;
-import me.kqlqk.springBootApp.service.UserService;
-import me.kqlqk.springBootApp.validation.NoteValidation;
+import me.kqlqk.todo_list.models.Note;
+import me.kqlqk.todo_list.service.NoteService;
+import me.kqlqk.todo_list.service.UserService;
+import me.kqlqk.todo_list.validation.NoteValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

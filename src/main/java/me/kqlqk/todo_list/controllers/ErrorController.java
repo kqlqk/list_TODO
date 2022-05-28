@@ -1,6 +1,9 @@
-package me.kqlqk.springBootApp.controllers;
+package me.kqlqk.todo_list.controllers;
 
-import me.kqlqk.springBootApp.service.UserService;
+import me.kqlqk.todo_list.Init;
+import me.kqlqk.todo_list.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
+    private static final Logger logger = LoggerFactory.getLogger(Init.class);
+
     private UserService userService;
 
     @Autowired
@@ -22,6 +27,8 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
     public String handleError(Model model, HttpServletRequest request){
         int status = (int) (request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) != null ?
                 request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) : 0);
+
+        logger.warn("User " + userService.getCurrentEmail() + " got a " + "error: " + status);
 
         String message = "";
 

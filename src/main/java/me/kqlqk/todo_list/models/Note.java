@@ -1,4 +1,4 @@
-package me.kqlqk.springBootApp.models;
+package me.kqlqk.todo_list.models;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

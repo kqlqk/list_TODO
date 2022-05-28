@@ -1,10 +1,10 @@
-package me.kqlqk.springBootApp.service.impl;
+package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.springBootApp.repositories.NoteRepository;
-import me.kqlqk.springBootApp.models.Note;
-import me.kqlqk.springBootApp.models.User;
-import me.kqlqk.springBootApp.service.NoteService;
-import me.kqlqk.springBootApp.service.UserService;
+import me.kqlqk.todo_list.repositories.NoteRepository;
+import me.kqlqk.todo_list.models.Note;
+import me.kqlqk.todo_list.models.User;
+import me.kqlqk.todo_list.service.NoteService;
+import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

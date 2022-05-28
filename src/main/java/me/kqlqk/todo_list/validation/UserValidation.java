@@ -1,4 +1,4 @@
-package me.kqlqk.springBootApp.validation;
+package me.kqlqk.todo_list.validation;
 
 import javax.validation.constraints.Pattern;
 

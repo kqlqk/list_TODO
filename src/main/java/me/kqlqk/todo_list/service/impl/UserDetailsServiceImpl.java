@@ -1,7 +1,7 @@
-package me.kqlqk.springBootApp.service.impl;
+package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.springBootApp.repositories.UserRepository;
-import me.kqlqk.springBootApp.models.User;
+import me.kqlqk.todo_list.repositories.UserRepository;
+import me.kqlqk.todo_list.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

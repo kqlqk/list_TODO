@@ -1,6 +1,6 @@
-package me.kqlqk.springBootApp.repositories;
+package me.kqlqk.todo_list.repositories;
 
-import me.kqlqk.springBootApp.models.Role;
+import me.kqlqk.todo_list.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

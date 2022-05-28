@@ -1,8 +1,11 @@
-package me.kqlqk.springBootApp.controllers;
+package me.kqlqk.todo_list.controllers;
 
-import me.kqlqk.springBootApp.models.User;
-import me.kqlqk.springBootApp.service.UserService;
-import me.kqlqk.springBootApp.validation.UserValidation;
+import me.kqlqk.todo_list.Init;
+import me.kqlqk.todo_list.models.User;
+import me.kqlqk.todo_list.service.UserService;
+import me.kqlqk.todo_list.validation.UserValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,8 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/")
 public class MainController {
+    private static final Logger logger = LoggerFactory.getLogger(Init.class);
+
     private UserService userService;
     private PasswordEncoder passwordEncoder;
 
@@ -108,7 +113,7 @@ public class MainController {
         userService.addNew(userToDB);
 
         if(userService.tryAutoLogin(userToDB.getEmail(), decryptedPassword)){
-
+            logger.info("Was created new user " + userToDB.getEmail());
             return "redirect:/home";
         }
 

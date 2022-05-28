@@ -1,10 +1,10 @@
-package me.kqlqk.springBootApp.service.impl;
+package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.springBootApp.models.Role;
-import me.kqlqk.springBootApp.models.User;
-import me.kqlqk.springBootApp.repositories.RoleRepository;
-import me.kqlqk.springBootApp.repositories.UserRepository;
-import me.kqlqk.springBootApp.service.UserService;
+import me.kqlqk.todo_list.models.Role;
+import me.kqlqk.todo_list.models.User;
+import me.kqlqk.todo_list.repositories.RoleRepository;
+import me.kqlqk.todo_list.repositories.UserRepository;
+import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

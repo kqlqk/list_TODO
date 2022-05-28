@@ -1,8 +1,8 @@
-package me.kqlqk.springBootApp.service.impl;
+package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.springBootApp.repositories.RoleRepository;
-import me.kqlqk.springBootApp.models.Role;
-import me.kqlqk.springBootApp.service.RoleService;
+import me.kqlqk.todo_list.repositories.RoleRepository;
+import me.kqlqk.todo_list.models.Role;
+import me.kqlqk.todo_list.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

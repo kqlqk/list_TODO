@@ -18,11 +18,5 @@ public class Init {
         logger.info("App was started");
     }
 }
-
-/**
- * TODO:
- * 1.sign up with google v1.2
- * 5.password recovery v1.2
- * 6.log system v1.1
- */
+//v1.2
 

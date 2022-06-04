@@ -19,9 +19,10 @@ public class Init {
     }
 }
 
-/**
+/*
  * TODO:
- * 1.sign up with google v1.5
- * 5.password recovery v1.5
+ * 1.jwt auth v1.5 improving
+ * 2.password recovery v1.5 dev
+ * 3.sign up with google v1.5 dev
  */
 

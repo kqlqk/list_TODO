@@ -1,6 +1,5 @@
 package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.models.Role;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
@@ -16,19 +15,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Service
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private UserDetailsService userDetailsService;
-    private AuthenticationManager authenticationManager;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final UserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, UserDetailsService userDetailsService, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository,
+                           RoleRepository roleRepository,
+                           UserDetailsService userDetailsService,
+                           AuthenticationManager authenticationManager,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userDetailsService = userDetailsService;
@@ -54,15 +54,18 @@ public class UserServiceImpl implements UserService {
         return user != null ? user : getByLogin(loginObj);
     }
 
+    @Override
+    @Transactional
+    public void add(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(roleRepository.getById(1L));
+        userRepository.save(user);
+    }
 
     @Override
     @Transactional
-    public void addNew(User user) {
+    public void update(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-            Set<Role> roles = new HashSet<>();
-            roles.add(roleRepository.findById(1L).isPresent() ? roleRepository.findById(1L).get() : null);
-        user.setRoles(roles);
-
         userRepository.save(user);
     }
 
@@ -78,7 +81,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean tryAutoLogin(String loginObj, String password) {
+    public boolean canAutoLogin(String loginObj, String password) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginObj);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+
+        Authentication auth = authenticationManager.authenticate(token);
+
+        return auth.isAuthenticated();
+    }
+
+    @Override
+    public void autoLogin(String loginObj, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginObj);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
@@ -86,9 +99,6 @@ public class UserServiceImpl implements UserService {
 
         if (auth.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(auth);
-            return true;
         }
-
-        return false;
     }
 }

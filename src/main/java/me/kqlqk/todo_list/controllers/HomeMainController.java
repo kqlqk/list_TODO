@@ -15,9 +15,9 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/home")
 public class HomeMainController {
-    private NoteService noteService;
-    private UserService userService;
-    private String[] greetings = {
+    private final NoteService noteService;
+    private final UserService userService;
+    private final String[] greetings = {
             "Hello",
             "Hi",
             "Howdy",
@@ -51,7 +51,7 @@ public class HomeMainController {
     }
 
     @GetMapping("/{id}")
-    public String showNote(@PathVariable("id") long id, Model model){
+    public String showNote(@PathVariable("id") int id, Model model){
         if(!(noteService.existsById(id) && noteService.existsForUser(userService.getCurrentUser(), id))){
             return "redirect:/home";
         }
@@ -61,6 +61,7 @@ public class HomeMainController {
 
     @DeleteMapping("/{id}")
     public String deleteNote(@PathVariable("id") int id){
+        //FIXME: add checking
         noteService.delete(id);
         return "redirect:/home";
     }
@@ -82,11 +83,7 @@ public class HomeMainController {
             return "home-main-pages/new";
         }
 
-        Note noteToDB = new Note();
-
-        noteToDB.setFullTitle(noteValidation.getTitle().trim());
-        noteToDB.setBody(noteValidation.getBody());
-
+        Note noteToDB = noteValidation.convertToNote();
         noteService.add(noteToDB);
 
         return "redirect:/home";
@@ -101,7 +98,6 @@ public class HomeMainController {
     @PatchMapping("/{id}/edit")
     public String saveNote(@ModelAttribute("note") Note note){
         noteService.update(note);
-        return "redirect:/home/{id}";
+        return "redirect:/{id}";
     }
-
 }

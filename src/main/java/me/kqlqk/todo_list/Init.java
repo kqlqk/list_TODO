@@ -21,8 +21,7 @@ public class Init {
 
 /*
  * TODO:
- * 1.jwt auth v1.5 improving
- * 2.password recovery v1.5 dev
- * 3.sign up with google v1.5 dev
+ * 3.refactoring v1.5 improving
+ * 4.sign up with google v1.5 dev
  */
 

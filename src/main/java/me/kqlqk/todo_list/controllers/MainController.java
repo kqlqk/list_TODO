@@ -26,8 +26,8 @@ import javax.validation.Valid;
 public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(Init.class);
 
-    private UserService userService;
-    private PasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public MainController(UserService userService, PasswordEncoder passwordEncoder) {
@@ -55,34 +55,18 @@ public class MainController {
 
     @PostMapping("/login")
     public String logIn(@ModelAttribute("userValid") UserValidation userValidation,
-                        @ModelAttribute(name = "rememberMe") String rememberMe,
+                        @ModelAttribute("rememberMe") String rememberMe,
                         HttpServletResponse response,
                         HttpServletRequest request){
-
         if(userService.getByEmailOrLogin(userValidation.getLoginObject()) != null &&
                 passwordEncoder.matches(userValidation.getPassword(), userService.getByEmailOrLogin(userValidation.getLoginObject()).getPassword())){
-                if(userService.tryAutoLogin(userValidation.getLoginObject(), userValidation.getPassword())) {
-                    if (request.getCookies().length != 0) {
-                        if (rememberMe.equals("on")) {
-                            for (Cookie cookie : request.getCookies()) {
-                                if (cookie.getName().equals("JSESSIONID")) {
-                                    cookie.setMaxAge(60 * 60 * 24 * 7);
-                                    response.addCookie(cookie);
-                                }
-                            }
-                        } else {
-                            for (Cookie cookie : request.getCookies()) {
-                                if (cookie.getName().equals("JSESSIONID")) {
-                                    cookie.setMaxAge(-1);
-                                    response.addCookie(cookie);
-                                }
-                            }
-                        }
-                    }
+                if(userService.canAutoLogin(userValidation.getLoginObject(), userValidation.getPassword())) {
+                    setSessionCookie(request, response, rememberMe);
+                    userService.autoLogin(userValidation.getLoginObject(), userValidation.getPassword());
                     return "redirect:/home";
                 }
 
-            return "redirect:/error";
+                return "redirect:/error";
         }
         else {
             userValidation.setFormCorrect(false);
@@ -102,22 +86,39 @@ public class MainController {
             return "main-pages/registration";
         }
 
-        User userToDB = new User();
-        userToDB.setEmail(userValidation.getEmail());
-        userToDB.setLogin(userValidation.getLogin());
-        userToDB.setPassword(userValidation.getPassword());
-        userToDB.setConfirmPassword(userValidation.getConfirmPassword());
+        User userToDB = userValidation.convertToUser();
+        userService.add(userToDB);
 
         String decryptedPassword = userToDB.getPassword();
 
-        userService.addNew(userToDB);
-
-        if(userService.tryAutoLogin(userToDB.getEmail(), decryptedPassword)){
+        if(userService.canAutoLogin(userToDB.getEmail(), decryptedPassword)){
+            userService.autoLogin(userToDB.getEmail(), decryptedPassword);
             logger.info("Was created new user " + userToDB.getEmail());
             return "redirect:/home";
         }
 
         return "redirect:/mainPage";
+    }
+
+
+    private void setSessionCookie(HttpServletRequest request, HttpServletResponse response, String status){
+        if (request.getCookies().length != 0) {
+            if (status.equals("on")) {
+                for (Cookie cookie : request.getCookies()) {
+                    if (cookie.getName().equals("JSESSIONID")) {
+                        cookie.setMaxAge(60 * 60 * 24 * 7);
+                        response.addCookie(cookie);
+                    }
+                }
+            } else {
+                for (Cookie cookie : request.getCookies()) {
+                    if (cookie.getName().equals("JSESSIONID")) {
+                        cookie.setMaxAge(-1);
+                        response.addCookie(cookie);
+                    }
+                }
+            }
+        }
     }
 
 }

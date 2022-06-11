@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
     private static final Logger logger = LoggerFactory.getLogger(Init.class);
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public ErrorController(UserService userService) {

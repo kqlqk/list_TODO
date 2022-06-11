@@ -8,9 +8,11 @@ public interface UserService{
     User getByEmail(String email);
     User getByLogin(String login);
 
-    void addNew(User user);
+    void add(User user);
+    void autoLogin(String loginObj, String password);
+    boolean canAutoLogin(String loginObj, String password);
     User getByEmailOrLogin(String loginObj);
     String getCurrentEmail();
     User getCurrentUser();
-    boolean tryAutoLogin(String loginObj, String password);
+    void update(User user);
 }

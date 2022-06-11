@@ -19,8 +19,8 @@ public class NoteServiceImpl implements NoteService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private NoteRepository noteRepository;
-    private UserService userService;
+    private final NoteRepository noteRepository;
+    private final UserService userService;
 
     @Autowired
     public NoteServiceImpl(NoteRepository noteRepository, UserService userService) {
@@ -84,7 +84,7 @@ public class NoteServiceImpl implements NoteService {
         if(!existsById(noteId)){
             return false;
         }
-        return user.getNotes().stream().filter(note -> noteId == note.getId()).findAny().isPresent();
+        return user.getNotes().stream().anyMatch(note -> noteId == note.getId());
     }
 
     @Override

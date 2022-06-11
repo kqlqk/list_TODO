@@ -1,5 +1,7 @@
 package me.kqlqk.todo_list.validation;
 
+import me.kqlqk.todo_list.models.User;
+
 import javax.validation.constraints.Pattern;
 
 public class UserValidation {
@@ -66,5 +68,15 @@ public class UserValidation {
 
     public void setFormCorrect(boolean formCorrect) {
         this.formCorrect = formCorrect;
+    }
+
+    public User convertToUser(){
+        User user = new User();
+        user.setEmail(email);
+        user.setLogin(login);
+        user.setPassword(password);
+        user.setConfirmPassword(confirmPassword);
+
+        return user;
     }
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
@@ -28,9 +28,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(user == null){
             user = userRepository.getByLogin(obj);
         }
-        Set<GrantedAuthority> authorities = new HashSet<>();
 
-        user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),

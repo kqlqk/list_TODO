@@ -1,5 +1,7 @@
 package me.kqlqk.todo_list.validation;
 
+import me.kqlqk.todo_list.models.Note;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -27,6 +29,14 @@ public class NoteValidation {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public Note convertToNote(){
+        Note note = new Note();
+        note.setFullTitle(title.trim());
+        note.setBody(body);
+
+        return note;
     }
 
 }

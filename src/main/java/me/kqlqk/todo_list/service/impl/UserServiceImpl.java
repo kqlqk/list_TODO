@@ -4,6 +4,8 @@ import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserDetailsService userDetailsService;
@@ -60,6 +64,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleRepository.getById(1L));
         userRepository.save(user);
+        logger.info("was created " + user);
     }
 
     @Override
@@ -67,6 +72,7 @@ public class UserServiceImpl implements UserService {
     public void update(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        logger.info("was updated " + user);
     }
 
     @Override
@@ -99,6 +105,7 @@ public class UserServiceImpl implements UserService {
 
         if (auth.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(auth);
+            logger.info("was set auth");
         }
     }
 }

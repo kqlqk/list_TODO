@@ -1,14 +1,14 @@
-package me.kqlqk.todo_list.validation;
+package me.kqlqk.todo_list.dto;
 
 import me.kqlqk.todo_list.models.Note;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-public class NoteValidation {
+public class NoteDTO {
 
-    @Size(min = 1, max = 100, message = "Title message should be a valid(Cannot starts or end with space)")
-    @NotBlank(message = "Title message should be a valid(Cannot starts or end with space)")
+    @Size(min = 1, max = 100, message = "Title message should be a valid(must be between 1 and 100 characters)")
+    @NotBlank(message = "Title message should be a valid(must be between 1 and 100 characters)")
     private String title;
 
 

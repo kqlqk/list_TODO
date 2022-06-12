@@ -73,4 +73,11 @@ public class Note {
     public void setFullTitle(String fullTitle) {
         this.fullTitle = fullTitle;
     }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "id=" + id +
+                '}';
+    }
 }

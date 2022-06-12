@@ -24,10 +24,10 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
     @Override
     public void sendEmail(String to, String subject, String text) {
-        MailMessage message = new SimpleMailMessage();
+        SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
-        mailSender.send((SimpleMailMessage) message);
+        mailSender.send(message);
     }
 }

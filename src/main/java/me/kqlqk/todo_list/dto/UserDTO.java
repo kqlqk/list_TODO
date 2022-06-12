@@ -1,10 +1,10 @@
-package me.kqlqk.todo_list.validation;
+package me.kqlqk.todo_list.dto;
 
 import me.kqlqk.todo_list.models.User;
 
 import javax.validation.constraints.Pattern;
 
-public class UserValidation {
+public class UserDTO {
     private String loginObject;
 
     @Pattern(regexp = "^[^\\s@]{3,}@[^\\s@]{2,}\\.[^\\s@]{2,}$", message = "Email must be valid")

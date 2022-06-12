@@ -1,13 +1,14 @@
 package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.models.User;
+import me.kqlqk.todo_list.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -15,6 +16,8 @@ import java.util.Set;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+    private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+
     private final UserRepository userRepository;
 
     @Autowired
@@ -23,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String obj) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String obj) {
         User user = userRepository.getByEmail(obj);
         if(user == null){
             user = userRepository.getByLogin(obj);
@@ -31,6 +34,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
+
+        logger.info("was loaded " + user);
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),

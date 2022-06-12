@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 
 @Controller
 public class AdminController {
-    private static final Logger logger = LoggerFactory.getLogger(Init.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     private final UserService userService;
 
@@ -24,7 +24,8 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String getAdminMenu(Model model){
-        logger.warn("User " + userService.getCurrentEmail() + " went to the /admin");
+        logger.info("was get request to /admin by " + userService.getCurrentEmail());
+        logger.warn(userService.getCurrentEmail() + " went to the /admin");
         SimpleDateFormat format = new SimpleDateFormat("MMMM-dd, HH:mm:ss");
         model.addAttribute("startTime", format.format(Init.appStartTime));
 

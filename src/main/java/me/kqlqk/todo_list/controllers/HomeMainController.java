@@ -3,7 +3,9 @@ package me.kqlqk.todo_list.controllers;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.service.NoteService;
 import me.kqlqk.todo_list.service.UserService;
-import me.kqlqk.todo_list.validation.NoteValidation;
+import me.kqlqk.todo_list.dto.NoteDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +17,8 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/home")
 public class HomeMainController {
+    private static final Logger logger = LoggerFactory.getLogger(HomeMainController.class);
+
     private final NoteService noteService;
     private final UserService userService;
     private final String[] greetings = {
@@ -44,6 +48,7 @@ public class HomeMainController {
 
     @GetMapping
     public String showHomeMainPage(Model model){
+        logger.info("was get request to /home");
         model.addAttribute("greetings", greetings[(int) (Math.random() * greetings.length)]);
         model.addAttribute("user", userService.getCurrentUser());
         model.addAttribute("notes", noteService.getByUser(userService.getCurrentUser()));
@@ -52,6 +57,7 @@ public class HomeMainController {
 
     @GetMapping("/{id}")
     public String showNote(@PathVariable("id") int id, Model model){
+        logger.info("was get request to /home/" + id + " by " + userService.getCurrentEmail());
         if(!(noteService.existsById(id) && noteService.existsForUser(userService.getCurrentUser(), id))){
             return "redirect:/home";
         }
@@ -61,29 +67,35 @@ public class HomeMainController {
 
     @DeleteMapping("/{id}")
     public String deleteNote(@PathVariable("id") int id){
-        //FIXME: add checking
+        logger.info("was delete request to /home/" + id + " by " + userService.getCurrentEmail());
+        if(!(noteService.existsById(id) && noteService.existsForUser(userService.getCurrentUser(), id))){
+            return "redirect:/home";
+        }
         noteService.delete(id);
         return "redirect:/home";
     }
 
     @PutMapping("/{id}")
-    public String backToHomePage(){
+    public String backToHomePage(@PathVariable String id){
+        logger.info("was put request to /home/" + id + " by " + userService.getCurrentEmail());
         return "redirect:/home";
     }
 
     @GetMapping("/new")
     public String showNewForm(Model model){
-        model.addAttribute("noteValid", new NoteValidation());
+        logger.info("was get request to /home/new by " + userService.getCurrentEmail());
+        model.addAttribute("noteValid", new NoteDTO());
         return "home-main-pages/new";
     }
 
     @PostMapping("/new")
-    public String createNote(@ModelAttribute("noteValid") @Valid NoteValidation noteValidation, BindingResult bindingResult){
+    public String createNote(@ModelAttribute("noteValid") @Valid NoteDTO noteDTO, BindingResult bindingResult){
+        logger.info("was post request to /home/new by " + userService.getCurrentEmail());
         if(bindingResult.hasErrors()){
             return "home-main-pages/new";
         }
 
-        Note noteToDB = noteValidation.convertToNote();
+        Note noteToDB = noteDTO.convertToNote();
         noteService.add(noteToDB);
 
         return "redirect:/home";
@@ -91,13 +103,15 @@ public class HomeMainController {
 
     @GetMapping("/{id}/edit")
     public String editNote(@PathVariable("id") int id, Model model){
+        logger.info("was get request to /home/" + id + "/edit by " + userService.getCurrentEmail());
         model.addAttribute("note", noteService.getById(id));
         return "home-main-pages/edit";
     }
 
     @PatchMapping("/{id}/edit")
-    public String saveNote(@ModelAttribute("note") Note note){
+    public String saveNote(@PathVariable("id") int id, @ModelAttribute("note") Note note){
+        logger.info("was patch request to /home/" + id + "/edit by " + userService.getCurrentEmail());
         noteService.update(note);
-        return "redirect:/{id}";
+        return "redirect:/home/{id}";
     }
 }

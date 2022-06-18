@@ -21,14 +21,14 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    @ManyToOne
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private Set<Note> notes;
+
+    @Column(name = "oauth2")
+    private boolean isOAuth2;
 
     @Transient
     private String confirmPassword;
@@ -66,12 +66,12 @@ public class User {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getConfirmPassword() {
@@ -88,5 +88,24 @@ public class User {
 
     public void setNotes(Set<Note> notes) {
         this.notes = notes;
+    }
+
+    public boolean isOAuth2() {
+        return isOAuth2;
+    }
+
+    public void setOAuth2(boolean OAuth2) {
+        isOAuth2 = OAuth2;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", isOAuth2='" + isOAuth2 + '\'' +
+                '}';
     }
 }

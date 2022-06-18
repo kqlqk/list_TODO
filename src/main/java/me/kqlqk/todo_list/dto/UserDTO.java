@@ -1,8 +1,10 @@
-package me.kqlqk.todo_list.validation;
+package me.kqlqk.todo_list.dto;
+
+import me.kqlqk.todo_list.models.User;
 
 import javax.validation.constraints.Pattern;
 
-public class UserValidation {
+public class UserDTO {
     private String loginObject;
 
     @Pattern(regexp = "^[^\\s@]{3,}@[^\\s@]{2,}\\.[^\\s@]{2,}$", message = "Email must be valid")
@@ -66,5 +68,15 @@ public class UserValidation {
 
     public void setFormCorrect(boolean formCorrect) {
         this.formCorrect = formCorrect;
+    }
+
+    public User convertToUser(){
+        User user = new User();
+        user.setEmail(email.toLowerCase());
+        user.setLogin(login);
+        user.setPassword(password);
+        user.setConfirmPassword(confirmPassword);
+
+        return user;
     }
 }

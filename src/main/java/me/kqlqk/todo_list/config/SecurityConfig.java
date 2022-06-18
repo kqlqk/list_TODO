@@ -34,10 +34,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .accessDeniedHandler(accessDeniedHandler())
                 .and()
                     .authorizeRequests()
-                    .antMatchers("/", "/login", "/registration", "/error").permitAll()
-                    .antMatchers("/home", "/home/{\\d}", "/home/{\\d}/new", "/home/{\\d}/edit").hasRole("USER")
+                    .antMatchers("/", "/login", "/registration", "/error", "/recovery", "/recovery/{\\d}", "/tempOAuth2LoginPage").permitAll()
+                    .antMatchers("/home", "/home/{\\d}", "/home/{\\d}/new", "/home/{\\d}/edit").hasAnyRole("USER", "ADMIN")
                     .antMatchers("/admin").hasRole("ADMIN")
                     .anyRequest().authenticated()
+                .and()
+                    .oauth2Login()
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/tempOAuth2LoginPage")
+                    .failureUrl("/login")
                 .and()
                     .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
@@ -48,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 

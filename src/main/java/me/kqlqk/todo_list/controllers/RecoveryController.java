@@ -1,9 +1,9 @@
 package me.kqlqk.todo_list.controllers;
 
+import me.kqlqk.todo_list.dto.UserDTO;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.EmailSenderService;
 import me.kqlqk.todo_list.service.UserService;
-import me.kqlqk.todo_list.dto.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class RecoveryController {
     @PostMapping
     public String sendEmail(@ModelAttribute("userValid") UserDTO userDTO){
         logger.info("was post request to /recovery");
-        if(userService.getByEmail(userDTO.getEmail()) != null){
+        if(userService.getByEmail(userDTO.getEmail().toLowerCase()) != null){
             int tempId = (int) (Math.random() * 99999);
             recoveryIdsEmails.put(tempId, userDTO.getEmail());
 
@@ -77,7 +77,7 @@ public class RecoveryController {
             return "recovery-pages/changePassword";
         }
 
-        User user = userService.getByEmail(recoveryIdsEmails.get(recoveryId));
+        User user = userService.getByEmail(recoveryIdsEmails.get(recoveryId).toLowerCase());
         user.setPassword(userDTO.getPassword());
         userService.update(user);
 

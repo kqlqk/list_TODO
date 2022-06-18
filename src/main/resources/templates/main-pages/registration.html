@@ -17,11 +17,13 @@
                     <label class="form-label" for="email">Email:</label>
                     <input class="form-control" th:style="${#fields.hasErrors('email')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" placeholder="Enter email" name="email" th:field="*{email}" id="email"/>
                     <div th:style="${#fields.hasErrors('email')} ? 'color: #ff0000' : 'color: #000000'" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    <div th:style="'color: #ff0000'" th:text="${emailIsAlreadyRegistered} == true ? 'This email is already registered' : ''"></div>
                     <br/>
 
                     <label class="form-label" for="login">Username:</label>
                     <input class="form-control" th:style="${#fields.hasErrors('login')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" placeholder="Enter username" name="login" th:field="*{login}" id="login"/>
                     <div th:style="${#fields.hasErrors('login')} ? 'color: #ff0000' : 'color: #000000'" th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></div>
+                    <div th:style="'color: #ff0000'" th:text="${loginIsAlreadyRegistered} == true ? 'This login is already registered' : ''"></div>
                     <br/>
 
                     <label class="form-label" for="password">Password:</label>
@@ -41,11 +43,25 @@
                 </div>
                 <br/>
                 <button class="btn btn-outline-primary btn-lg" type="submit">Sign up</button>
-            </form>
 
+                <section class="py-5 text-center container">
+                    <div class="row py-lg-1">
+                        <div class="col-lg-6 col-md-8 mx-auto">
+                            <h3 class="fw-light">Or</h3>
+
+                            <h3>Login with:</h3>
+                            <h4>
+                                <a th:text="Google" th:href="@{/oauth2/authorization/google}"></a>
+                            </h4>
+                        </div>
+                    </div>
+                </section>
+            </form>
         </div>
     </div>
 </div>
+
+
 
 <script>
     document.getElementById('showPassword').onclick = function() {

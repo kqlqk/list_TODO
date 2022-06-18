@@ -72,7 +72,7 @@ public class UserDTO {
 
     public User convertToUser(){
         User user = new User();
-        user.setEmail(email);
+        user.setEmail(email.toLowerCase());
         user.setLogin(login);
         user.setPassword(password);
         user.setConfirmPassword(confirmPassword);

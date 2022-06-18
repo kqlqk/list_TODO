@@ -27,6 +27,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Note> notes;
 
+    @Column(name = "oauth2")
+    private boolean isOAuth2;
+
     @Transient
     private String confirmPassword;
 
@@ -87,6 +90,14 @@ public class User {
         this.notes = notes;
     }
 
+    public boolean isOAuth2() {
+        return isOAuth2;
+    }
+
+    public void setOAuth2(boolean OAuth2) {
+        isOAuth2 = OAuth2;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -94,6 +105,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
+                ", isOAuth2='" + isOAuth2 + '\'' +
                 '}';
     }
 }

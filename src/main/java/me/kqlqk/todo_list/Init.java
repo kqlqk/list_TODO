@@ -20,9 +20,10 @@ public class Init {
 }
 
 /*
- * TODO:logs, code reformatting
- * 4.sign up with google v1.5 dev
+ * TODO:
  * 5.restfull service v2 rest
  * 6.tests v2 dev
+ * 7.improve remember me button v2 dev
+ * 8.add default values to db v2 dev
  */
 

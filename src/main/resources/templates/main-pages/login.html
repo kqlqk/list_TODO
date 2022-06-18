@@ -11,6 +11,9 @@
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 col-md-8 col-lg-6">
 
+            <div th:style="'color: #ff0000'" th:text="${oAuth2LoginByFormAttempt == true} ? 'Please, log in with your google account' : ''"></div>
+            <div th:style="'color: #ff0000'" th:text="${loginWithForm == true} ? 'Please, log in with the form below' : ''"></div>
+
             <form  th:method="post" th:action="@{/login}" th:object="${userValid}">
                 <div class="form-group">
 
@@ -35,9 +38,20 @@
                 <button class="btn btn-outline-primary btn-lg" type="submit">Log in</button>
             </form>
             <br/>
-
             <a class="btn btn-outline-danger btn-sm" th:href="@{/recovery}">Forgot password?</a>
 
+            <section class="py text-center container">
+                <div class="row py-lg-1">
+                    <div class="col-lg-6 col-md-8 mx-auto">
+                        <h3 class="fw-light">Or</h3>
+
+                        <h3>Login with:</h3>
+                        <h4>
+                            <a th:text="Google" th:href="@{/oauth2/authorization/google}"></a>
+                        </h4>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </div>
@@ -52,6 +66,8 @@
 
     };
 </script>
+
+
 
 </body>
 </html>

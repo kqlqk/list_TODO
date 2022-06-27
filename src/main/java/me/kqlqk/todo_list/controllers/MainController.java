@@ -1,6 +1,8 @@
 package me.kqlqk.todo_list.controllers;
 
 import me.kqlqk.todo_list.dto.UserDTO;
+import me.kqlqk.todo_list.exceptions.UserAlreadyExistException;
+import me.kqlqk.todo_list.exceptions.status.UserStatus;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.util.ControllersUtil;
@@ -8,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -78,9 +79,7 @@ public class MainController {
     public String transferOAuth2User(){
         logger.info("was get request to /tempOAuth2LoginPage");
 
-        OAuth2User oAuth2User = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        SecurityContextHolder.clearContext();
+        OAuth2User oAuth2User = userService.getOAuth2UserFromSecurityContextHolder();
 
         if(userService.existsByEmail(oAuth2User.getAttribute("email"))){
             if(!userService.getByEmail(oAuth2User.getAttribute("email")).isOAuth2()) {
@@ -93,7 +92,7 @@ public class MainController {
             userService.convertOAuth2UserToUserAndSave(oAuth2User);
         }
 
-            if(userService.canAutoLogin(oAuth2User.getAttribute("email"), tempPassword)){
+        if(userService.canAutoLogin(oAuth2User.getAttribute("email"), tempPassword)){
             userService.autoLogin(oAuth2User.getAttribute("email"), tempPassword);
             return "redirect:/home";
         }
@@ -103,9 +102,9 @@ public class MainController {
     @PostMapping("/login")
     public String logIn(@ModelAttribute("userValid") UserDTO userDTO,
                         @ModelAttribute("rememberMe") String rememberMe,
-                        HttpServletResponse response,
                         HttpServletRequest request,
-                        Model model){
+                        HttpServletResponse response,
+                        Model model) {
         logger.info("was post request to /login");
 
         if(userService.getByLoginObj(userDTO.getLoginObject()) == null){
@@ -151,20 +150,23 @@ public class MainController {
             return "main-pages/registration";
         }
 
-        if(userService.existsByEmail(userDTO.getEmail())){
-            model.addAttribute("emailIsAlreadyRegistered", true);
-            return "main-pages/registration";
-        }
-
-        if(userService.existsByLogin(userDTO.getLogin())){
-            model.addAttribute("loginIsAlreadyRegistered", true);
-            return "main-pages/registration";
-        }
-
         String decryptedPassword = userDTO.getPassword();
 
         User userToDB = userDTO.convertToUser();
-        userService.add(userToDB);
+
+        try{
+            userService.add(userToDB);
+        }
+        catch (UserAlreadyExistException e){
+            if (e.getUserStatus() == UserStatus.EMAIL_ALREADY_EXIST){
+                model.addAttribute("emailIsAlreadyRegistered", true);
+                return "main-pages/registration";
+            }
+            if(e.getUserStatus() == UserStatus.LOGIN_ALREADY_EXIST){
+                model.addAttribute("loginIsAlreadyRegistered", true);
+                return "main-pages/registration";
+            }
+        }
 
 
         if(userService.canAutoLogin(userToDB.getEmail(), decryptedPassword)){

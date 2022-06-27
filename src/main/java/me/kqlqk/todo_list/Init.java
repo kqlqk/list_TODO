@@ -21,9 +21,9 @@ public class Init {
 
 /*
  * TODO:
- * 5.restfull service v2 rest
- * 6.tests v2 dev
- * 7.improve remember me button v2 dev
- * 8.add default values to db v2 dev
+ * ! restfull service v2 rest
+ * ! improve remember me button v2 dev
+ * ! add default values to db v2 dev
+ * ! integrated tests v2+ dev
  */
 

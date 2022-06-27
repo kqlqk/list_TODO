@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 public class EmailSenderServiceImpl implements EmailSenderService {
     private final MailSender mailSender;
 
-
     @Autowired
     public EmailSenderServiceImpl(MailSender mailSender) {
         this.mailSender = mailSender;

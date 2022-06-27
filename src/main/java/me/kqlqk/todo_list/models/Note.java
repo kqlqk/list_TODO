@@ -25,6 +25,12 @@ public class Note {
     @Column(name = "full_title")
     private String fullTitle;
 
+    public Note(String fullTitle, String body) {
+        this.fullTitle = fullTitle;
+        this.body = body;
+    }
+
+    public Note(){}
 
     public long getId() {
         return id;

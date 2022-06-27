@@ -1,5 +1,7 @@
 package me.kqlqk.todo_list.service.impl;
 
+import me.kqlqk.todo_list.exceptions.UserAlreadyExistException;
+import me.kqlqk.todo_list.exceptions.status.UserStatus;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
@@ -69,7 +71,14 @@ public class UserServiceImpl implements UserService {
     //UserService methods
     @Override
     @Transactional
-    public void add(User user) {
+    public void add(User user) throws UserAlreadyExistException {
+        if(existsByEmail(user.getEmail())){
+            throw new UserAlreadyExistException("User already exist", UserStatus.EMAIL_ALREADY_EXIST);
+        }
+        if(existsByLogin(user.getLogin())){
+            throw new UserAlreadyExistException("User already exist", UserStatus.LOGIN_ALREADY_EXIST);
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleRepository.getById(1L));
         userRepository.save(user);
@@ -78,7 +87,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getByLoginObj(String loginObj) {
-        return getByEmail(loginObj) != null ? getByEmail(loginObj) : getByLogin(loginObj);
+        return getByEmail(loginObj) == null ? getByLogin(loginObj) : getByEmail(loginObj);
+    }
+
+    @Override
+    public OAuth2User getOAuth2UserFromSecurityContextHolder() {
+        OAuth2User oAuth2User = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SecurityContextHolder.clearContext();
+        return oAuth2User;
     }
 
     @Override
@@ -131,7 +147,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void convertOAuth2UserToUserAndSave(OAuth2User oAuth2User) {
+    public User convertOAuth2UserToUserAndSave(OAuth2User oAuth2User) {
         User user = new User();
         user.setEmail(oAuth2User.getAttribute("email").toString().toLowerCase());
         user.setLogin(oAuth2User.getAttribute("name"));
@@ -139,6 +155,9 @@ public class UserServiceImpl implements UserService {
         user.setOAuth2(true);
         user.setRole(roleRepository.getById(1L));
         userRepository.save(user);
+
         logger.info("was converted and saved " + user);
+
+        return user;
     }
 }

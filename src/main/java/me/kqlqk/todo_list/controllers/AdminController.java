@@ -18,17 +18,16 @@ public class AdminController {
     private final UserService userService;
 
     @Autowired
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService){
         this.userService = userService;
     }
 
     @GetMapping("/admin")
     public String getAdminMenu(Model model){
         logger.info("was get request to /admin by " + userService.getCurrentEmail());
-        logger.warn(userService.getCurrentEmail() + " went to the /admin");
+
         SimpleDateFormat format = new SimpleDateFormat("MMMM-dd, HH:mm:ss");
         model.addAttribute("startTime", format.format(Init.appStartTime));
-
 
         return "admin-pages/mainAdminPage";
     }

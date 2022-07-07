@@ -22,6 +22,7 @@ public class Init {
 /*
  * TODO:
  * ! restfull service v2 rest
+ * ! add sign up button to login page v2 dev
  * ! improve remember me button v2 dev
  * ! add default values to db v2 dev
  * ! integrated tests v2+ dev

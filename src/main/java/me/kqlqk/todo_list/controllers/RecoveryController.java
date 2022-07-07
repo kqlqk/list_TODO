@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,58 +27,72 @@ public class RecoveryController {
     private final Map<Integer, String> recoveryIdsEmails;
 
     @Autowired
-    public RecoveryController(UserService userService, EmailSenderService emailSenderService) {
+    public RecoveryController(UserService userService, EmailSenderService emailSenderService){
         this.userService = userService;
         this.emailSenderService = emailSenderService;
         recoveryIdsEmails = new HashMap<>();
     }
 
     @GetMapping
-    public String showRecoveryPage(Model model){
-        logger.info("was get request to /recovery");
+    public String showRecoveryPage(HttpServletRequest request, Model model){
+        logger.debug("was get request to /recovery by " + request.getRemoteAddr());
+
         model.addAttribute("userValid", new UserDTO());
+
         return "recovery-pages/recovery";
     }
 
     @PostMapping
-    public String sendEmail(@ModelAttribute("userValid") UserDTO userDTO){
-        logger.info("was post request to /recovery");
-        if(userService.getByEmail(userDTO.getEmail().toLowerCase()) != null){
+    public String sendEmail(@ModelAttribute("userValid") UserDTO userDTO, HttpServletRequest request){
+        logger.debug("was post request to /recovery by " + request.getRemoteAddr());
+
+        if(userService.getByEmail(userDTO.getEmail()) != null){
             int tempId = (int) (Math.random() * 99999);
             recoveryIdsEmails.put(tempId, userDTO.getEmail());
 
-            emailSenderService.sendEmail(
-                    userDTO.getEmail(),
-                    "Password recovery",
-                    "follow this link to reset your password: http://localhost:8080/recovery/" + tempId
-                    );
+            try{
+                emailSenderService.sendEmail(
+                        userDTO.getEmail(),
+                        "Password recovery",
+                        "follow this link to reset your password: http://localhost:8080/recovery/" + tempId
+                );
+            }
+            catch (NullPointerException e){
+                logger.warn(request.getRemoteAddr() + " got " + e);
+                return "recovery-pages/badRecovery";
+            }
 
             return "recovery-pages/successRecovery";
         }
         userDTO.setFormCorrect(false);
+
         return "recovery-pages/recovery";
     }
 
     @GetMapping("/{recoveryId}")
-    public String showChangingPasswordPage(@PathVariable("recoveryId") int recoveryId, Model model){
-        logger.info("was get request to /recovery/" + recoveryId);
+    public String showChangingPasswordPage(@PathVariable("recoveryId") int recoveryId, HttpServletRequest request, Model model){
+        logger.debug("was get request to /recovery/" + recoveryId + " by " + request.getRemoteAddr());
+
         if(this.recoveryIdsEmails.get(recoveryId) == null){
             return "redirect:/";
         }
         model.addAttribute("recoveryId", recoveryId);
         model.addAttribute("userValid", new UserDTO());
+
         return "recovery-pages/changePassword";
     }
 
     @PostMapping("/{recoveryId}")
-    public String changePassword(@ModelAttribute("userValid") @Valid UserDTO userDTO, BindingResult bindingResult, @PathVariable int recoveryId){
-        logger.info("was post request to /recovery/" + recoveryId);
+    public String changePassword(@ModelAttribute("userValid") @Valid UserDTO userDTO, BindingResult bindingResult,
+                                 HttpServletRequest request,
+                                 @PathVariable int recoveryId){
+        logger.debug("was post request to /recovery/" + recoveryId + " by " + request.getRemoteAddr());
 
         if(bindingResult.hasErrors() || !userDTO.getPassword().equals(userDTO.getConfirmPassword())){
             return "recovery-pages/changePassword";
         }
 
-        User user = userService.getByEmail(recoveryIdsEmails.get(recoveryId).toLowerCase());
+        User user = userService.getByEmail(recoveryIdsEmails.get(recoveryId));
         user.setPassword(userDTO.getPassword());
         userService.update(user);
 

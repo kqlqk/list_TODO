@@ -1,7 +1,9 @@
 package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions.UserAlreadyExistException;
-import me.kqlqk.todo_list.exceptions.status.UserStatus;
+import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserAlreadyExistException;
+import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserNotFoundException;
+import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.status.UserStatus;
+import me.kqlqk.todo_list.exceptions.service_exceptions.AuthenticationNotAutheticatedException;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
@@ -50,7 +52,7 @@ public class UserServiceImpl implements UserService {
     //JPA-repository methods
     @Override
     public User getByEmail(String email) {
-        return userRepository.getByEmail(email);
+        return userRepository.getByEmail(email.toLowerCase());
     }
 
     @Override
@@ -71,28 +73,41 @@ public class UserServiceImpl implements UserService {
     //UserService methods
     @Override
     @Transactional
-    public void add(User user) throws UserAlreadyExistException {
-        if(existsByEmail(user.getEmail())){
-            throw new UserAlreadyExistException("User already exist", UserStatus.EMAIL_ALREADY_EXIST);
+    public void add(User user) {
+        if(existsByEmail(user.getEmail())) {
+            throw new UserAlreadyExistException("User already exist, Email already exist", UserStatus.EMAIL_ALREADY_EXIST);
         }
-        if(existsByLogin(user.getLogin())){
-            throw new UserAlreadyExistException("User already exist", UserStatus.LOGIN_ALREADY_EXIST);
+        if(existsByLogin(user.getLogin())) {
+            throw new UserAlreadyExistException("User already exist, Login already exist", UserStatus.LOGIN_ALREADY_EXIST);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleRepository.getById(1L));
         userRepository.save(user);
+
         logger.info("was created " + user);
     }
 
     @Override
     public User getByLoginObj(String loginObj) {
-        return getByEmail(loginObj) == null ? getByLogin(loginObj) : getByEmail(loginObj);
+        User user = getByEmail(loginObj);
+        if(user == null) {
+            user = getByLogin(loginObj);
+            if(user == null) {
+                throw new UserNotFoundException("User not found, Login object is " + (loginObj == "" ? "null" : loginObj) );
+            }
+        }
+
+        return user;
     }
 
     @Override
     public OAuth2User getOAuth2UserFromSecurityContextHolder() {
         OAuth2User oAuth2User = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(oAuth2User == null) {
+            throw new UserNotFoundException("OAuth2User not found, SecurityContextHolder principals " +
+                    SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        }
         SecurityContextHolder.clearContext();
         return oAuth2User;
     }
@@ -106,44 +121,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean passwordsMatches(String decodedPassword, User userToCheck) {
-        return passwordEncoder.matches(decodedPassword, userToCheck.getPassword());
-    }
-
-    @Override
     public User getCurrentUser() {
         return getByEmail(getCurrentEmail());
     }
 
     @Override
     public String getCurrentEmail() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth.getName();
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
+
     @Override
-    public boolean canAutoLogin(String loginObj, String password) {
+    public void setAuth(String loginObj, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginObj);
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
         Authentication auth = authenticationManager.authenticate(token);
 
-        return auth.isAuthenticated();
-    }
-
-    @Override
-    public void autoLogin(String loginObj, String password) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginObj);
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
-
-        Authentication auth = authenticationManager.authenticate(token);
-
-        if (auth.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            logger.info("was set auth");
+        if(!auth.isAuthenticated()) {
+            throw new AuthenticationNotAutheticatedException("Authentication not authenticated, auth is " + auth);
         }
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        logger.info("was set auth");
     }
 
     @Override
@@ -159,5 +160,10 @@ public class UserServiceImpl implements UserService {
         logger.info("was converted and saved " + user);
 
         return user;
+    }
+
+    @Override
+    public boolean isUserUsedOAuth2Login() {
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser";
     }
 }

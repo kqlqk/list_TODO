@@ -1,5 +1,6 @@
 package me.kqlqk.todo_list.service.impl;
 
+import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserNotFoundException;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import org.slf4j.Logger;
@@ -26,10 +27,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String obj) {
-        User user = userRepository.getByEmail(obj);
+    public UserDetails loadUserByUsername(String loginObj) {
+        User user = userRepository.getByEmail(loginObj);
         if(user == null){
-            user = userRepository.getByLogin(obj);
+            user = userRepository.getByLogin(loginObj);
+            if(user == null) {
+                throw new UserNotFoundException("User not found");
+            }
         }
 
         Set<GrantedAuthority> authorities = new HashSet<>();

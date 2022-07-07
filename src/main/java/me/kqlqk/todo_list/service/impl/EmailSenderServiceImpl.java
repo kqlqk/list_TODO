@@ -23,6 +23,14 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
     @Override
     public void sendEmail(String to, String subject, String text) {
+        if(to == null || subject == null || text == null){
+            throw new NullPointerException(
+                    "To, Subject, Text cannot be null, \n" +
+                    "to = " + to + "\n" +
+                    "subject = " + subject + "\n" +
+                    "text = " + text);
+        }
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);

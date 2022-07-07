@@ -4,7 +4,7 @@ import me.kqlqk.todo_list.controllers.MainController;
 import me.kqlqk.todo_list.dto.UserDTO;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.UserService;
-import me.kqlqk.todo_list.util.ControllersUtil;
+import me.kqlqk.todo_list.util.UtilMethods;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,7 +33,7 @@ public class MainControllerTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private ControllersUtil controllersUtil;
+    private UtilMethods utilMethods;
 
     @Mock
     private Model model;
@@ -58,14 +58,14 @@ public class MainControllerTest {
 
     @Test
     public void showMainPage() {
-        mainController.showMainPage();
+        mainController.showMainPage(request);
 
         verify(userService, times(1)).getCurrentUser();
     }
 
     @Test
     public void showLoginPage() {
-        mainController.showLoginPage(model);
+        mainController.showLoginPage(request, model);
         verify(userService, times(1)).getCurrentUser();
     }
 
@@ -76,15 +76,14 @@ public class MainControllerTest {
         when(userService.existsByEmail("testMail")).thenReturn(true);
         when(userService.getByEmail("testMail")).thenReturn(user);
         when(user.isOAuth2()).thenReturn(true);
-        when(userService.canAutoLogin("testMail", null)).thenReturn(true);
+        when(userService.isUserUsedOAuth2Login()).thenReturn(true);
 
-        mainController.transferOAuth2User();
+        mainController.transferOAuth2User(request);
 
         verify(userService, times(1)).getOAuth2UserFromSecurityContextHolder();
         verify(userService, times(1)).existsByEmail("testMail");
         verify(userService, times(1)).getByEmail("testMail");
-        verify(userService, times(1)).canAutoLogin("testMail", null);
-        verify(userService, times(1)).autoLogin("testMail", null);
+        verify(userService, times(1)).setAuth("testMail", null);
     }
 
     @Test
@@ -95,13 +94,11 @@ public class MainControllerTest {
         when(userDTO.getPassword()).thenReturn("testPSWD");
         when(user.isOAuth2()).thenReturn(false);
         when(passwordEncoder.matches("testPSWD", "testPSWD")).thenReturn(true);
-        when(userService.canAutoLogin("testMail", "testPSWD")).thenReturn(true);
 
-        mainController.logIn(userDTO, "", request, response, model);
+        mainController.logIn(userDTO, "", request, model);
 
         verify(userService, times(3)).getByLoginObj(userDTO.getLoginObject());
-        verify(userService, times(1)).canAutoLogin("testMail", "testPSWD");
-        verify(userService, times(1)).autoLogin("testMail", "testPSWD");
+        verify(userService, times(1)).setAuth("testMail", "testPSWD");
     }
 
     @Test
@@ -111,12 +108,10 @@ public class MainControllerTest {
         when(userDTO.getPassword()).thenReturn("testPSWD");
         when(userDTO.getConfirmPassword()).thenReturn("testPSWD");
         when(user.getEmail()).thenReturn("testMail");
-        when(userService.canAutoLogin("testMail", "testPSWD")).thenReturn(true);
 
-        mainController.signUp(userDTO, bindingResult, model);
+        mainController.signUp(userDTO, bindingResult, model, request);
 
         verify(userService, times(1)).add(any());
-        verify(userService, times(1)).canAutoLogin("testMail", "testPSWD");
-        verify(userService, times(1)).autoLogin("testMail", "testPSWD");
+        verify(userService, times(1)).setAuth("testMail", "testPSWD");
     }
 }

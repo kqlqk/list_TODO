@@ -12,13 +12,12 @@ public interface UserService{
     boolean existsByLogin(String login);
 
     void add(User user);
-    void autoLogin(String loginObj, String password);
-    boolean canAutoLogin(String loginObj, String password);
     User convertOAuth2UserToUserAndSave(OAuth2User oAuth2User);
     User getByLoginObj(String loginObj);
     String getCurrentEmail();
     User getCurrentUser();
     OAuth2User getOAuth2UserFromSecurityContextHolder();
+    boolean isUserUsedOAuth2Login();
+    void setAuth(String loginObj, String password);
     void update(User user);
-    boolean passwordsMatches(String decodedPassword, User userToCheck);
 }

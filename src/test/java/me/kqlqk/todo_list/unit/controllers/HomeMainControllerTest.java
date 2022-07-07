@@ -3,6 +3,7 @@ package me.kqlqk.todo_list.unit.controllers;
 import me.kqlqk.todo_list.controllers.HomeMainController;
 import me.kqlqk.todo_list.dto.NoteDTO;
 import me.kqlqk.todo_list.models.Note;
+import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.NoteService;
 import me.kqlqk.todo_list.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -10,9 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.*;
 
@@ -32,9 +34,6 @@ public class HomeMainControllerTest {
     private Model model;
 
     @Mock
-    private Logger logger;
-
-    @Mock
     private Note note;
 
     @Mock
@@ -43,14 +42,21 @@ public class HomeMainControllerTest {
     @Mock
     private BindingResult bindingResult;
 
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private User user;
+
     @Test
     public void showNote_shouldMakeAllCalls() {
+        when(userService.getCurrentUser()).thenReturn(user);
         when(noteService.existsById(0)).thenReturn(true);
         when(noteService.existsForUser(userService.getCurrentUser(), 0)).thenReturn(true);
 
         homeMainController.showNote(0,model);
 
-        verify(userService, times(2)).getCurrentUser();
+        verify(userService, times(3)).getCurrentUser();
         verify(userService, times(1)).getCurrentEmail();
         verify(noteService, times(1)).getById(0);
         verify(noteService, times(1)).existsForUser(userService.getCurrentUser(), 0);
@@ -59,7 +65,6 @@ public class HomeMainControllerTest {
 
     @Test
     public void deleteNote_shouldMakeAllCalls() {
-        when(noteService.existsById(0)).thenReturn(true);
         when(noteService.existsForUser(userService.getCurrentUser(), 0)).thenReturn(true);
 
         homeMainController.deleteNote(0);
@@ -68,7 +73,6 @@ public class HomeMainControllerTest {
         verify(userService, times(1)).getCurrentEmail();
         verify(noteService, times(1)).delete(0);
         verify(noteService, times(1)).existsForUser(userService.getCurrentUser(), 0);
-        verify(noteService, times(1)).existsById(0);
     }
 
     @Test
@@ -76,16 +80,21 @@ public class HomeMainControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
         when(noteDTO.convertToNote()).thenReturn(note);
 
-        homeMainController.createNote(noteDTO, bindingResult);
+        homeMainController.createNote(noteDTO, bindingResult, request);
 
         verify(userService, times(1)).getCurrentEmail();
         verify(noteService, times(1)).add(note);
     }
 
     @Test
-    public void saveNote_shouldMakeAllCalls() {
-        homeMainController.saveNote(0, note);
+    public void saveEditedNote_shouldMakeAllCalls() {
+        when(noteDTO.getTitle()).thenReturn("testTitle");
+        when(noteDTO.getBody()).thenReturn("testBody");
+        when(noteService.getById(0)).thenReturn(note);
 
+        homeMainController.saveEditedNote(0, noteDTO);
+
+        verify(noteService, times(1)).getById(0);
         verify(userService, times(1)).getCurrentEmail();
         verify(noteService, times(1)).update(note);
     }

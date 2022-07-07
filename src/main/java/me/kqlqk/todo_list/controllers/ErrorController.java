@@ -1,5 +1,6 @@
 package me.kqlqk.todo_list.controllers;
 
+import me.kqlqk.todo_list.service.ErrorsHandlerService;
 import me.kqlqk.todo_list.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
@@ -16,44 +16,21 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
     private static final Logger logger = LoggerFactory.getLogger(ErrorController.class);
 
     private final UserService userService;
+    private final ErrorsHandlerService errorsHandlerService;
 
     @Autowired
-    public ErrorController(UserService userService) {
+    public ErrorController(UserService userService, ErrorsHandlerService errorsHandlerService){
         this.userService = userService;
+        this.errorsHandlerService = errorsHandlerService;
     }
 
     @GetMapping("/error")
-    public String handleError(Model model, HttpServletRequest request){
-        logger.info("was get request to /error by " + userService.getCurrentEmail());
-        int status = (int) (request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) != null ?
-                request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) : 0);
+    public String handleErrors(Model model, HttpServletRequest request){
+        logger.warn("was get request to /error by " + userService.getCurrentEmail());
 
-        logger.warn(userService.getCurrentEmail() + " got an " + "error: " + status);
+        model.addAttribute("error", errorsHandlerService.getErrorCodeWithDetails(request));
 
-        String message = "";
-
-        if((status + "").startsWith("4")){
-            message = status + " Client error";
-        }
-        else if((status + "").startsWith("5")){
-            message = status + " Server error";
-        }
-
-        if(status == 403){
-            if(userService.getCurrentUser() != null){
-                message = status + " Sorry, you haven't permissions to do that.";
-            }
-            if(userService.getCurrentUser() == null) {
-                return "redirect:/login";
-            }
-        }
-
-        if(status == 404 || status == 400){
-            message = status + " Page not found";
-        }
-
-        model.addAttribute("error", message);
-
-        return "error-pages/errorPage";
+        return "error-pages/generalErrors";
     }
+
 }

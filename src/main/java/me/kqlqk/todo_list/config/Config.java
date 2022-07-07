@@ -13,31 +13,44 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class Config extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
+    private final String[] urlsForGuests = {
+            "/",
+            "/login",
+            "/registration",
+            "/error",
+            "/recovery",
+            "/recovery/{\\d}",
+            "/tempOAuth2LoginPage"};
+
+    private final String[] urlsForUser = {
+            "/home", "/home/",
+            "/home/{\\d}", "/home/{\\d}/",
+            "/home/{\\d}/new", "/home/{\\d}/new/",
+            "/home/{\\d}/edit", "/home/{\\d}/edit/"};
+
+    private final String[] urlsForAdmins = {
+            "/admin", "/admin/"};
+
 
     @Autowired
-    public Config(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
+    public Config(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService){
         this.userDetailsService = userDetailsService;
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception{
         http
                 .csrf().disable()
-                    .exceptionHandling()
-                    .accessDeniedHandler(accessDeniedHandler())
-                .and()
-                    .authorizeRequests()
-                    .antMatchers("/", "/login", "/registration", "/error", "/recovery", "/recovery/{\\d}", "/tempOAuth2LoginPage").permitAll()
-                    .antMatchers("/home", "/home/{\\d}", "/home/{\\d}/new", "/home/{\\d}/edit").hasAnyRole("USER", "ADMIN")
-                    .antMatchers("/admin").hasRole("ADMIN")
-                    .anyRequest().authenticated()
+                .authorizeRequests()
+                    .antMatchers(urlsForGuests).permitAll()
+                    .antMatchers(urlsForUser).hasAnyRole("USER", "ADMIN")
+                    .antMatchers(urlsForAdmins).hasRole("ADMIN")
                 .and()
                     .oauth2Login()
                     .loginPage("/login")
@@ -53,7 +66,7 @@ public class Config extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
+    protected void configure(AuthenticationManagerBuilder auth){
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
@@ -72,13 +85,7 @@ public class Config extends WebSecurityConfigurerAdapter {
 
     @Override
     @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
+    public AuthenticationManager authenticationManagerBean() throws Exception{
         return super.authenticationManagerBean();
     }
-
-    @Bean
-    public AccessDeniedHandler accessDeniedHandler(){
-        return new CustomAccessDeniedHandler();
-    }
-
 }

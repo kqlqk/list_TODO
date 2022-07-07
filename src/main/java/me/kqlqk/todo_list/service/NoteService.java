@@ -13,7 +13,6 @@ public interface NoteService{
     List<Note> getByUserId(long userId);
     boolean existsById(long id);
 
-
     void add(Note note);
     void delete(Note note);
     void delete(long id);

@@ -1,6 +1,7 @@
 package me.kqlqk.todo_list.unit.service.impl;
 
-import me.kqlqk.todo_list.exceptions.UserAlreadyExistException;
+import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserAlreadyExistException;
+import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserNotFoundException;
 import me.kqlqk.todo_list.models.Role;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
@@ -66,13 +67,17 @@ public class UserServiceImplTest {
 
         Exception exception = assertThrows(UserAlreadyExistException.class, () -> userServiceImpl.add(user));
 
-        assertEquals("User already exist", exception.getMessage());
+        assertEquals("User already exist, Email already exist", exception.getMessage());
     }
 
 
     @Test
-    public void getByLoginObj_shouldReturnNull() {
-        assertNull(userServiceImpl.getByEmail(null));
+    public void getByLoginObj_shouldThrowUserNotFoundException() {
+        when(userRepository.getByEmail("")).thenReturn(null);
+
+        Exception exception = assertThrows(UserNotFoundException.class, () -> userServiceImpl.getByLoginObj(""));
+
+        assertEquals("User not found, Login object is null", exception.getMessage());
     }
 
     @Test

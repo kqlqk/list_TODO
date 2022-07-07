@@ -19,29 +19,45 @@ TODO List is a simple way to write down all your plans, tasks, ideas in one plac
 <details>
   <summary>Back-end</summary>
   <ol>
-    <li><p>Hibernate</p></li>
-    <li><p>Java</p></li>
-    <li><p>JUnit</p></li>
+    <li><p>Java 11</p></li>
     <li><p>Maven</p></li>
     <li><p>Spring</p>
       <ul>
         <li><p>Spring boot</p></li>
-        <li><p>Spring data</p></li>
-        <li><p>Spring framework</p></li>
-        <li><p>Spring security</p></li>
-        <li><p>Spring web</p></li>
+            <details>
+                <summary>Starters:</summary>
+                <ol>
+                    <ul>
+                    <li><p>Data jpa</p></li>
+                        <ul><li><p>Hibernate</p></li></ul>
+                    <li><p>Mail</p></li>
+                    <li><p>OAuth2 client</p></li>
+                    <li><p>Security</p></li>
+                    <li><p>Test</p></li>
+                        <ul>
+                            <li><p>JUnit</p></li>
+                            <li><p>Mockito</p></li>
+                        </ul>
+                    <li><p>Validation</p></li>
+                    <li><p>Web mvc</p></li>
+                        <ul><li><p>Tomcat</p></li></ul>
+                    <li><p>Thymeleaf</p></li>
+                    </ul>
+                </ol>
+            </details>
       </ul>
     </li>
-    <li><p>ThymeLeaf</p></li>
-    <li><p>TomCat</p></li>
+    <li><p>PostgreSQL</p></li>
   </ol>
 </details>
 
 <details>
   <summary>Front-end</summary>
   <ol>
-    <li><p>Bootstrap</p></li>
     <li><p>CSS</p></li>
+    <ul>
+        <li><p>Bootstrap</p></li>
+    </ul>
     <li><p>HTML</p></li>
     <li><p>JavaScript</p></li>
   </ol>

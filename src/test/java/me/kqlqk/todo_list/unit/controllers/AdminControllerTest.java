@@ -26,6 +26,6 @@ public class AdminControllerTest {
     @Test
     public void getAdminMenu_shouldMakeAllCalls(){
         adminController.getAdminMenu(model);
-        Mockito.verify(userService, Mockito.times(2)).getCurrentEmail();
+        Mockito.verify(userService, Mockito.times(1)).getCurrentEmail();
     }
 }

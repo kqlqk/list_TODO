@@ -21,7 +21,7 @@
                 </p>
                 <br/>
                 <div class="alert alert-info mt-2" th:each="note : ${notes}">
-                    <a th:href="@{/home/{id}(id=${note.getId()})}" th:text="${note.getTitle()}"/>
+                    <a th:href="@{/home/{id}(id=${note.getId()})}" th:text="${note.getTitle()}"></a>
                 </div>
             </div>
         </div>

@@ -1,19 +1,19 @@
 package me.kqlqk.todo_list.unit.controllers;
 
 import me.kqlqk.todo_list.controllers.ErrorController;
+import me.kqlqk.todo_list.service.ErrorsHandlerService;
 import me.kqlqk.todo_list.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import org.springframework.ui.Model;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class ErrorControllerTest {
@@ -31,18 +31,14 @@ public class ErrorControllerTest {
     private UserService userService;
 
     @Mock
-    private RequestDispatcher requestDispatcher;
-
-    @Mock
-    private Logger logger;
+    private ErrorsHandlerService errorsHandlerService;
 
     @Test
-    public void handleError_shouldMakeAllCalls(){
-        when(request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE)).thenReturn(403);
+    public void handleErrors_shouldMakeAllCalls(){
 
-        errorController.handleError(model, request);
+        errorController.handleErrors(model, request);
 
-        verify(userService, times(2)).getCurrentEmail();
-        verify(userService, times(2)).getCurrentUser();
+        verify(userService, times(1)).getCurrentEmail();
+        verify(errorsHandlerService, times(1)).getErrorCodeWithDetails(request);
     }
 }

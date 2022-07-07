@@ -18,5 +18,5 @@ public class Init {
         logger.info("App was started");
     }
 }
-//v1.5
+//v1.7
 

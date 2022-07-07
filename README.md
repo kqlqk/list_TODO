@@ -5,9 +5,9 @@
     Pet-project
     <br />
     ·
-    <a href="https://github.com/kqlqk/TODO_list/issues">Report Bug</a>
+    <a href="https://github.com/kqlqk/list_TODO/issues">Report Bug</a>
     ·
-    <a href="https://github.com/kqlqk/TODO_list/issues">Request Feature</a>
+    <a href="https://github.com/kqlqk/list_TODO/issues">Request Feature</a>
   </p>
 </div>
 

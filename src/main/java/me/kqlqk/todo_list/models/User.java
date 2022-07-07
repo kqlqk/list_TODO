@@ -33,6 +33,14 @@ public class User {
     @Transient
     private String confirmPassword;
 
+    public User(String email, String login, String password, Role role) {
+        this.email = email;
+        this.login = login;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User(){}
 
     public long getId() {
         return id;

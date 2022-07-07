@@ -20,7 +20,8 @@
 
 
                 <label class="form-label" for="body">Enter body:</label>
-                <input class="form-control" th:style="'border-color: #0d6efd'" type="text" th:field="*{body}" id="body">
+                <input class="form-control" th:style="${#fields.hasErrors('body')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" th:field="*{body}" id="body">
+                <div th:style="${#fields.hasErrors('body')} ? 'color: #ff0000' : 'color: #000000'" th:if="${#fields.hasErrors('body')}" th:errors="*{body}">error</div>
                 <br/>
 
                 <input class="btn btn-outline-primary btn-lg btn-block" type="submit" value="Create">

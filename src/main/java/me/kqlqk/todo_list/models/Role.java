@@ -18,6 +18,11 @@ public class Role implements GrantedAuthority {
     @OneToMany(mappedBy = "role")
     private Set<User> users;
 
+    public Role(String name) {
+        this.name = name;
+    }
+
+    public Role(){}
 
     public long getId() {
         return id;

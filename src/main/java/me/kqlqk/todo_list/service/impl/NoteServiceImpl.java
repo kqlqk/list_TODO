@@ -1,5 +1,7 @@
 package me.kqlqk.todo_list.service.impl;
 
+import me.kqlqk.todo_list.exceptions.dao_exceptions.note_exceptions.NoteAlreadyExistException;
+import me.kqlqk.todo_list.exceptions.dao_exceptions.note_exceptions.NoteNotFoundException;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.NoteRepository;
@@ -56,6 +58,10 @@ public class NoteServiceImpl implements NoteService {
     @Override
     @Transactional
     public void add(Note note) {
+        if(existsById(note.getId())) {
+            throw new NoteAlreadyExistException("Note already exist, note is" + note);
+        }
+
         if(note.getFullTitle().length() > 36){
             note.setTitle(note.getFullTitle().substring(0,37));
         }
@@ -80,10 +86,13 @@ public class NoteServiceImpl implements NoteService {
     @Override
     @Transactional
     public void delete(long id) {
-        if (existsById(id)) {
-            noteRepository.delete(entityManager.createQuery("from Note where id = " + id, Note.class).getResultList().get(0));
-            logger.info("Note with id " + id + " was deleted");
+        if (!existsById(id)) {
+            throw new NoteNotFoundException("Note not found by id " + id);
         }
+
+        noteRepository.delete(entityManager.createQuery("from Note where id = " + id, Note.class).getResultList().get(0));
+        logger.info("Note with id " + id + " was deleted");
+
     }
 
     @Override

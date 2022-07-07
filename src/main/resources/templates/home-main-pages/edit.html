@@ -10,14 +10,18 @@
 <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 col-md-8 col-lg-6">
-            <form th:method="patch" th:action="@{/home/{id}/edit(id=${note.getId()})}" th:object="${note}">
+            <form th:method="post" th:action="@{/home/{id}/edit(id=${pathVariable})}" th:object="${noteValid}">
                 <div class="form-group">
                     <label class="form-label" for="title">Enter new title:</label>
-                    <input class="form-control" type="text" th:field="*{fullTitle}" id="title">
+                    <input class="form-control" th:style="${titleIsValid == false} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" name="title" th:field="*{title}" id="title">
+                    <div th:style="'color: #ff0000'" th:text="${titleIsValid == false} ? 'Title message should be a valid(must be between 1 and 100 characters)' : ''">error</div>
                     <br/>
+
                     <label class="form-label" for="body">Enter new body:</label>
-                    <input class="form-control" type="text" th:field="*{body}" id="body">
+                    <input class="form-control" th:style="${bodyIsValid == false} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" th:field="*{body}" id="body">
+                    <div th:style="'color: #ff0000'" th:text="${bodyIsValid == false} ? 'Message is too long' : ''">error</div>
                     <br/>
+
                     <input class="btn btn-outline-primary" type="submit" value="Update">
                 </div>
             </form>

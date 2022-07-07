@@ -22,51 +22,51 @@ public class UserDTO {
 
     private boolean formCorrect = true;
 
-    public String getLoginObject() {
+    public String getLoginObject(){
         return loginObject;
     }
 
-    public void setLoginObject(String loginObject) {
+    public void setLoginObject(String loginObject){
         this.loginObject = loginObject;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmail(){
+        return email != null ? email.toLowerCase() : null;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String email){
+        this.email = email.toLowerCase();
     }
 
-    public String getLogin() {
+    public String getLogin(){
         return login;
     }
 
-    public void setLogin(String login) {
+    public void setLogin(String login){
         this.login = login;
     }
 
-    public String getPassword() {
+    public String getPassword(){
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password){
         this.password = password;
     }
 
-    public String getConfirmPassword() {
+    public String getConfirmPassword(){
         return confirmPassword;
     }
 
-    public void setConfirmPassword(String confirmPassword) {
+    public void setConfirmPassword(String confirmPassword){
         this.confirmPassword = confirmPassword;
     }
 
-    public boolean isFormCorrect() {
+    public boolean isFormCorrect(){
         return formCorrect;
     }
 
-    public void setFormCorrect(boolean formCorrect) {
+    public void setFormCorrect(boolean formCorrect){
         this.formCorrect = formCorrect;
     }
 

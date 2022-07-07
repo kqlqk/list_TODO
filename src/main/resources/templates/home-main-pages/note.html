@@ -34,9 +34,7 @@
                 <input class="btn btn-outline-danger btn-lg" th:type="submit" th:value="Delete">
             </form>
 
-            <form th:method="put" th:action="@{/home/{id}(id=${note.getId()})}" th:object="${note}">
-                <input class="btn btn-outline-secondary btn-lg" th:type="submit" th:value="Back">
-            </form>
+            <a class="btn btn-outline-primary btn-lg" th:href="@{/home}" th:text="Back"></a>
         </div>
 
 </body>

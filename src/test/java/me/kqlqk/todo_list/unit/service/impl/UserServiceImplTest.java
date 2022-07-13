@@ -1,7 +1,7 @@
 package me.kqlqk.todo_list.unit.service.impl;
 
-import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserAlreadyExistException;
-import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserNotFoundException;
+import me.kqlqk.todo_list.exceptions.dao.user.UserAlreadyExistException;
+import me.kqlqk.todo_list.exceptions.dao.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.Role;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;

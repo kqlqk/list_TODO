@@ -33,34 +33,24 @@ public class RecoveryController {
         recoveryIdsEmails = new HashMap<>();
     }
 
-    @GetMapping
+    @RequestMapping(method = RequestMethod.GET)
     public String showRecoveryPage(HttpServletRequest request, Model model){
-        logger.debug("was get request to /recovery by " + request.getRemoteAddr());
-
         model.addAttribute("userValid", new UserDTO());
 
         return "recovery-pages/recovery";
     }
 
-    @PostMapping
+    @RequestMapping(method = RequestMethod.POST)
     public String sendEmail(@ModelAttribute("userValid") UserDTO userDTO, HttpServletRequest request){
-        logger.debug("was post request to /recovery by " + request.getRemoteAddr());
-
         if(userService.getByEmail(userDTO.getEmail()) != null){
             int tempId = (int) (Math.random() * 99999);
             recoveryIdsEmails.put(tempId, userDTO.getEmail());
 
-            try{
-                emailSenderService.sendEmail(
-                        userDTO.getEmail(),
-                        "Password recovery",
-                        "follow this link to reset your password: http://localhost:8080/recovery/" + tempId
-                );
-            }
-            catch (NullPointerException e){
-                logger.warn(request.getRemoteAddr() + " got " + e);
-                return "recovery-pages/badRecovery";
-            }
+            //throws NullPointerException which is caught in LoggingAspect.aroundExceptionInControllersLoggingAdvice()
+            emailSenderService.sendEmail(
+                    userDTO.getEmail(),
+                    "Password recovery",
+                    "follow this link to reset your password: http://localhost:8080/recovery/" + tempId);
 
             return "recovery-pages/successRecovery";
         }
@@ -69,10 +59,8 @@ public class RecoveryController {
         return "recovery-pages/recovery";
     }
 
-    @GetMapping("/{recoveryId}")
+    @RequestMapping(method = RequestMethod.GET, value = "/{recoveryId}")
     public String showChangingPasswordPage(@PathVariable("recoveryId") int recoveryId, HttpServletRequest request, Model model){
-        logger.debug("was get request to /recovery/" + recoveryId + " by " + request.getRemoteAddr());
-
         if(this.recoveryIdsEmails.get(recoveryId) == null){
             return "redirect:/";
         }
@@ -82,12 +70,10 @@ public class RecoveryController {
         return "recovery-pages/changePassword";
     }
 
-    @PostMapping("/{recoveryId}")
+    @RequestMapping(method = RequestMethod.POST, value = "/{recoveryId}")
     public String changePassword(@ModelAttribute("userValid") @Valid UserDTO userDTO, BindingResult bindingResult,
                                  HttpServletRequest request,
                                  @PathVariable int recoveryId){
-        logger.debug("was post request to /recovery/" + recoveryId + " by " + request.getRemoteAddr());
-
         if(bindingResult.hasErrors() || !userDTO.getPassword().equals(userDTO.getConfirmPassword())){
             return "recovery-pages/changePassword";
         }

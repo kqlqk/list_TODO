@@ -1,14 +1,12 @@
 package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions.dao_exceptions.note_exceptions.NoteAlreadyExistException;
-import me.kqlqk.todo_list.exceptions.dao_exceptions.note_exceptions.NoteNotFoundException;
+import me.kqlqk.todo_list.exceptions.dao.note.NoteAlreadyExistException;
+import me.kqlqk.todo_list.exceptions.dao.note.NoteNotFoundException;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.NoteRepository;
 import me.kqlqk.todo_list.service.NoteService;
 import me.kqlqk.todo_list.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +18,6 @@ import java.util.List;
 
 @Service
 public class NoteServiceImpl implements NoteService {
-    private static final Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -71,7 +67,6 @@ public class NoteServiceImpl implements NoteService {
         note.setUser(userService.getCurrentUser());
         note.setDateOfCreation(new Timestamp(new java.util.Date().getTime()));
         noteRepository.save(note);
-        logger.info(note + "was created");
     }
 
     @Override
@@ -79,7 +74,6 @@ public class NoteServiceImpl implements NoteService {
     public void delete(Note note) {
         if (existsById(note.getId())) {
             noteRepository.delete(note);
-            logger.info(note + "was deleted");
         }
     }
 
@@ -91,8 +85,6 @@ public class NoteServiceImpl implements NoteService {
         }
 
         noteRepository.delete(entityManager.createQuery("from Note where id = " + id, Note.class).getResultList().get(0));
-        logger.info("Note with id " + id + " was deleted");
-
     }
 
     @Override
@@ -116,7 +108,6 @@ public class NoteServiceImpl implements NoteService {
             note.setDateOfCreation(new Timestamp(new java.util.Date().getTime()));
             note.setUser(userService.getCurrentUser());
             noteRepository.save(note);
-            logger.info(note + "was updated");
         }
     }
 }

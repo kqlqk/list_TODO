@@ -1,18 +1,17 @@
 package me.kqlqk.todo_list.controllers;
 
 import me.kqlqk.todo_list.dto.NoteDTO;
-import me.kqlqk.todo_list.exceptions.DAOException;
-import me.kqlqk.todo_list.exceptions.dao_exceptions.note_exceptions.NoteNotFoundException;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.service.NoteService;
 import me.kqlqk.todo_list.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -20,8 +19,6 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/home")
 public class HomeMainController {
-    private static final Logger logger = LoggerFactory.getLogger(HomeMainController.class);
-
     private final NoteService noteService;
     private final UserService userService;
 
@@ -55,10 +52,8 @@ public class HomeMainController {
     }
 
 
-    @GetMapping
+    @RequestMapping(method = RequestMethod.GET)
     public String showHomeMainPage(Model model){
-        logger.debug("was get request to /home by " + userService.getCurrentEmail());
-
         model.addAttribute("greetings", greetings[(int) (Math.random() * greetings.length)]);
         model.addAttribute("user", userService.getCurrentUser());
         model.addAttribute("notes", noteService.getByUser(userService.getCurrentUser()));
@@ -66,10 +61,8 @@ public class HomeMainController {
         return "home-main-pages/home";
     }
 
-    @GetMapping("/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public String showNote(@PathVariable("id") int id, Model model){
-        logger.debug("was get request to /home/" + id + " by " + userService.getCurrentEmail());
-
         if(userService.getCurrentUser() == null){
             return "redirect:/login";
         }
@@ -82,57 +75,38 @@ public class HomeMainController {
         return "home-main-pages/note";
     }
 
-    @DeleteMapping("/{id}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
     public String deleteNote(@PathVariable("id") int id) {
-        logger.debug("was delete request to /home/" + id + " by " + userService.getCurrentEmail());
-
-        try {
-            if(noteService.existsForUser(userService.getCurrentUser(), id)) {
-                noteService.delete(id);
-                return "redirect:/home";
-            }
-        }
-        catch (NoteNotFoundException e) {
-            logger.warn("was delete request for note that not exist for user " + userService.getCurrentUser());
-            return "redirect:/home";
+        if(noteService.existsForUser(userService.getCurrentUser(), id)) {
+            //throws NoteNotFoundException which is caught in LoggingAspect.aroundExceptionInControllersLoggingAdvice()
+            noteService.delete(id);
         }
 
         return "redirect:/home";
     }
 
 
-    @GetMapping("/new")
+    @RequestMapping(method = RequestMethod.GET, value = "/new")
     public String showNewForm(Model model) {
-        logger.debug("was get request to /home/new by " + userService.getCurrentEmail());
-
         model.addAttribute("noteValid", new NoteDTO());
         return "home-main-pages/new";
     }
 
-    @PostMapping("/new")
+    @RequestMapping(method = RequestMethod.POST, value ="/new")
     public String createNote(@ModelAttribute("noteValid") @Valid NoteDTO noteDTO, BindingResult bindingResult,
-                             HttpServletRequest request){
-        logger.debug("was post request to /home/new by " + userService.getCurrentEmail());
-
+                             HttpServletRequest ignoredRequest){
         if(bindingResult.hasErrors()){
             return "home-main-pages/new";
         }
 
-        try{
-            noteService.add(noteDTO.convertToNote());
-        }
-        catch (DAOException e){
-            logger.warn(request.getRemoteAddr() + " got " + e);
-            return "redirect:/home";
-        }
+        //throws NoteAlreadyExistException which is caught in LoggingAspect.aroundExceptionInControllersLoggingAdvice()
+        noteService.add(noteDTO.convertToNote());
 
         return "redirect:/home";
     }
 
-    @GetMapping("/{id}/edit")
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/edit")
     public String editNote(@PathVariable("id") int id, Model model){
-        logger.info("was get request to /home/" + id + "/edit by " + userService.getCurrentEmail());
-
         if(countForTitle == 0){
             titleIsValid = true;
         }
@@ -150,10 +124,8 @@ public class HomeMainController {
         return "home-main-pages/edit";
     }
 
-    @PostMapping("/{id}/edit")
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/edit")
     public String saveEditedNote(@PathVariable("id") int id, @ModelAttribute("noteValid") NoteDTO noteDTO){
-        logger.info("was post request to /home/" + id + "/edit by " + userService.getCurrentEmail());
-
         if(noteDTO.getTitle().getBytes().length < 1 || noteDTO.getTitle().getBytes().length > 100){
             titleIsValid = false;
             countForTitle++;

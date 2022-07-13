@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.status;
+package me.kqlqk.todo_list.exceptions.dao.user.status;
 
 public enum UserStatus {
     EMAIL_ALREADY_EXIST,

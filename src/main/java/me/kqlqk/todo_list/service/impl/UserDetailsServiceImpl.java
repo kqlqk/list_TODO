@@ -1,6 +1,6 @@
 package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserNotFoundException;
+import me.kqlqk.todo_list.exceptions.dao.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import org.slf4j.Logger;

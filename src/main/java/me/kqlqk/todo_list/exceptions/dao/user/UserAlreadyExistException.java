@@ -1,9 +1,8 @@
-package me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions;
+package me.kqlqk.todo_list.exceptions.dao.user;
 
-import me.kqlqk.todo_list.exceptions.dao_exceptions.UserException;
-import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.status.UserStatus;
+import me.kqlqk.todo_list.exceptions.dao.user.status.UserStatus;
 
-public class UserAlreadyExistException extends UserException {
+public class UserAlreadyExistException extends RuntimeException {
     private UserStatus userStatus;
 
 

@@ -1,15 +1,13 @@
 package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserAlreadyExistException;
-import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.UserNotFoundException;
-import me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions.status.UserStatus;
-import me.kqlqk.todo_list.exceptions.service_exceptions.AuthenticationNotAutheticatedException;
+import me.kqlqk.todo_list.exceptions.dao.user.UserAlreadyExistException;
+import me.kqlqk.todo_list.exceptions.dao.user.UserNotFoundException;
+import me.kqlqk.todo_list.exceptions.dao.user.status.UserStatus;
+import me.kqlqk.todo_list.exceptions.service_exceptions.AuthenticationNotAuthenticatedException;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserDetailsService userDetailsService;
@@ -84,8 +80,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleRepository.getById(1L));
         userRepository.save(user);
-
-        logger.info("was created " + user);
     }
 
     @Override
@@ -94,7 +88,7 @@ public class UserServiceImpl implements UserService {
         if(user == null) {
             user = getByLogin(loginObj);
             if(user == null) {
-                throw new UserNotFoundException("User not found, Login object is " + (loginObj == "" ? "null" : loginObj) );
+                throw new UserNotFoundException("User not found, Login object is " + (loginObj.equals("") ? "null" : loginObj) );
             }
         }
 
@@ -117,7 +111,6 @@ public class UserServiceImpl implements UserService {
     public void update(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        logger.info("was updated " + user);
     }
 
     @Override
@@ -140,11 +133,10 @@ public class UserServiceImpl implements UserService {
         Authentication auth = authenticationManager.authenticate(token);
 
         if(!auth.isAuthenticated()) {
-            throw new AuthenticationNotAutheticatedException("Authentication not authenticated, auth is " + auth);
+            throw new AuthenticationNotAuthenticatedException("Authentication not authenticated, auth is " + auth);
         }
 
         SecurityContextHolder.getContext().setAuthentication(auth);
-        logger.info("was set auth");
     }
 
     @Override
@@ -156,8 +148,6 @@ public class UserServiceImpl implements UserService {
         user.setOAuth2(true);
         user.setRole(roleRepository.getById(1L));
         userRepository.save(user);
-
-        logger.info("was converted and saved " + user);
 
         return user;
     }

@@ -1,8 +1,6 @@
-package me.kqlqk.todo_list.exceptions.dao_exceptions.user_exceptions;
+package me.kqlqk.todo_list.exceptions.dao.user;
 
-import me.kqlqk.todo_list.exceptions.dao_exceptions.UserException;
-
-public class UserNotFoundException extends UserException {
+public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(){
     }
 

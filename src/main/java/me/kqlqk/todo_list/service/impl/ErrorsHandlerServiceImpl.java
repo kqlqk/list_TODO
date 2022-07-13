@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class ErrorsHandlerServiceImpl implements ErrorsHandlerService {
-
     private final UserService userService;
 
     @Autowired

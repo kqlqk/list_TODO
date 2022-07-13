@@ -1,8 +1,6 @@
-package me.kqlqk.todo_list.exceptions.dao_exceptions.note_exceptions;
+package me.kqlqk.todo_list.exceptions.dao.note;
 
-import me.kqlqk.todo_list.exceptions.dao_exceptions.NoteException;
-
-public class NoteNotFoundException extends NoteException {
+public class NoteNotFoundException extends RuntimeException {
 
     public NoteNotFoundException(){
     }

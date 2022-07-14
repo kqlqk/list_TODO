@@ -4,15 +4,18 @@ import me.kqlqk.todo_list.models.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public interface UserService{
     User getByEmail(String email);
     User getByLogin(String login);
     boolean existsByEmail(String email);
     boolean existsByLogin(String login);
-
     void add(User user);
+
     User convertOAuth2UserToUserAndSave(OAuth2User oAuth2User);
+    List<User> getAll();
     User getByLoginObj(String loginObj);
     String getCurrentEmail();
     User getCurrentUser();

@@ -21,8 +21,15 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserDetailsService userDetailsService;
@@ -80,6 +87,12 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleRepository.getById(1L));
         userRepository.save(user);
+    }
+
+
+    @Override
+    public List<User> getAll() {
+       return entityManager.createQuery("from User", User.class).getResultList();
     }
 
     @Override

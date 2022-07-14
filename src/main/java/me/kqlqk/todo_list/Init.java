@@ -20,7 +20,6 @@ public class Init {
 }
 /*
  * TODO:
- *  list of users at /admin
  *  improve url with UtilMethods.improveUrl()
  *  test connection to db at /admin
  *  restfull service v2 rest
@@ -28,6 +27,5 @@ public class Init {
  *  improve remember me button v2 dev
  *  add default values to db v2 dev
  *  integrated tests v2+ dev
- *
  */
 

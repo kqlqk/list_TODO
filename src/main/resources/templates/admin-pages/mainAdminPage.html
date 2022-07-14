@@ -10,7 +10,13 @@
 <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 col-md-8 col-lg-6">
-            <p th:text="${'Site works till ' + startTime}"></p>
+            <h1 th:text="${'Site works till ' + startTime}">fff</h1>
+            <br/>
+            <h4>All users list</h4>
+            <div class="alert alert-info mt-2" th:each="user : ${users}">
+                <div th:text="${'id: ' + user.getId()}"></div>
+                <div th:text="${'email: ' + user.getEmail()}"></div>
+            </div>
         </div>
     </div>
 </div>

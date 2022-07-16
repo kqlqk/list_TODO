@@ -20,12 +20,10 @@ public class Init {
 }
 /*
  * TODO:
- *  improve url with UtilMethods.improveUrl()
- *  test connection to db at /admin
  *  restfull service v2 rest
- *  add sign up button to login page v2 dev
- *  improve remember me button v2 dev
- *  add default values to db v2 dev
- *  integrated tests v2+ dev
+ *  add sign up button to login page v2.5 dev
+ *  improve remember me button v2.5 dev
+ *  add default values to db v2.5 dev
+ *  integrated tests v2.5 dev
  */
 

@@ -8,8 +8,8 @@ public class UtilMethodsTest {
 
     @Test
     public void getImprovedUrl() {
-        String improvedUrl = UtilMethods.getImprovedUrl("localhost:8080//test/////dsad/r321//213");
+        String improvedUrl = UtilMethods.getImprovedUrl("http://localhost:8080/test//");
 
-        Assertions.assertEquals("localhost:8080/test/dsad/r321/213/", improvedUrl);
+        Assertions.assertEquals("/test/", improvedUrl);
     }
 }

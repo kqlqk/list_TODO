@@ -12,11 +12,24 @@
         <div class="col-10 col-md-8 col-lg-6">
             <h1 th:text="${'Site works till ' + startTime}">fff</h1>
             <br/>
+
             <h4>All users list</h4>
             <div class="alert alert-info mt-2" th:each="user : ${users}">
                 <div th:text="${'id: ' + user.getId()}"></div>
                 <div th:text="${'email: ' + user.getEmail()}"></div>
             </div>
+            <br/>
+
+            <div class="form-group">
+                <h4 th:text="'Test connection to database'">ddd</h4>
+                <form th:method="patch" th:action="@{/admin}">
+                    <input class="btn btn-outline-primary btn-lg" th:type="submit" th:value="Test">
+                </form>
+            </div>
+            <br/>
+
+            <h5 th:style="${validConnection == true ? '' : 'color: #ff0000'}" th:text="${validConnection == true ? 'All is working correctly. Click to update' : 'ERROR!'}"></h5>
+            <h6 th:style="'color: #ff0000'" th:text="${validConnection == true ? '' : log}"></h6>
         </div>
     </div>
 </div>

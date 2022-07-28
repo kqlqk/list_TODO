@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.exceptions.dao.note;
+package me.kqlqk.todo_list.exceptions_handling.exceptions.note;
 
 public class NoteNotFoundException extends RuntimeException {
 

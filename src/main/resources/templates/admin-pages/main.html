@@ -13,18 +13,21 @@
             <h1 th:text="${'Site works till ' + startTime}">fff</h1>
             <br/>
 
-            <h4>All users list</h4>
-            <div class="alert alert-info mt-2" th:each="user : ${users}">
-                <div th:text="${'id: ' + user.getId()}"></div>
-                <div th:text="${'email: ' + user.getEmail()}"></div>
-            </div>
-            <br/>
-
             <div class="form-group">
                 <h4 th:text="'Test connection to database'">ddd</h4>
                 <form th:method="patch" th:action="@{/admin}">
                     <input class="btn btn-outline-primary btn-lg" th:type="submit" th:value="Test">
                 </form>
+            </div>
+            <br/>
+
+            <h4>All users list</h4>
+            <div class="alert alert-info mt-2" th:each="user : ${users}">
+                <div th:text="${'id: ' + user.getId()}"></div>
+                <div th:text="${'email: ' + user.getEmail()}"></div>
+                <div th:text="${'login: ' + user.getLogin()}"></div>
+                <div th:text="${'roleId: ' + user.getRoleId()}"></div>
+                <div th:text="${'oauth2: ' + user.isOAuth2()}"></div>
             </div>
             <br/>
 

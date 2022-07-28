@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.config;
+package me.kqlqk.todo_list.config.filters;
 
 import me.kqlqk.todo_list.util.UtilMethods;
 import org.springframework.core.Ordered;

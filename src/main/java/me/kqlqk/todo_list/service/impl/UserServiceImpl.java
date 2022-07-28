@@ -1,20 +1,16 @@
 package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions.dao.user.UserAlreadyExistException;
-import me.kqlqk.todo_list.exceptions.dao.user.UserNotFoundException;
-import me.kqlqk.todo_list.exceptions.dao.user.status.UserStatus;
-import me.kqlqk.todo_list.exceptions.service_exceptions.AuthenticationNotAuthenticatedException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
+import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -33,7 +29,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserDetailsService userDetailsService;
-    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${temp.password.oauth2}")
@@ -43,29 +38,46 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
                            UserDetailsService userDetailsService,
-                           AuthenticationManager authenticationManager,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userDetailsService = userDetailsService;
-        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
     //JPA-repository methods
     @Override
     public User getByEmail(String email) {
+        if(email == null){
+            throw new UserNotFoundException("Email cannot be null");
+        }
         return userRepository.getByEmail(email.toLowerCase());
     }
 
     @Override
     public User getByLogin(String login) {
+        if(login == null){
+            throw new UserNotFoundException("Login cannot be null");
+        }
         return userRepository.getByLogin(login);
+    }
+
+    @Override
+    public User getByRefreshToken(RefreshToken refreshToken) {
+        if(refreshToken == null){
+            throw new TokenNotFoundException("Refresh token cannot be null");
+        }
+        return userRepository.getByRefreshToken(refreshToken);
     }
 
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsById(long id) {
+        return userRepository.existsById(id);
     }
 
     @Override
@@ -77,18 +89,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void add(User user) {
-        if(existsByEmail(user.getEmail())) {
-            throw new UserAlreadyExistException("User already exist, Email already exist", UserStatus.EMAIL_ALREADY_EXIST);
-        }
-        if(existsByLogin(user.getLogin())) {
-            throw new UserAlreadyExistException("User already exist, Login already exist", UserStatus.LOGIN_ALREADY_EXIST);
+        if(getByEmail(user.getEmail()) != null){
+            throw new UserAlreadyExistsException(user + " already exists");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleRepository.getById(1L));
         userRepository.save(user);
     }
-
 
     @Override
     public List<User> getAll() {
@@ -97,15 +105,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getByLoginObj(String loginObj) {
-        User user = getByEmail(loginObj);
-        if(user == null) {
-            user = getByLogin(loginObj);
-            if(user == null) {
-                throw new UserNotFoundException("User not found, Login object is " + (loginObj.equals("") ? "null" : loginObj) );
-            }
+        if(loginObj == null){
+            throw new UserNotFoundException("loginObj cannot be a null");
         }
 
-        return user;
+        return getByEmail(loginObj.toLowerCase()) == null ? getByLogin(loginObj) : getByEmail(loginObj.toLowerCase());
     }
 
     @Override
@@ -122,6 +126,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void update(User user) {
+        if(getByEmail(user.getEmail()) == null){
+            throw new UserNotFoundException(user + " already exists");
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
@@ -133,23 +141,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getCurrentEmail() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
-
-    @Override
-    public void setAuth(String loginObj, String password) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginObj);
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
-
-        Authentication auth = authenticationManager.authenticate(token);
-
-        if(!auth.isAuthenticated()) {
-            throw new AuthenticationNotAuthenticatedException("Authentication not authenticated, auth is " + auth);
+        try{
+            return SecurityContextHolder.getContext().getAuthentication().getName();
         }
-
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        catch (NullPointerException e){
+            return null;
+        }
     }
 
     @Override

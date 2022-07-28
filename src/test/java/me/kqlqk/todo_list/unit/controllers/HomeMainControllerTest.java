@@ -1,7 +1,7 @@
 package me.kqlqk.todo_list.unit.controllers;
 
 import me.kqlqk.todo_list.controllers.HomeMainController;
-import me.kqlqk.todo_list.dto.NoteDTO;
+import me.kqlqk.todo_list.dto.daoDTOs.NoteDTO;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.NoteService;
@@ -13,8 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.*;
 
@@ -41,9 +39,6 @@ public class HomeMainControllerTest {
 
     @Mock
     private BindingResult bindingResult;
-
-    @Mock
-    private HttpServletRequest request;
 
     @Mock
     private User user;
@@ -78,9 +73,9 @@ public class HomeMainControllerTest {
     @Test
     public void createNote_shouldMakeAllCalls() {
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(noteDTO.convertToNote()).thenReturn(note);
+        when(noteDTO.convertToNewNote()).thenReturn(note);
 
-        homeMainController.createNote(noteDTO, bindingResult, request);
+        homeMainController.createNote(noteDTO, bindingResult);
 
         verify(userService, times(1)).getCurrentEmail();
         verify(noteService, times(1)).add(note);

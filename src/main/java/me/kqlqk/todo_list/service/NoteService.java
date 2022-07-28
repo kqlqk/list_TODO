@@ -8,7 +8,7 @@ import java.util.List;
 
 @Component
 public interface NoteService{
-    Note getById(long id);
+    Note getById(long noteId);
     List<Note> getByUser(User user);
     List<Note> getByUserId(long userId);
     boolean existsById(long id);

@@ -30,6 +30,9 @@ public class User {
     @Column(name = "oauth2")
     private boolean isOAuth2;
 
+    @OneToOne(mappedBy = "user")
+    private RefreshToken refreshToken;
+
     @Transient
     private String confirmPassword;
 
@@ -106,13 +109,20 @@ public class User {
         isOAuth2 = OAuth2;
     }
 
+    public RefreshToken getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(RefreshToken refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
                 ", isOAuth2='" + isOAuth2 + '\'' +
                 '}';
     }

@@ -9,18 +9,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Init {
     private static final Logger logger = LoggerFactory.getLogger(Init.class);
-    public static long appStartTime;
+    public static long startTime;
 
     public static void main(String[] args) {
-        appStartTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
 
         SpringApplication.run(Init.class, args);
-        logger.info("App was started");
+        logger.info("Todo_list was started");
     }
 }
 /*
  * TODO:
- *  restfull service v2 rest
  *  add sign up button to login page v2.5 dev
  *  improve remember me button v2.5 dev
  *  add default values to db v2.5 dev

@@ -1,12 +1,13 @@
 package me.kqlqk.todo_list.dto;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import me.kqlqk.todo_list.models.User;
 
 import javax.validation.constraints.Pattern;
 
-public class UserDTO {
-    private String loginObject;
-
+public class RegistrationDTO {
     @Pattern(regexp = "^[^\\s@]{3,}@[^\\s@]{2,}\\.[^\\s@]{2,}$", message = "Email must be valid")
     private String email;
 
@@ -18,64 +19,59 @@ public class UserDTO {
             message = "Password must be between 8 and 50 characters, at least 1 number and both lower and uppercase letters")
     private String password;
 
+    private boolean setCookie = true;
+
+    @JsonIgnore
     private String confirmPassword;
 
-    private boolean formCorrect = true;
-
-    public String getLoginObject(){
-        return loginObject;
+    public String getEmail() {
+        return email != null ? email.toLowerCase() : email;
     }
 
-    public void setLoginObject(String loginObject){
-        this.loginObject = loginObject;
-    }
-
-    public String getEmail(){
-        return email != null ? email.toLowerCase() : null;
-    }
-
-    public void setEmail(String email){
+    public void setEmail(String email) {
         this.email = email.toLowerCase();
     }
 
-    public String getLogin(){
+    public String getLogin() {
         return login;
     }
 
-    public void setLogin(String login){
+    public void setLogin(String login) {
         this.login = login;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password){
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getConfirmPassword(){
+    @JsonGetter("setCookie")
+    public boolean isSetCookie() {
+        return setCookie;
+    }
+
+    @JsonSetter("setCookie")
+    public void setCookie(boolean hasCookie) {
+        this.setCookie = hasCookie;
+    }
+
+    public String getConfirmPassword() {
         return confirmPassword;
     }
 
-    public void setConfirmPassword(String confirmPassword){
+    public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
-    }
-
-    public boolean isFormCorrect(){
-        return formCorrect;
-    }
-
-    public void setFormCorrect(boolean formCorrect){
-        this.formCorrect = formCorrect;
     }
 
     public User convertToUser(){
         User user = new User();
-        user.setEmail(email.toLowerCase());
+        user.setEmail(email);
         user.setLogin(login);
         user.setPassword(password);
-        user.setConfirmPassword(confirmPassword);
+        user.setOAuth2(false);
 
         return user;
     }

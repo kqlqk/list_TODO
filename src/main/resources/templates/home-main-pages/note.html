@@ -12,7 +12,7 @@
         <div class="row py-lg-5">
             <div class="col-lg-8 col-md-8 mx-auto">
                 <div class="hyphens" lang="en">
-                    <h2 class="fw-light" th:text="${note.getDateOfCreation()}">date</h2>
+                    <h2 class="fw-light" th:text="${note.getLastEdited()}">date</h2>
                     <h1 class="fw-light" th:utext="'<b>' + ${note.getFullTitle()} + '</b>'">title</h1>
                 </div>
             </div>

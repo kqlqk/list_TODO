@@ -39,7 +39,7 @@ public class ErrorsHandlerServiceImpl implements ErrorsHandlerService {
                 details = "Error " + status + " Page forbidden";
             }
             if (userService.getCurrentUser() == null) {
-                return "redirect:/login";
+                return "shouldLogIn";
             }
         }
         else if (status == 404) {

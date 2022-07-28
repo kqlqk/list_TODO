@@ -16,10 +16,10 @@ public class Note {
     @Column(name = "body")
     private String body;
 
-    @Column(name = "date_of_creation")
-    private Timestamp dateOfCreation;
+    @Column(name = "last_edited")
+    private Timestamp lastEdited;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Column(name = "full_title")
@@ -56,12 +56,12 @@ public class Note {
         this.body = body;
     }
 
-    public Timestamp getDateOfCreation() {
-        return dateOfCreation;
+    public Timestamp getLastEdited() {
+        return lastEdited;
     }
 
-    public void setDateOfCreation(Timestamp dateOfCreation) {
-        this.dateOfCreation = dateOfCreation;
+    public void setLastEdited(Timestamp lastEdited) {
+        this.lastEdited = lastEdited;
     }
 
     public User getUser() {

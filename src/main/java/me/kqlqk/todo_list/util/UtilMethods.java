@@ -3,29 +3,17 @@ package me.kqlqk.todo_list.util;
 import me.kqlqk.todo_list.service.UserService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class UtilMethods {
-    @Value("${spring.datasource.driver-class-name}")
-    private static String driverClassName;
-
-    @Value("${spring.datasource.url}")
-    private static String url;
-
-    @Value("${spring.datasource.username}")
-    private static String username;
-
-    @Value("${spring.datasource.password}")
-    private static String password;
 
     public static String getImprovedUrl(String url){
         StringBuilder improvedUrl = new StringBuilder();
@@ -45,7 +33,6 @@ public class UtilMethods {
     }
 
     public static String getURLPath(JoinPoint joinPoint, String[] mappingValues){
-
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
         StringBuilder path = new StringBuilder();
@@ -59,8 +46,8 @@ public class UtilMethods {
         }
         if(path.indexOf("{id}") != -1){
             for(Object arg : joinPoint.getArgs()) {
-                if (arg instanceof Integer) {
-                    path.replace(path.indexOf("{"), path.indexOf("{") + 4   , Integer.toString((Integer) arg));
+                if (arg instanceof Long) {
+                    path.replace(path.indexOf("{"), path.indexOf("{") + 4   , Long.toString((Long) arg));
                     break;
                 }
             }
@@ -69,27 +56,9 @@ public class UtilMethods {
         return path.toString();
     }
 
-    public static String getUserFromJoinPoint(JoinPoint joinPoint, UserService userService){
-        HttpServletRequest request = null;
-
-        for(Object arg : joinPoint.getArgs()){
-            if(arg instanceof HttpServletRequest){
-                request = (HttpServletRequest) arg;
-                break;
-            }
-        }
+    public static String getUserFromJoinPoint(UserService userService){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
         return userService.getCurrentEmail().equals("anonymousUser") ? request.getRemoteAddr() :  userService.getCurrentEmail();
     }
-
-    public static DataSource getDataSource(){
-        DataSourceBuilder dataSource = DataSourceBuilder.create();
-        dataSource.driverClassName(driverClassName);
-        dataSource.url(url);
-        dataSource.username(username);
-        dataSource.password(password);
-
-        return dataSource.build();
-    }
-
 }

@@ -12,28 +12,28 @@
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 col-md-8 col-lg-6">
 
-            <form th:method="post" th:action="@{/registration}" th:object="${userValid}">
+            <form th:method="post" th:action="@{/registration}" th:object="${registrationDTO}">
                 <div class="form-group">
                     <label class="form-label" for="email">Email:</label>
-                    <input class="form-control" th:style="${#fields.hasErrors('email')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" placeholder="Enter email" name="email" th:field="*{email}" id="email"/>
-                    <div th:style="${#fields.hasErrors('email')} ? 'color: #ff0000' : 'color: #000000'" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                    <div th:style="'color: #ff0000'" th:text="${emailIsAlreadyRegistered} == true ? 'This email is already registered' : ''"></div>
+                    <input class="form-control" th:style="${#fields.hasErrors('email') or emailAlreadyRegistered == true} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" placeholder="e.g. MyEmail@gmail.com" name="email" th:field="*{email}" id="email"/>
+                    <div th:style="'color: #ff0000'" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    <div th:style="'color: #ff0000'" th:text="${emailAlreadyRegistered} == true ? 'This email already registered' : ''"></div>
                     <br/>
 
                     <label class="form-label" for="login">Username:</label>
-                    <input class="form-control" th:style="${#fields.hasErrors('login')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" placeholder="Enter username" name="login" th:field="*{login}" id="login"/>
-                    <div th:style="${#fields.hasErrors('login')} ? 'color: #ff0000' : 'color: #000000'" th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></div>
-                    <div th:style="'color: #ff0000'" th:text="${loginIsAlreadyRegistered} == true ? 'This login is already registered' : ''"></div>
+                    <input class="form-control" th:style="${#fields.hasErrors('login') or loginAlreadyRegistered == true} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" placeholder="e.g. Dazzzy123" name="login" th:field="*{login}" id="login"/>
+                    <div th:style="'color: #ff0000'" th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></div>
+                    <div th:style="'color: #ff0000'" th:text="${loginAlreadyRegistered} == true ? 'This login already registered' : ''"></div>
                     <br/>
 
                     <label class="form-label" for="password">Password:</label>
-                    <input class="form-control" th:style="${#fields.hasErrors('password')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="password" placeholder="Enter password" name="password" th:field="*{password}" id="password"/>
-                    <div th:style="${#fields.hasErrors('password')} ? 'color: #ff0000' : 'color: #000000'" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                    <input class="form-control" th:style="${#fields.hasErrors('password')} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="password" placeholder="e.g. Fgfdi$fisj88!!!a" name="password" th:field="*{password}" id="password"/>
+                    <div th:style="'color: #ff0000'" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                     <br/>
 
                     <label class="form-label" for="confirmPassword">Confirm Password:</label>
-                    <input class="form-control" th:style="*{confirmPassword != password} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="password" placeholder="Confirm password" name="password" th:field="*{confirmPassword}" id="confirmPassword"/>
-                    <div th:style="*{confirmPassword != password} ? 'color: #ff0000' : 'color: #000000'" th:text="*{confirmPassword == password} ? '' : 'Passwords do not match. Try again.'"></div>
+                    <input class="form-control" th:style="*{confirmPassword != password} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="password" placeholder="e.g. Fgfdi$fisj88!!!a" name="password" th:field="*{confirmPassword}" id="confirmPassword"/>
+                    <div th:style="'color: #ff0000'" th:text="*{confirmPassword == password} ? '' : 'Passwords don\'t match. Try again.'"></div>
 
                     <div class="form-check form-switch">
                     <label class="form-check-label" for="showPassword">Show password</label>

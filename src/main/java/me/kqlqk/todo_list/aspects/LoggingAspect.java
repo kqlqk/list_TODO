@@ -1,17 +1,11 @@
 package me.kqlqk.todo_list.aspects;
 
-import me.kqlqk.todo_list.exceptions.dao.note.NoteAlreadyExistException;
-import me.kqlqk.todo_list.exceptions.dao.note.NoteNotFoundException;
-import me.kqlqk.todo_list.exceptions.dao.user.UserNotFoundException;
-import me.kqlqk.todo_list.exceptions.service_exceptions.AuthenticationNotAuthenticatedException;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.util.UtilMethods;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -43,7 +37,7 @@ public class LoggingAspect {
 
         String requestMethod = Arrays.toString(method.getAnnotation(RequestMapping.class).method());
         String path = UtilMethods.getURLPath(joinPoint, method.getAnnotation(RequestMapping.class).value());
-        String user = UtilMethods.getUserFromJoinPoint(joinPoint, userService);
+        String user = UtilMethods.getUserFromJoinPoint(userService);
 
         if(joinPoint.getSignature().getName().equals("handleErrors")){
             logger.warn("was " + requestMethod  + " request to " + path + " by " + user);
@@ -53,42 +47,6 @@ public class LoggingAspect {
         }
     }
 
-    @Around("me.kqlqk.todo_list.aspects.Pointcuts.allMappingAnnotations()")
-    public Object aroundExceptionsInControllersLoggingAdvice(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String methodName = proceedingJoinPoint.getSignature().getName();
-
-        Object targetMethodResult = null;
-
-        try {
-            targetMethodResult = proceedingJoinPoint.proceed();
-        }
-        catch (Exception e) {
-            String log = null;
-
-            if(e instanceof NullPointerException && methodName.equals("sendEmail")){
-                targetMethodResult = "recovery-pages/badRecovery";
-            }
-
-            if(e instanceof NoteNotFoundException && methodName.equals("deleteNote")){
-                log = "was [DELETE] request for note that not exist for user " + userService.getCurrentUser();
-                targetMethodResult = "redirect:/home";
-            }
-
-            if(e instanceof NoteAlreadyExistException && methodName.equals("showNewForm")){
-                targetMethodResult = "redirect:/home";
-            }
-
-            if(e instanceof UserNotFoundException || e instanceof AuthenticationNotAuthenticatedException) {
-                targetMethodResult = "redirect:/login";
-            }
-
-            logger.warn(log == null ?
-                    UtilMethods.getUserFromJoinPoint(proceedingJoinPoint, userService) + " got " + e :
-                    log);
-        }
-
-        return targetMethodResult;
-    }
 
     //SERVICES ADVICES
     @AfterReturning("me.kqlqk.todo_list.aspects.Pointcuts.add()")
@@ -106,7 +64,7 @@ public class LoggingAspect {
     }
 
     @AfterReturning("me.kqlqk.todo_list.aspects.Pointcuts.update()")
-    public void afterUpdateUserLoggingAdvice(JoinPoint joinPoint){
+    public void afterUpdateUserOrNoteLoggingAdvice(JoinPoint joinPoint){
         for(Object arg : joinPoint.getArgs()){
             if(arg instanceof User){
                 logger.info("was updated " + arg);
@@ -120,14 +78,14 @@ public class LoggingAspect {
     }
 
     @AfterReturning("me.kqlqk.todo_list.aspects.Pointcuts.delete()")
-    public void afterDeleteLoggingAdvice(JoinPoint joinPoint){
+    public void afterDeleteNoteLoggingAdvice(JoinPoint joinPoint){
         for(Object arg : joinPoint.getArgs()){
             if(arg instanceof Note){
                 logger.info("was deleted " + arg);
                 break;
             }
             if(arg instanceof Long){
-                logger.info("was deleted note by id = " + arg);
+                logger.info("was deleted note with id = " + arg);
                 break;
             }
         }

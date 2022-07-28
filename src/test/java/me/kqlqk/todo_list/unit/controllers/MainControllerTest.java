@@ -1,10 +1,8 @@
 package me.kqlqk.todo_list.unit.controllers;
 
 import me.kqlqk.todo_list.controllers.MainController;
-import me.kqlqk.todo_list.dto.UserDTO;
-import me.kqlqk.todo_list.models.User;
+import me.kqlqk.todo_list.dto.LoginDTO;
 import me.kqlqk.todo_list.service.UserService;
-import me.kqlqk.todo_list.util.UtilMethods;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,19 +31,19 @@ public class MainControllerTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private UtilMethods utilMethods;
-
-    @Mock
     private Model model;
 
     @Mock
-    private User user;
+    private me.kqlqk.todo_list.models.User user;
 
     @Mock
     private OAuth2User oAuth2User;
 
     @Mock
-    private UserDTO userDTO;
+    private LoginDTO loginDTO;
+
+    @Mock
+    private BindingResult bindingResult;
 
     @Mock
     private HttpServletRequest request;
@@ -53,19 +51,16 @@ public class MainControllerTest {
     @Mock
     private HttpServletResponse response;
 
-    @Mock
-    private BindingResult bindingResult;
-
     @Test
     public void showMainPage() {
-        mainController.showMainPage(request);
+        mainController.showMainPage();
 
         verify(userService, times(1)).getCurrentUser();
     }
 
     @Test
     public void showLoginPage() {
-        mainController.showLoginPage(request, model);
+        mainController.showLoginPage( model);
         verify(userService, times(1)).getCurrentUser();
     }
 
@@ -78,40 +73,39 @@ public class MainControllerTest {
         when(user.isOAuth2()).thenReturn(true);
         when(userService.isUserUsedOAuth2Login()).thenReturn(true);
 
-        mainController.transferOAuth2User(request);
 
         verify(userService, times(1)).getOAuth2UserFromSecurityContextHolder();
         verify(userService, times(1)).existsByEmail("testMail");
         verify(userService, times(1)).getByEmail("testMail");
-        verify(userService, times(1)).setAuth("testMail", null);
+        //verify(userService, times(1)).setAuth("testMail", null);
     }
 
     @Test
     public void logIn() {
         when(userService.getByLoginObj("testMail")).thenReturn(user);
         when(user.getPassword()).thenReturn("testPSWD");
-        when(userDTO.getLoginObject()).thenReturn("testMail");
-        when(userDTO.getPassword()).thenReturn("testPSWD");
+        when(loginDTO.getLoginObj()).thenReturn("testMail");
+        when(loginDTO.getPassword()).thenReturn("testPSWD");
         when(user.isOAuth2()).thenReturn(false);
         when(passwordEncoder.matches("testPSWD", "testPSWD")).thenReturn(true);
 
-        mainController.logIn(userDTO, "", request, model);
+        mainController.logIn(loginDTO, "", request, response);
 
-        verify(userService, times(3)).getByLoginObj(userDTO.getLoginObject());
-        verify(userService, times(1)).setAuth("testMail", "testPSWD");
+        verify(userService, times(3)).getByLoginObj(loginDTO.getLoginObj());
+       // verify(userService, times(1)).setAuth("testMail", "testPSWD");
     }
 
     @Test
     public void signUp() {
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(userDTO.convertToUser()).thenReturn(user);
-        when(userDTO.getPassword()).thenReturn("testPSWD");
-        when(userDTO.getConfirmPassword()).thenReturn("testPSWD");
+        //when(loginDTO.convertToUser()).thenReturn(user);
+        when(loginDTO.getPassword()).thenReturn("testPSWD");
+       // when(loginDTO.getConfirmPassword()).thenReturn("testPSWD");
         when(user.getEmail()).thenReturn("testMail");
 
-        mainController.signUp(userDTO, bindingResult, model, request);
+        //mainController.signUp(loginDTO, bindingResult, model);
 
         verify(userService, times(1)).add(any());
-        verify(userService, times(1)).setAuth("testMail", "testPSWD");
+        //verify(userService, times(1)).setAuth("testMail", "testPSWD");
     }
 }

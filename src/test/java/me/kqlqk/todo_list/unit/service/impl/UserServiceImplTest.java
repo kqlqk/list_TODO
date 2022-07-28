@@ -1,7 +1,6 @@
 package me.kqlqk.todo_list.unit.service.impl;
 
-import me.kqlqk.todo_list.exceptions.dao.user.UserAlreadyExistException;
-import me.kqlqk.todo_list.exceptions.dao.user.UserNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.Role;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
@@ -59,15 +58,6 @@ public class UserServiceImplTest {
         assertNotNull(user);
 
         verify(userRepository, times(1)).save(user);
-    }
-
-    @Test
-    public void add_shouldThrowNewUserAlreadyExistException() {
-        when(userRepository.existsByEmail("testMail@todo.list")).thenReturn(true);
-
-        Exception exception = assertThrows(UserAlreadyExistException.class, () -> userServiceImpl.add(user));
-
-        assertEquals("User already exist, Email already exist", exception.getMessage());
     }
 
 

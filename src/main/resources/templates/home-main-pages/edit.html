@@ -10,7 +10,7 @@
 <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 col-md-8 col-lg-6">
-            <form th:method="post" th:action="@{/home/{id}/edit(id=${pathVariable})}" th:object="${noteValid}">
+            <form th:method="put" th:action="@{/home/{id}/edit(id=${pathVariable})}" th:object="${noteDTO}">
                 <div class="form-group">
                     <label class="form-label" for="title">Enter new title:</label>
                     <input class="form-control" th:style="${titleIsValid == false} ? 'border-color: #ff0000' : 'border-color: #0d6efd'" type="text" name="title" th:field="*{title}" id="title">

@@ -18,11 +18,5 @@ public class Init {
         logger.info("Todo_list was started");
     }
 }
-/*
- * TODO:
- *  add sign up button to login page v2.5 dev
- *  improve remember me button v2.5 dev
- *  add default values to db v2.5 dev
- *  integrated tests v2.5 dev
- */
+//v2
 

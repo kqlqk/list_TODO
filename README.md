@@ -333,7 +333,7 @@ Below you can find all available requests and descriptions for them.
 </details>
 
 
-#CONFIGURATION
+## CONFIGURATION
 You should create `application.properties` in `src/main/resources/`, that consist of
 ```
 spring.datasource.url=yourValue

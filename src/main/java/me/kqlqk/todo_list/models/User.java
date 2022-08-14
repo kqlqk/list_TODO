@@ -30,7 +30,8 @@ public class User {
     @Column(name = "oauth2")
     private boolean isOAuth2;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne
+    @JoinColumn(name = "refresh_token_id")
     private RefreshToken refreshToken;
 
     @Transient

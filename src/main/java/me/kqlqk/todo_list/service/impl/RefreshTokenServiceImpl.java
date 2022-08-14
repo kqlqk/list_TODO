@@ -71,7 +71,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         if(!userService.existsById(user.getId())){
             throw new UserNotFoundException(user + " not found");
         }
-        return refreshTokenRepository.getByUser(user);
+
+        return refreshTokenRepository.getByUserId(user.getId());
     }
 
     //RefreshTokenService methods
@@ -82,7 +83,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMillis);
 
-        String token = Jwts.builder()
+        String refreshTokenString = Jwts.builder()
                         .setClaims(claims)
                         .setIssuedAt(now)
                         .setExpiration(validity)
@@ -94,9 +95,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         }
 
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken(token);
+        refreshToken.setToken(refreshTokenString);
         refreshToken.setExpiresIn(validity.getTime());
         refreshToken.setUser(user);
+        user.setRefreshToken(refreshToken);
 
         refreshTokenRepository.save(refreshToken);
     }

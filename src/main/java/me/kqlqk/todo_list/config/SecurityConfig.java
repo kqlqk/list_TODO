@@ -33,7 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final String[] urlsForUser = {
             "/home/**",
-            "/api/**"};
+            "/api/**",
+            "/logout"};
 
     private final String[] urlsForAdmins = {
             "/admin/**",

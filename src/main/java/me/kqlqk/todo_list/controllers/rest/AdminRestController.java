@@ -44,7 +44,7 @@ public class AdminRestController {
             log = e.toString();
         }
 
-        items.put("site_start_works", format.format(Init.startTime));
+        items.put("site_start_works", format.format(Init.appStartTime));
         items.put("users", UserDTO.convertListOfUsersToListOfUserDTOs(userService.getAll()));
         items.put("connection_to_db", conn);
         if(!conn){

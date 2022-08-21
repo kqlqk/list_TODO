@@ -5,5 +5,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface RoleService {
-    Role getById(Long id);
+    Role getById(long id);
 }

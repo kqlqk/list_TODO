@@ -15,9 +15,8 @@ public class RoleServiceImpl implements RoleService {
         this.roleRepository = roleRepository;
     }
 
-    //JPA-repository methods
     @Override
-    public Role getById(Long id) {
+    public Role getById(long id) {
         return roleRepository.getById(id);
     }
 }

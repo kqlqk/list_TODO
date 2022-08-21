@@ -39,14 +39,15 @@ public class MainRestController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/login")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response){
         User user = userService.getByLoginObj(loginDTO.getLoginObj());
 
         if(user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())){
-            throw new UserNotFoundException("Email/Login or password incorrect");
+            throw new UserNotFoundException("Email/Username or password incorrect");
         }
 
-        refreshTokenService.update(user);
+        refreshTokenService.updateRefreshToken(user);
 
         String accessToken = accessTokenService.createToken(user.getEmail());
         String refreshToken = refreshTokenService.getByUser(user).getToken();

@@ -2,8 +2,11 @@ package me.kqlqk.todo_list.exceptions_handling;
 
 import me.kqlqk.todo_list.dto.ExceptionDTO;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotValidException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotValidException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -20,11 +23,25 @@ import java.util.Map;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestGlobalExceptionHandler {
 
-    @ExceptionHandler(NoteNotFoundException.class)
+    @ExceptionHandler({
+            NoteNotFoundException.class,
+            UserNotFoundException.class,
+            NoteNotValidException.class,
+            UserNotValidException.class,
+            TokenNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionDTO handleNoteNotFoundEx(NoteNotFoundException e){
+    public ExceptionDTO handleNotFoundAndNotValidExceptions(RuntimeException e){
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setInfo(e.getMessage());
+        return exceptionDTO;
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionDTO handleUserAlreadyExistsEx(UserAlreadyExistsException e){
+        ExceptionDTO exceptionDTO = new ExceptionDTO();
+        exceptionDTO.setInfo(e.getMessage());
+
         return exceptionDTO;
     }
 
@@ -43,24 +60,6 @@ public class RestGlobalExceptionHandler {
     public ExceptionDTO handleHttpMessageNotReadableEx(){
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setInfo("Required request body is missing");
-
-        return exceptionDTO;
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionDTO handleUserNotFoundEx(UserNotFoundException e){
-        ExceptionDTO exceptionDTO = new ExceptionDTO();
-        exceptionDTO.setInfo(e.getMessage());
-
-        return exceptionDTO;
-    }
-
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionDTO handleUserAlreadyExistsEx(UserAlreadyExistsException e){
-        ExceptionDTO exceptionDTO = new ExceptionDTO();
-        exceptionDTO.setInfo(e.getMessage());
 
         return exceptionDTO;
     }

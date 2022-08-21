@@ -1,21 +1,34 @@
 package me.kqlqk.todo_list.unit.util;
 
 import me.kqlqk.todo_list.util.UtilMethods;
-import net.bytebuddy.utility.RandomString;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UtilMethodsTest {
 
     @Test
-    public void getImprovedUrl() {
-        String improvedUrl = UtilMethods.getImprovedUrl("http://localhost:8080/test//");
+    public void getImprovedUrl_shouldGetImprovedUrl() {
+        String improvedUrl = UtilMethods.getImprovedUrl("http:///localhost:8080//test//");
 
-        Assertions.assertEquals("/test/", improvedUrl);
+        assertEquals("/test/", improvedUrl);
     }
 
     @Test
-    public void random(){
-        System.out.println(RandomString.make(30));
+    public void getImprovedUrl_shouldThrowsNPE() {
+        assertThrows(NullPointerException.class, () -> UtilMethods.getImprovedUrl(null));
+        assertThrows(NullPointerException.class, () -> UtilMethods.getImprovedUrl(""));
+
+    }
+
+    @Test
+    public void getURLPath_shouldThrowsNPE() {
+        assertThrows(NullPointerException.class, () -> UtilMethods.getURLPath(null, new String[]{"1"}));
+    }
+
+    @Test
+    public void getUserFromJoinPoint_shouldThrowsNPE() {
+        assertThrows(NullPointerException.class, () -> UtilMethods.getUserFromJoinPoint(null));
     }
 }

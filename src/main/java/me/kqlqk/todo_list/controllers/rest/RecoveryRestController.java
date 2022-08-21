@@ -37,11 +37,11 @@ public class RecoveryRestController {
         recoveryPageIdEmail.put(tempPageId, recoveryDTO.getEmail());
 
         emailSenderService.sendEmail(
-                recoveryDTO.getEmail(),
                 "Password recovery",
                 "Follow the link to reset your password." +
                         " http://localhost:8080/api/recovery/" + tempPageId  +
-                        " If you didn't request a restore, please ignore this message.");
+                        " If you didn't request a restore, please ignore this message.",
+                recoveryDTO.getEmail());
 
         Map<String, String> response = new HashMap<>();
         response.put("info", "A message with further actions has been sent to your email.");

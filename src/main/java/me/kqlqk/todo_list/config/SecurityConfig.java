@@ -63,11 +63,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                     .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
-                    .invalidateHttpSession(true)
-                    .clearAuthentication(true)
-                    .deleteCookies("at", "rt")
-                    .logoutSuccessUrl("/");
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("at", "rt")
+                        .logoutSuccessUrl("/");
     }
 
     @Override

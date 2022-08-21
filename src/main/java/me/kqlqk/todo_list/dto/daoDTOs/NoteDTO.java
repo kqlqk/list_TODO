@@ -3,6 +3,7 @@ package me.kqlqk.todo_list.dto.daoDTOs;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.service.NoteService;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class NoteDTO {
     private long id;
 
     @Size(min = 1, max = 100, message = "Title message should be a valid(must be between 1 and 100 characters)")
+    @NotBlank(message = "Title cannot be null")
     private String title;
 
     @Size(max = 65000, message = "Message is too long")

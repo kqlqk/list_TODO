@@ -71,7 +71,7 @@ public class MainController {
             return "main-pages/login";
         }
 
-        refreshTokenService.update(user);
+        refreshTokenService.updateRefreshToken(user);
 
         String accessToken = accessTokenService.createToken(user.getEmail());
         String refreshToken = refreshTokenService.getByUser(user).getToken();

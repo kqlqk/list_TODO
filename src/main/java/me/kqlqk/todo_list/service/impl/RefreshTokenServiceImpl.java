@@ -4,8 +4,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletResponseNotFoundException;
 import me.kqlqk.todo_list.service.AccessTokenService;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenIsNotValidException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.RefreshToken;
@@ -49,35 +51,26 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    //JPA-repository methods
     @Override
     public boolean existsById(long id) {
         return refreshTokenRepository.existsById(id);
     }
 
     @Override
-    public boolean existsByToken(String token) {
-        if(token == null){
-            throw new TokenNotFoundException("Token cannot be a null");
-        }
-        return refreshTokenRepository.existsByToken(token);
-    }
-
-    @Override
     public RefreshToken getByUser(User user) {
-        if(user == null){
-            throw new UserNotFoundException("User cannot be null");
-        }
-        if(!userService.existsById(user.getId())){
-            throw new UserNotFoundException(user + " not found");
+        if(!userService.isValid(user)){
+            throw new UserNotFoundException("User with id = " +  user.getId() + " not found");
         }
 
         return refreshTokenRepository.getByUserId(user.getId());
     }
 
-    //RefreshTokenService methods
     @Override
     public void create(User user) {
+        if(!userService.isValid(user)){
+            throw new UserNotFoundException("User with id = " +  user.getId() + " not found");
+        }
+
         Claims claims = Jwts.claims().setSubject(user.getEmail());
 
         Date now = new Date();
@@ -90,10 +83,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                         .signWith(SignatureAlgorithm.HS256, secret)
                         .compact();
 
-        if(!userService.existsById(user.getId())){
-            throw new UserNotFoundException(user + " not found");
-        }
-
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(refreshTokenString);
         refreshToken.setExpiresIn(validity.getTime());
@@ -105,11 +94,15 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public String getEmail(String token) {
+        if(token == null){
+            throw new TokenNotFoundException("Refresh token cannot be null");
+        }
+
         try {
             return Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getSubject();
         }
-        catch (JwtException e){
-            return null;
+        catch (JwtException | IllegalArgumentException e){
+            throw new TokenNotValidException("Refresh token cannot be parsed");
         }
     }
 
@@ -128,19 +121,26 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public String resolveStringToken(HttpServletRequest request){
-        String bearerWithToken = request.getHeader("Authorization_refresh");
-
-        if(bearerWithToken != null && bearerWithToken.startsWith("Bearer_")){
-            return bearerWithToken.substring(7);
+    public String resolveToken(HttpServletRequest request){
+        if(request == null){
+            throw new HttpServletRequestNotFoundException("HttpServletRequest cannot be null");
         }
 
-        return null;
+        String bearerWithToken = request.getHeader("Authorization_refresh");
+
+        if(bearerWithToken == null){
+            throw new TokenNotFoundException("Authorization_refresh header not found");
+        }
+        if(!bearerWithToken.startsWith("Bearer_")){
+            throw new TokenNotFoundException("Refresh token should starts with Bearer_");
+        }
+
+        return bearerWithToken.substring(7);
     }
 
     @Override
-    public void update(User user) {
-        if(!userService.existsById(user.getId())){
+    public void updateRefreshToken(User user) {
+        if(!userService.isValid(user)){
             throw new UserNotFoundException("User not found, if you hasn't account try to sign up");
         }
 
@@ -166,13 +166,19 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public Map<String, String> updateAccessAndRefreshTokens(RefreshToken refreshToken, User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie) {
         if(!isValid(refreshToken)){
-            throw new TokenIsNotValidException("refresh token is not valid, try to log in one more time");
+            throw new TokenNotValidException("Refresh token is not valid, try to log in one more time");
         }
-        if(!userService.existsById(user.getId())){
-            throw new UserNotFoundException(user + " not found");
+        if(!userService.isValid(user)){
+            throw new UserNotFoundException("User not found");
+        }
+        if(request == null){
+            throw new HttpServletRequestNotFoundException("HttpServletRequest cannot be null");
+        }
+        if(response == null){
+            throw new HttpServletResponseNotFoundException("HttpServletResponse cannot be null");
         }
 
-        update(user);
+        updateRefreshToken(user);
 
         String newAccessToken = accessTokenService.createToken(user.getEmail());
         String newRefreshToken = getByUser(user).getToken();

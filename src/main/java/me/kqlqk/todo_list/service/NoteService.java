@@ -18,4 +18,6 @@ public interface NoteService{
     void delete(long id);
     boolean existsForUser(User user, long noteId);
     void update(Note note);
+    boolean isValid(Note note);
+    boolean isValid(long noteId);
 }

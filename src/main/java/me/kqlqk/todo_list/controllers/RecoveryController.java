@@ -53,11 +53,11 @@ public class RecoveryController {
         recoveryPageIdEmail.put(pageId, recoveryDTO.getEmail());
 
         emailSenderService.sendEmail(
-                recoveryDTO.getEmail(),
                 "Password recovery",
                 "Follow the link to reset your password." +
                         " http://localhost:8080/recovery/" + pageId  +
-                        " If you didn't request a restore, please ignore this message.");
+                        " If you didn't request a restore, please ignore this message.",
+                recoveryDTO.getEmail());
 
         return "recovery-pages/successRecovery";
     }

@@ -1,5 +1,6 @@
 package me.kqlqk.todo_list.unit.service.impl;
 
+import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.Role;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.UserRepository;
@@ -11,8 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith({MockitoExtension.class})
 public class UserDetailsServiceImplTest {
@@ -29,19 +31,24 @@ public class UserDetailsServiceImplTest {
     @Mock
     private Role role;
 
+    @Test
+    public void loadUserByUsername_shouldReturnValidSpringSecurityUser(){
+        doReturn(user).when(userRepository).getByEmail("anyLoginObj");
+        doReturn(role).when(user).getRole();
+        doReturn("anyRole").when(role).getName();
+        doReturn("anyEmail").when(user).getEmail();
+        doReturn("anyPswd").when(user).getPassword();
+
+        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername("anyLoginObj");
+
+        assertThat(userDetails).isInstanceOf(org.springframework.security.core.userdetails.User.class);
+        assertThat(userDetails.getUsername()).isEqualTo("anyEmail");
+        assertThat(userDetails.getPassword()).isEqualTo("anyPswd");
+    }
 
     @Test
-    public void loadUserByUsername_shouldLoadUserByUsername(){
-        when(user.getEmail()).thenReturn("test@todo.list");
-        when(user.getRole()).thenReturn(role);
-        when(user.getPassword()).thenReturn("testPswd");
-        when(role.getName()).thenReturn("USER");
-        when(userRepository.getByEmail("test")).thenReturn(user);
-
-        System.out.println(user);
-        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername("test");
-
-        assertEquals(userDetails.getUsername(), user.getEmail());
-        assertEquals(userDetails.getPassword(), user.getPassword());
+    public void loadUserByUsername_shouldThrowUserNotFoundException(){
+        assertThrows(UserNotFoundException.class, () -> userDetailsServiceImpl.loadUserByUsername(null));
+        assertThrows(UserNotFoundException.class, () -> userDetailsServiceImpl.loadUserByUsername("anyLoginObj"));
     }
 }

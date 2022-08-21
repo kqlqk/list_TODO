@@ -9,11 +9,8 @@ import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,30 +25,30 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${temp.password.oauth2}")
-    private String tempPassword;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
-                           UserDetailsService userDetailsService,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
     }
 
-    //JPA-repository methods
     @Override
     public User getByEmail(String email) {
         if(email == null){
             throw new UserNotFoundException("Email cannot be null");
         }
+
         return userRepository.getByEmail(email.toLowerCase());
+    }
+
+    @Override
+    public User getById(long id) {
+        return userRepository.getById(id);
     }
 
     @Override
@@ -113,17 +110,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public OAuth2User getOAuth2UserFromSecurityContextHolder() {
-        OAuth2User oAuth2User = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(oAuth2User == null) {
-            throw new UserNotFoundException("OAuth2User not found, SecurityContextHolder principals " +
-                    SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        }
-        SecurityContextHolder.clearContext();
-        return oAuth2User;
-    }
-
-    @Override
     @Transactional
     public void update(User user) {
         if(getByEmail(user.getEmail()) == null){
@@ -150,20 +136,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User convertOAuth2UserToUserAndSave(OAuth2User oAuth2User) {
-        User user = new User();
-        user.setEmail(oAuth2User.getAttribute("email").toString().toLowerCase());
-        user.setLogin(oAuth2User.getAttribute("name"));
-        user.setPassword(passwordEncoder.encode(tempPassword));
-        user.setOAuth2(true);
-        user.setRole(roleRepository.getById(1L));
-        userRepository.save(user);
-
-        return user;
+    public boolean isValid(User user){
+        if(user == null || !existsById(user.getId()) || user.getEmail() == null || user.getLogin() == null){
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public boolean isUserUsedOAuth2Login() {
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser";
+    public boolean isValid(long userId){
+        return isValid(getById(userId));
     }
 }

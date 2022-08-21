@@ -8,6 +8,8 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 @Service
 public class EmailSenderServiceImpl implements EmailSenderService {
     private final MailSender mailSender;
@@ -19,13 +21,23 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
     @Override
     public void sendEmail(MailMessage mailMessage) {
-        mailSender.send((SimpleMailMessage) mailMessage);
+        SimpleMailMessage simpleMessage = (SimpleMailMessage) mailMessage;
+
+        if(simpleMessage.getSubject() == null || simpleMessage.getTo() == null){
+            throw new MailSendException("'to' and 'text' cannot be null, \n" +
+                    "to = " + Arrays.toString(simpleMessage.getTo()) + "\n" +
+                    "text = " + simpleMessage.getText());
+        }
+
+        mailSender.send(simpleMessage);
     }
 
     @Override
-    public void sendEmail(String to, String subject, String text) {
+    public void sendEmail(String subject, String text, String... to) {
         if(to == null || text == null){
-            throw new MailSendException("'to' and 'text' cannot be null, \nto = " + to + "\n text = " + text);
+            throw new MailSendException("'to' and 'text' cannot be null, \n" +
+                    "to = " + to + "\n" +
+                    "text = " + text);
         }
 
         SimpleMailMessage message = new SimpleMailMessage();

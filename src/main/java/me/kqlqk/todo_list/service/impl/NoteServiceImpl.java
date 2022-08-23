@@ -41,10 +41,6 @@ public class NoteServiceImpl implements NoteService {
         return noteRepository.getByUser(user);
     }
 
-    @Override
-    public List<Note> getByUserId(long userId) {
-        return noteRepository.getByUser(userService.getById(userId));
-    }
 
     @Override
     public boolean existsById(long id) {

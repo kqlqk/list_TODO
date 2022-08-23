@@ -10,7 +10,6 @@ import java.util.List;
 public interface NoteService{
     Note getById(long noteId);
     List<Note> getByUser(User user);
-    List<Note> getByUserId(long userId);
     boolean existsById(long id);
 
     void add(Note note);

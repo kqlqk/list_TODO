@@ -59,15 +59,6 @@ public class NoteServiceImplTest {
     }
 
     @Test
-    public void getByUserId_shouldCallNoteRepository(){
-        doReturn(user).when(userService).getById(10L);
-
-        noteServiceImpl.getByUserId(10L);
-
-        verify(noteRepository, times(1)).getByUser(user);
-    }
-
-    @Test
     public void existsByID_shouldCallNoteRepository(){
         noteServiceImpl.existsById(10L);
 

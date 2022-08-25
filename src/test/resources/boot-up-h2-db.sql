@@ -10,7 +10,7 @@ create table roles(
     primary key (id));
 
 create table refresh_tokens(
-    id varchar(255) not null unique,
+    id bigint not null unique auto_increment,
     token varchar(255) not null unique,
     expires_in bigint not null,
 

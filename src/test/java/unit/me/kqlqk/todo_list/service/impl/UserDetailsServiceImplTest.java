@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.unit.service.impl;
+package unit.me.kqlqk.todo_list.service.impl;
 
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.Role;
@@ -6,18 +6,16 @@ import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+import unit.me.kqlqk.todo_list.service.UnitServiceParent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 
-@ExtendWith({MockitoExtension.class})
-public class UserDetailsServiceImplTest {
+public class UserDetailsServiceImplTest extends UnitServiceParent {
 
     @InjectMocks
     private UserDetailsServiceImpl userDetailsServiceImpl;
@@ -32,7 +30,7 @@ public class UserDetailsServiceImplTest {
     private Role role;
 
     @Test
-    public void loadUserByUsername_shouldReturnValidSpringSecurityUser(){
+    public void loadUserByUsername_shouldReturnsValidSpringSecurityUser(){
         doReturn(user).when(userRepository).getByEmail("anyLoginObj");
         doReturn(role).when(user).getRole();
         doReturn("anyRole").when(role).getName();
@@ -47,7 +45,7 @@ public class UserDetailsServiceImplTest {
     }
 
     @Test
-    public void loadUserByUsername_shouldThrowUserNotFoundException(){
+    public void loadUserByUsername_shouldThrowsUserNotFoundException(){
         assertThrows(UserNotFoundException.class, () -> userDetailsServiceImpl.loadUserByUsername(null));
         assertThrows(UserNotFoundException.class, () -> userDetailsServiceImpl.loadUserByUsername("anyLoginObj"));
     }

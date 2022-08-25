@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.unit.service.impl;
+package unit.me.kqlqk.todo_list.service.impl;
 
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsException;
@@ -7,22 +7,21 @@ import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
+import me.kqlqk.todo_list.service.AuthenticationService;
 import me.kqlqk.todo_list.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import unit.me.kqlqk.todo_list.service.UnitServiceParent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 
-@ExtendWith({MockitoExtension.class})
-public class UserServiceImplTest {
-
+public class UserServiceImplTest extends UnitServiceParent {
     @InjectMocks
     private UserServiceImpl userServiceImpl;
 
@@ -41,9 +40,15 @@ public class UserServiceImplTest {
     @Mock
     private RefreshToken refreshToken;
 
+    @Mock
+    private AuthenticationService authenticationService;
+
+    @Mock
+    private Authentication authentication;
+
 
     @Test
-    public void getByEmail_shouldSetEmailInLowerCaseAndCallUserRepository(){
+    public void getByEmail_shouldSetsEmailInLowerCaseAndCallUserRepository(){
         String email = "anyEmail";
 
         userServiceImpl.getByEmail(email);
@@ -52,19 +57,21 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void getByEmail_shouldThrowUserNotFoundException(){
+    public void getByEmail_shouldThrowsUserNotFoundException(){
         assertThrows(UserNotFoundException.class, () -> userServiceImpl.getByEmail(null));
     }
 
     @Test
-    public void getById_shouldCallUserRepository(){
+    public void getById_shouldCallsUserRepository(){
+        doReturn(user).when(userRepository).getById(10L);
+
         userServiceImpl.getById(10L);
 
         verify(userRepository, times(1)).getById(10L);
     }
 
     @Test
-    public void getByLogin_shouldCallUserRepository(){
+    public void getByLogin_shouldCallsUserRepository(){
         String login = "anyLogin";
 
         userServiceImpl.getByLogin(login);
@@ -73,24 +80,24 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void getByLogin_shouldThrowUserNotFoundException(){
+    public void getByLogin_shouldThrowsUserNotFoundException(){
         assertThrows(UserNotFoundException.class, () -> userServiceImpl.getByLogin(null));
     }
 
     @Test
-    public void getByRefreshToken_shouldCallUserRepository(){
+    public void getByRefreshToken_shouldCallsUserRepository(){
         userServiceImpl.getByRefreshToken(refreshToken);
 
         verify(userRepository, times(1)).getByRefreshToken(refreshToken);
     }
 
     @Test
-    public void getByRefreshToken_shouldThrowTokenNotFoundException(){
+    public void getByRefreshToken_shouldThrowsTokenNotFoundException(){
         assertThrows(TokenNotFoundException.class, () -> userServiceImpl.getByRefreshToken(null));
     }
 
     @Test
-    public void existsByEmail_shouldCallUserRepository(){
+    public void existsByEmail_shouldCallsUserRepository(){
         String email = "anyEmail";
 
         userServiceImpl.existsByEmail(email);
@@ -99,14 +106,14 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void existsById_shouldCallUserRepository(){
+    public void existsById_shouldCallsUserRepository(){
         userServiceImpl.existsById(10L);
 
         verify(userRepository, times(1)).existsById(10L);
     }
 
     @Test
-    public void existsByLogin_shouldCallUserRepository(){
+    public void existsByLogin_shouldCallsUserRepository(){
         String login = "anyLogin";
 
         userServiceImpl.existsByLogin(login);
@@ -115,7 +122,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void add_shouldCallUserRepository(){
+    public void add_shouldCallsUserRepository(){
         doReturn("anyEmail").when(user).getEmail();
 
         userServiceImpl.add(user);
@@ -124,7 +131,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void add_shouldThrowUserAlreadyExistsException(){
+    public void add_shouldThrowsUserAlreadyExistsException(){
         doReturn("anyEmail").when(user).getEmail();
         doReturn(user).when(userRepository).getByEmail("anyemail");
 
@@ -132,12 +139,12 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void getByLoginObj_shouldThrowUserNotFoundException(){
+    public void getByLoginObj_shouldThrowsUserNotFoundException(){
         assertThrows(UserNotFoundException.class, () -> userServiceImpl.getByLoginObj(null));
     }
 
     @Test
-    public void update_shouldCallUserRepository(){
+    public void update_shouldCallsUserRepository(){
         doReturn("anyEmail").when(user).getEmail();
         doReturn(user).when(userRepository).getByEmail("anyemail");
 
@@ -154,7 +161,16 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void isValid_test(){
+    public void getCurrentEmail_shouldCallAuthenticationService(){
+        doReturn(authentication).when(authenticationService).getAuthenticationFromContext();
+
+        userServiceImpl.getCurrentEmail();
+
+        verify(authenticationService, times(1)).getAuthenticationFromContext();
+    }
+
+    @Test
+    public void isValid_shouldCheckIfValid(){
         assertThat(userServiceImpl.isValid(null)).isFalse();
 
         doReturn(true).when(userRepository).existsById(10L);

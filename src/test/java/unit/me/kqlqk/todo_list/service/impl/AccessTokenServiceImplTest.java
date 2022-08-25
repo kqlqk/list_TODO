@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.unit.service.impl;
+package unit.me.kqlqk.todo_list.service.impl;
 
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
@@ -8,10 +8,9 @@ import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.service.impl.AccessTokenServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import unit.me.kqlqk.todo_list.service.UnitServiceParent;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,8 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 
-@ExtendWith(MockitoExtension.class)
-public class AccessTokenServiceImplTest {
+public class AccessTokenServiceImplTest extends UnitServiceParent {
     @InjectMocks
     private AccessTokenServiceImpl accessTokenService;
 
@@ -34,27 +32,22 @@ public class AccessTokenServiceImplTest {
     private HttpServletRequest request;
 
     @Test
-    public void createToken_shouldThrowUserNotFoundException(){
+    public void createToken_shouldThrowsUserNotFoundException(){
         assertThrows(UserNotFoundException.class, () -> accessTokenService.createToken("anyEmail"));
     }
 
     @Test
-    public void getAuthentication_shouldThrowTokenNotValidException(){
-        assertThrows(TokenNotValidException.class, () ->accessTokenService.getAuthentication(null));
-    }
-
-    @Test
-    public void getEmail_shouldThrowTokenNotFoundException(){
+    public void getEmail_shouldThrowsTokenNotFoundException(){
         assertThrows(TokenNotFoundException.class, () ->accessTokenService.getEmail(null));
     }
 
     @Test
-    public void getEmail_shouldThrowTokenNotValidException(){
+    public void getEmail_shouldThrowsTokenNotValidException(){
         assertThrows(TokenNotValidException.class, () ->accessTokenService.getEmail("anyEmail"));
     }
 
     @Test
-    public void resolveToken_shouldReturnToken(){
+    public void resolveToken_shouldReturnsToken(){
         doReturn("Bearer_anyToken").when(request).getHeader("Authorization_access");
 
         String token = accessTokenService.resolveToken(request);
@@ -63,18 +56,18 @@ public class AccessTokenServiceImplTest {
     }
 
     @Test
-    public void resolveToken_shouldThrowHttpServletRequestNotFoundException(){
+    public void resolveToken_shouldThrowsHttpServletRequestNotFoundException(){
         assertThrows(HttpServletRequestNotFoundException.class, () -> accessTokenService.resolveToken(null));
     }
 
     @Test
-    public void resolveToken_shouldThrowTokenNotFoundException(){
+    public void resolveToken_shouldThrowsTokenNotFoundException(){
        RuntimeException e = assertThrows(TokenNotFoundException.class, () -> accessTokenService.resolveToken(request));
        assertThat(e.getMessage()).isEqualTo("Authorization_access header not found");
     }
 
     @Test
-    public void resolveToken_shouldThrowTokenNotFoundExceptionWithAnotherException(){
+    public void resolveToken_shouldThrowsTokenNotFoundExceptionWithAnotherException(){
         doReturn("anyToken").when(request).getHeader("Authorization_access");
 
         RuntimeException e = assertThrows(TokenNotFoundException.class, () -> accessTokenService.resolveToken(request));
@@ -82,7 +75,7 @@ public class AccessTokenServiceImplTest {
     }
 
     @Test
-    public void validateToken_shouldValidateToken(){
+    public void validateToken_shouldValidatesToken(){
         assertThat(accessTokenService.validateToken(null)).isFalse();
         assertThat(accessTokenService.validateToken("anyToken")).isFalse();
     }

@@ -23,7 +23,6 @@ public class Init {
  *  rest logout
  *  add sign up button to login page v2.5 dev
  *  improve remember me button v2.5 dev
- *  add default values to db v2.5 dev
  *  integrated tests v2.5 dev
  */
 

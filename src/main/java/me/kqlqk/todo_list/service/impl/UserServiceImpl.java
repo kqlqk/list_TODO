@@ -7,34 +7,33 @@ import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
+import me.kqlqk.todo_list.service.AuthenticationService;
 import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @PersistenceContext
-    private EntityManager entityManager;
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationService authenticationService;
 
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, AuthenticationService authenticationService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -48,7 +47,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(long id) {
-        return userRepository.getById(id);
+        try {
+            User user = userRepository.getById(id);
+            user.getEmail();
+            return user;
+        }
+        catch (EntityNotFoundException e) {
+            return null;
+        }
     }
 
     @Override
@@ -84,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     //UserService methods
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void add(User user) {
         if(getByEmail(user.getEmail()) != null){
             throw new UserAlreadyExistsException(user + " already exists");
@@ -97,7 +103,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAll() {
-       return entityManager.createQuery("from User", User.class).getResultList();
+       return userRepository.findAll();
     }
 
     @Override
@@ -127,12 +133,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getCurrentEmail() {
-        try{
-            return SecurityContextHolder.getContext().getAuthentication().getName();
-        }
-        catch (NullPointerException e){
-            return null;
-        }
+        return authenticationService.getAuthenticationFromContext().getName();
     }
 
     @Override

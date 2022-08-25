@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @Controller
-public class MainController {
+public class    MainController {
     private final AccessTokenService accessTokenService;
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
@@ -113,7 +113,7 @@ public class MainController {
         User user = registrationDTO.convertToUser();
         userService.add(user);
 
-        refreshTokenService.create(user);
+        refreshTokenService.createAndAddToken(user);
         String accessToken = accessTokenService.createToken(user.getEmail());
         String refreshToken = refreshTokenService.getByUser(user).getToken();
 

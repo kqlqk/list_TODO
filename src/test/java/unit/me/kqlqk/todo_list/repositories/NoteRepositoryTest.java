@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.unit.repositories;
+package unit.me.kqlqk.todo_list.repositories;
 
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.models.User;
@@ -6,21 +6,15 @@ import me.kqlqk.todo_list.repositories.NoteRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
-@SpringBootTest
-@TestPropertySource("/application-test.properties")
-@Sql(value = {"/boot-up-h2-db.sql", "/add-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/drop-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class NoteRepositoryTest {
+public class NoteRepositoryTest extends RepositoryParent{
     @Autowired
     private NoteRepository noteRepository;
 
@@ -36,6 +30,12 @@ public class NoteRepositoryTest {
         assertThat(note.getTitle()).isEqualTo("anyTitle");
         assertThat(note.getFullTitle()).isEqualTo("anyTitle");
         assertThat(note.getUser().getId()).isEqualTo(1);
+    }
+
+    @Test
+    @Transactional
+    public void getById_shouldThrowsEntityNotFoundException(){
+        assertThrows(EntityNotFoundException.class, () -> noteRepository.getById(99).getTitle());
     }
 
     @Test

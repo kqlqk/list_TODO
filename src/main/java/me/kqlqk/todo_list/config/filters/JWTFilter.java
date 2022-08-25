@@ -9,12 +9,13 @@ import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundExcept
 import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.AccessTokenService;
+import me.kqlqk.todo_list.service.AuthenticationService;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
+import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import me.kqlqk.todo_list.util.UtilCookie;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,27 +34,29 @@ public class JWTFilter extends OncePerRequestFilter {
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
     private final RestGlobalExceptionHandler restExceptionHandler;
+    private final AuthenticationService authenticationService;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    private final List<String> uncheckedURI = Arrays.asList(
-            "/login",
-            "/registration",
-            "/recovery",
-            "/error",
-            "/api/login",
-            "/api/registration",
-            "/api/error",
-            "/api/recovery");
+    private final List<String> URIs = Arrays.asList(
+            "/home",
+            "/home/",
+            "/admin",
+
+            "/api/notes",
+            "/api/admin");
 
 
     @Autowired
     public JWTFilter(AccessTokenService accessTokenService,
                      RefreshTokenService refreshTokenService,
                      UserService userService,
-                     RestGlobalExceptionHandler restExceptionHandler) {
+                     RestGlobalExceptionHandler restExceptionHandler, AuthenticationService authenticationService, UserDetailsServiceImpl userDetailsService) {
         this.accessTokenService = accessTokenService;
         this.refreshTokenService = refreshTokenService;
         this.userService = userService;
         this.restExceptionHandler = restExceptionHandler;
+        this.authenticationService = authenticationService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -61,12 +64,17 @@ public class JWTFilter extends OncePerRequestFilter {
         boolean isRest = request.getRequestURI().contains("/api");
         ExceptionDTO exceptionDTO;
 
-        for(String uri : uncheckedURI){
-            if(request.getRequestURI().startsWith(uri) || request.getRequestURI().equals("/")){
+        int count = 0;
+        for(String uri : URIs){
+            if(!request.getRequestURI().startsWith(uri)){
+                count++;
+            }
+            if(count == URIs.size()){
                 filterChain.doFilter(request, response);
                 return;
             }
         }
+
 
         String accessTokenString = null;
         String refreshTokenString = null;
@@ -118,7 +126,7 @@ public class JWTFilter extends OncePerRequestFilter {
             RefreshToken refreshTokenFromDb = refreshTokenService.getByUser(user);
 
             if (refreshTokenString.equals(refreshTokenFromDb.getToken())) {
-                Map<String, String> tokens = refreshTokenService.updateAccessAndRefreshTokens(refreshTokenFromDb, user, request, response, setCookie);
+                Map<String, String> tokens = refreshTokenService.updateAccessAndRefreshTokens(user, request, response, setCookie);
                 accessTokenString = tokens.get("access_token");
                 refreshTokenString = tokens.get("refresh_token");
                 response.setHeader("Authorization_access", "Bearer_" + accessTokenString);
@@ -134,8 +142,10 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         }
 
-        Authentication authentication = accessTokenService.getAuthentication(accessTokenString);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String email = accessTokenService.getEmail(accessTokenString);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        authenticationService.setAuthentication(userDetails);
+
         filterChain.doFilter(request, response);
     }
 

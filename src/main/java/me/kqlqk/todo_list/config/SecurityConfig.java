@@ -20,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final DaoAuthenticationProvider daoAuthenticationProvider;
     private final JWTFilter jwtFilter;
 
-    private final String[] urlsForGuests = {
+    public static final String[] urlsForGuests = {
             "/",
             "/login",
             "/registration",
@@ -31,12 +31,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/error",
             "/api/recovery/**"};
 
-    private final String[] urlsForUser = {
+    public static final String[] urlsForUser = {
             "/home/**",
             "/api/**",
             "/logout"};
 
-    private final String[] urlsForAdmins = {
+    public static final String[] urlsForAdmins = {
             "/admin/**",
             "/api/admin/**"};
 

@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.unit.repositories;
+package unit.me.kqlqk.todo_list.repositories;
 
 import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
@@ -6,18 +6,14 @@ import me.kqlqk.todo_list.repositories.RefreshTokenRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.persistence.EntityNotFoundException;
 
-@SpringBootTest
-@TestPropertySource("/application-test.properties")
-@Sql(value = {"/boot-up-h2-db.sql", "/add-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/drop-tables.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class UserRepositoryTest {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public class UserRepositoryTest extends RepositoryParent{
 
     @Autowired
     private UserRepository userRepository;
@@ -44,6 +40,12 @@ public class UserRepositoryTest {
         assertThat(user.getId()).isEqualTo(1);
         assertThat(user.getEmail()).isEqualTo("user@mail.com");
         assertThat(user.getNotes().size()).isEqualTo(2);
+    }
+
+    @Test
+    @Transactional
+    public void getById_shouldThrowsEntityNotFoundException(){
+        assertThrows(EntityNotFoundException.class, () -> userRepository.getById(99).getEmail());
     }
 
     @Test

@@ -9,10 +9,6 @@ import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -29,12 +25,9 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     @Value("${jwt.access.expired}")
     private long validityInMillis;
 
-    private final UserDetailsService userDetailsService;
-
     @Autowired
-    public AccessTokenServiceImpl(UserService userService, UserDetailsService userDetailsService) {
+    public AccessTokenServiceImpl(UserService userService) {
         this.userService = userService;
-        this.userDetailsService = userDetailsService;
     }
 
     @PostConstruct
@@ -58,15 +51,6 @@ public class AccessTokenServiceImpl implements AccessTokenService {
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
-    }
-
-    public Authentication getAuthentication(String token){
-        if(token == null){
-            throw new TokenNotValidException("Token cannot be null");
-        }
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getEmail(token));
-
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public String getEmail(String token){

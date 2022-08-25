@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.unit.util;
+package unit.me.kqlqk.todo_list.util;
 
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletResponseNotFoundException;

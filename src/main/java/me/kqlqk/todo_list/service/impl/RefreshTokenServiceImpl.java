@@ -66,7 +66,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public void create(User user) {
+    public void createAndAddToken(User user) {
         if(!userService.isValid(user)){
             throw new UserNotFoundException("User with id = " +  user.getId() + " not found");
         }
@@ -164,10 +164,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public Map<String, String> updateAccessAndRefreshTokens(RefreshToken refreshToken, User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie) {
-        if(!isValid(refreshToken)){
-            throw new TokenNotValidException("Refresh token is not valid, try to log in one more time");
-        }
+    public Map<String, String> updateAccessAndRefreshTokens(User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie) {
         if(!userService.isValid(user)){
             throw new UserNotFoundException("User not found");
         }

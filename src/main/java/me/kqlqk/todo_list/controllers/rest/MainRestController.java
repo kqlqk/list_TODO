@@ -78,7 +78,7 @@ public class MainRestController {
         User user = registrationDTO.convertToUser();
         userService.add(user);
 
-        refreshTokenService.create(user);
+        refreshTokenService.createAndAddToken(user);
         String accessToken = accessTokenService.createToken(user.getEmail());
         String refreshToken = refreshTokenService.getByUser(user).getToken();
 

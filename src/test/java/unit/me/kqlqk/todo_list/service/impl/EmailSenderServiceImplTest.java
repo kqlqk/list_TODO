@@ -1,22 +1,20 @@
-package me.kqlqk.todo_list.unit.service.impl;
+package unit.me.kqlqk.todo_list.service.impl;
 
 import me.kqlqk.todo_list.service.impl.EmailSenderServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.MailMessage;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import unit.me.kqlqk.todo_list.service.UnitServiceParent;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith({MockitoExtension.class})
-public class EmailSenderServiceImplTest {
+public class EmailSenderServiceImplTest extends UnitServiceParent {
     @InjectMocks
     private EmailSenderServiceImpl emailSenderServiceImpl;
 
@@ -25,14 +23,14 @@ public class EmailSenderServiceImplTest {
 
 
     @Test
-    public void sendEmail_shouldSendEmail(){
+    public void sendEmail_shouldSendsEmail(){
         emailSenderServiceImpl.sendEmail(generateValidMessage());
 
         verify(mailSender, times(1)).send((SimpleMailMessage) generateValidMessage());
     }
 
     @Test
-    public void sendEmail_shouldThrowMailSendException(){
+    public void sendEmail_shouldThrowsMailSendException(){
         Assertions.assertThrows(MailSendException.class,
                 () -> emailSenderServiceImpl.sendEmail("SubjectMayBeNull",null, ""));
 

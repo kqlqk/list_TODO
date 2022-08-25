@@ -6,6 +6,8 @@ import me.kqlqk.todo_list.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
@@ -17,6 +19,13 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role getById(long id) {
-        return roleRepository.getById(id);
+        try{
+            Role role = roleRepository.getById(id);
+            role.getName();
+            return role;
+        }
+        catch (EntityNotFoundException e){
+            return null;
+        }
     }
 }

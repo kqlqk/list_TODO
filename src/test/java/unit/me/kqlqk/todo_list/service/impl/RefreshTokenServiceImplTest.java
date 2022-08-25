@@ -1,4 +1,4 @@
-package me.kqlqk.todo_list.unit.service.impl;
+package unit.me.kqlqk.todo_list.service.impl;
 
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletResponseNotFoundException;
@@ -11,10 +11,9 @@ import me.kqlqk.todo_list.repositories.RefreshTokenRepository;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.service.impl.RefreshTokenServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import unit.me.kqlqk.todo_list.service.UnitServiceParent;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,8 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class RefreshTokenServiceImplTest {
+public class RefreshTokenServiceImplTest extends UnitServiceParent {
     @InjectMocks
     private RefreshTokenServiceImpl refreshTokenServiceImpl;
 
@@ -48,14 +46,14 @@ public class RefreshTokenServiceImplTest {
     private HttpServletResponse response;
 
     @Test
-    public void existsById_shouldCallRefreshTokenRepository(){
+    public void existsById_shouldCallsRefreshTokenRepository(){
         refreshTokenServiceImpl.existsById(10L);
 
         verify(refreshTokenRepository, times(1)).existsById(10L);
     }
 
     @Test
-    public void getByUser_shouldCallRefreshTokenRepository(){
+    public void getByUser_shouldCallsRefreshTokenRepository(){
         doReturn(true).when(userService).isValid(user);
 
         refreshTokenServiceImpl.getByUser(user);
@@ -64,27 +62,27 @@ public class RefreshTokenServiceImplTest {
     }
 
     @Test
-    public void getByUser_shouldThrowUserNotFoundException(){
+    public void getByUser_shouldThrowsUserNotFoundException(){
         assertThrows(UserNotFoundException.class, () -> refreshTokenServiceImpl.getByUser(user));
     }
 
     @Test
-    public void create_shouldThrowUserNotFoundException(){
-        assertThrows(UserNotFoundException.class, () -> refreshTokenServiceImpl.create(user));
+    public void create_shouldThrowsUserNotFoundException(){
+        assertThrows(UserNotFoundException.class, () -> refreshTokenServiceImpl.createAndAddToken(user));
     }
 
     @Test
-    public void getEmail_shouldThrowTokenNotFoundException(){
+    public void getEmail_shouldThrowsTokenNotFoundException(){
         assertThrows(TokenNotFoundException.class, () ->refreshTokenServiceImpl.getEmail(null));
     }
 
     @Test
-    public void getEmail_shouldThrowTokenNotValidException(){
+    public void getEmail_shouldThrowsTokenNotValidException(){
         assertThrows(TokenNotValidException.class, () ->refreshTokenServiceImpl.getEmail("anyEmail"));
     }
 
     @Test
-    public void isValid_shouldCheckIsTokenValid(){
+    public void isValid_shouldChecksIsTokenValid(){
         assertThat(refreshTokenServiceImpl.isValid(null)).isFalse();
 
         doReturn(new Date().getTime() + 1000).when(refreshToken).getExpiresIn();
@@ -93,7 +91,7 @@ public class RefreshTokenServiceImplTest {
     }
 
     @Test
-    public void resolveToken_shouldReturnToken(){
+    public void resolveToken_shouldReturnsToken(){
         doReturn("Bearer_anyToken").when(request).getHeader("Authorization_refresh");
 
         String token = refreshTokenServiceImpl.resolveToken(request);
@@ -102,18 +100,18 @@ public class RefreshTokenServiceImplTest {
     }
 
     @Test
-    public void resolveToken_shouldThrowHttpServletRequestNotFoundException(){
+    public void resolveToken_shouldThrowsHttpServletRequestNotFoundException(){
         assertThrows(HttpServletRequestNotFoundException.class, () -> refreshTokenServiceImpl.resolveToken(null));
     }
 
     @Test
-    public void resolveToken_shouldThrowTokenNotFoundException(){
+    public void resolveToken_shouldThrowsTokenNotFoundException(){
         RuntimeException e = assertThrows(TokenNotFoundException.class, () -> refreshTokenServiceImpl.resolveToken(request));
         assertThat(e.getMessage()).isEqualTo("Authorization_refresh header not found");
     }
 
     @Test
-    public void resolveToken_shouldThrowTokenNotFoundExceptionWithAnotherException(){
+    public void resolveToken_shouldThrowsTokenNotFoundExceptionWithAnotherException(){
         doReturn("anyToken").when(request).getHeader("Authorization_refresh");
 
         RuntimeException e = assertThrows(TokenNotFoundException.class, () -> refreshTokenServiceImpl.resolveToken(request));
@@ -121,39 +119,29 @@ public class RefreshTokenServiceImplTest {
     }
 
     @Test
-    public void updateRefreshToken_shouldThrowUserNotFoundException(){
-        assertThrows(UserNotFoundException.class, () -> refreshTokenServiceImpl.create(user));
+    public void updateRefreshToken_shouldThrowsUserNotFoundException(){
+        assertThrows(UserNotFoundException.class, () -> refreshTokenServiceImpl.createAndAddToken(user));
     }
 
     @Test
-    public void updateAccessAndRefreshTokens_shouldThrowTokenNotValidException(){
-        assertThrows(TokenNotValidException.class,
-                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(refreshToken, user, request, response, false));
-    }
-
-    @Test
-    public void updateAccessAndRefreshTokens_shouldThrowUserNotFoundException(){
-        doReturn(new Date().getTime() + 1000).when(refreshToken).getExpiresIn();
-
+    public void updateAccessAndRefreshTokens_shouldThrowsUserNotFoundException(){
         assertThrows(UserNotFoundException.class,
-                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(refreshToken, user, request, response, false));
+                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, request, response, false));
     }
 
     @Test
-    public void updateAccessAndRefreshTokens_shouldThrowHttpServletRequestNotFoundException(){
-        doReturn(new Date().getTime() + 1000).when(refreshToken).getExpiresIn();
+    public void updateAccessAndRefreshTokens_shouldThrowsHttpServletRequestNotFoundException(){
         doReturn(true).when(userService).isValid(user);
 
         assertThrows(HttpServletRequestNotFoundException.class,
-                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(refreshToken, user, null, response, false));
+                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, null, response, false));
     }
 
     @Test
-    public void updateAccessAndRefreshTokens_shouldThrowHttpServletResponseNotFoundException(){
-        doReturn(new Date().getTime() + 1000).when(refreshToken).getExpiresIn();
+    public void updateAccessAndRefreshTokens_shouldThrowsHttpServletResponseNotFoundException(){
         doReturn(true).when(userService).isValid(user);
 
         assertThrows(HttpServletResponseNotFoundException.class,
-                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(refreshToken, user, request, null, false));
+                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, request, null, false));
     }
 }

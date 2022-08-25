@@ -10,8 +10,10 @@ import me.kqlqk.todo_list.service.NoteService;
 import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -29,8 +31,16 @@ public class NoteServiceImpl implements NoteService {
 
 
     @Override
+    @Transactional
     public Note getById(long id) {
-        return noteRepository.getById(id);
+        try {
+            Note note = noteRepository.getById(id);
+            note.getTitle();
+            return note;
+        }
+        catch (EntityNotFoundException e){
+            return null;
+        }
     }
 
     @Override
@@ -48,16 +58,16 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void add(Note note) {
         if(note.getFullTitle() == null){
             throw new NoteNotValidException("Note isn't valid. Note should has at least full title. \n" +
                     "full title = " + note.getFullTitle());
         }
-
         if(existsById(note.getId())){
             throw new NoteAlreadyExistsException("Note with id = " + note.getId() + " already exists");
         }
+
 
         if(note.getFullTitle().length() > 37){
             note.setTitle(note.getFullTitle().substring(0,37));
@@ -72,7 +82,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void delete(Note note) {
         if(!isValid(note)) {
             throw new NoteNotValidException("Note with id = " + note.getId() + " not found");
@@ -82,7 +92,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void delete(long id) {
         if(!isValid(id)){
             throw new NoteNotValidException("Note with id = " + id + " not found");
@@ -104,7 +114,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void update(Note note) {
         if(!isValid(note)){
             throw new NoteNotValidException("Note with id = " + note.getId() + " not found");
@@ -117,6 +127,7 @@ public class NoteServiceImpl implements NoteService {
             note.setTitle(note.getFullTitle());
         }
         note.setLastEdited(new Timestamp(new java.util.Date().getTime()));
+
         noteRepository.save(note);
     }
 

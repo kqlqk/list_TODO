@@ -13,11 +13,11 @@ public interface RefreshTokenService {
     boolean existsById(long id);
     RefreshToken getByUser(User user);
 
-    void create(User user);
+    void createAndAddToken(User user);
     String getEmail(String token);
     long getValidity();
     boolean isValid(RefreshToken refreshToken);
     String resolveToken(HttpServletRequest request);
     void updateRefreshToken(User user);
-    Map<String, String> updateAccessAndRefreshTokens(RefreshToken refreshToken, User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie);
+    Map<String, String> updateAccessAndRefreshTokens(User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie);
 }

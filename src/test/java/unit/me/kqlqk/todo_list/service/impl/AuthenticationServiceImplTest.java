@@ -3,6 +3,7 @@ package unit.me.kqlqk.todo_list.service.impl;
 import me.kqlqk.todo_list.service.impl.AuthenticationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import unit.me.kqlqk.todo_list.service.UnitServiceParent;
@@ -14,16 +15,28 @@ public class AuthenticationServiceImplTest extends UnitServiceParent {
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;
 
+    @Mock
+    private UserDetails userDetails;
+
     @Test
     public void setAuthentication_shouldThrowNPE() {
-        assertThrows(NullPointerException.class, () -> authenticationService.setAuthentication((UserDetails) null));
+        assertThrows(NullPointerException.class, () -> authenticationService.setAuthentication((String) null));
         assertThrows(NullPointerException.class, () -> authenticationService.setAuthentication((Authentication) null));
     }
 
 
     @Test
-    public void getAuthentication_shouldThrowNPE() {
-        assertThrows(NullPointerException.class, () -> authenticationService.getAuthentication((UserDetails) null));
+    public void getUsernamePasswordAuthenticationToken_shouldThrowNPE() {
+        assertThrows(NullPointerException.class,
+                () -> authenticationService.getUsernamePasswordAuthenticationToken(null, "any"));
+        assertThrows(NullPointerException.class,
+                () -> authenticationService.getUsernamePasswordAuthenticationToken(userDetails, null));
+    }
+
+    @Test
+    public void getUsernamePasswordAuthenticationTokenWithoutCredentials_shouldThrowNPE() {
+        assertThrows(NullPointerException.class,
+                () -> authenticationService.getUsernamePasswordAuthenticationTokenWithoutCredentials(null));
     }
 
     @Test

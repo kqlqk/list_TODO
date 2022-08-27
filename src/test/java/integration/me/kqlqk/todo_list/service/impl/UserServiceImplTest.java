@@ -7,7 +7,6 @@ import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import me.kqlqk.todo_list.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,8 +48,7 @@ public class UserServiceImplTest extends IntegrationServiceParent {
 
     @Test
     public void getCurrentEmail_shouldGetEmailFromAuth(){
-        UserDetails userDetails = userDetailsService.loadUserByUsername("userLogin");
-        authenticationService.setAuthentication(userDetails);
+        authenticationService.setAuthentication("user@mail.com");
 
         assertThat(userService.getCurrentEmail()).isEqualTo("user@mail.com");
     }

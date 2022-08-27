@@ -20,15 +20,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void setAuthentication(String loginObj) {
-        SecurityContextHolder.getContext().setAuthentication(getUsernamePasswordAuthenticationTokenWithoutCredentials(userDetailsService.loadUserByUsername(loginObj)));
-    }
-
-    @Override
-    public void setAuthentication(UserDetails userDetails) {
-        if(userDetails == null){
-            throw new NullPointerException("UserDetails cannot be null");
+        if(loginObj == null || loginObj.equals("")){
+            throw new NullPointerException("LoginObj cannot be null");
         }
-        SecurityContextHolder.getContext().setAuthentication(getUsernamePasswordAuthenticationToken(userDetails, ""));
+
+        SecurityContextHolder.getContext().setAuthentication(
+                getUsernamePasswordAuthenticationTokenWithoutCredentials(loginObj));
     }
 
     @Override
@@ -36,6 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(authentication == null){
             throw new NullPointerException("Auth cannot be null");
         }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
@@ -44,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(userDetails == null){
             throw new NullPointerException("UserDetails cannot be null");
         }
-        if(rawPassword == null){
+        if(rawPassword == null || rawPassword.equals("")){
             throw new NullPointerException("If you want to get authentication without password," +
                     " please use getUsernamePasswordAuthenticationTokenWithoutCredentials(UserDetails userDetails)");
         }
@@ -53,12 +51,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public Authentication getUsernamePasswordAuthenticationTokenWithoutCredentials(UserDetails userDetails) {
-        if(userDetails == null){
-            throw new NullPointerException("UserDetails cannot be null");
+    public Authentication getUsernamePasswordAuthenticationTokenWithoutCredentials(String loginObj) {
+        if(loginObj == null || loginObj.equals("")){
+            throw new NullPointerException("LoginObj cannot be null");
         }
 
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(
+                userDetailsService.loadUserByUsername(loginObj),
+                null,
+                userDetailsService.loadUserByUsername(loginObj).getAuthorities());
     }
 
     @Override

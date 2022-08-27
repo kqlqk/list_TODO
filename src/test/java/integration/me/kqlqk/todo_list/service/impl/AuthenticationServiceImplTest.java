@@ -6,7 +6,6 @@ import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,9 +20,7 @@ public class AuthenticationServiceImplTest extends IntegrationServiceParent {
 
     @Test
     public void setAuthentication_shouldSetAuthToContext() {
-        UserDetails userDetails = userDetailsService.loadUserByUsername("user@mail.com");
-
-        authenticationService.setAuthentication(userDetails);
+        authenticationService.setAuthentication("user@mail.com");
 
         assertThat(authenticationService.getAuthenticationFromContext()).isNotNull();
         assertThat(authenticationService.getAuthenticationFromContext().getName()).isEqualTo("user@mail.com");
@@ -31,7 +28,8 @@ public class AuthenticationServiceImplTest extends IntegrationServiceParent {
 
     @Test
     public void setAuthentication_shouldSetAuthToContext2() {
-        Authentication auth = authenticationService.getAuthentication(userDetailsService.loadUserByUsername("user@mail.com"));
+        Authentication auth =
+                authenticationService.getUsernamePasswordAuthenticationTokenWithoutCredentials("user@mail.com");
 
         authenticationService.setAuthentication(auth);
 
@@ -40,18 +38,29 @@ public class AuthenticationServiceImplTest extends IntegrationServiceParent {
     }
 
     @Test
-    public void getAuthentication() {
+    public void getUsernamePasswordAuthenticationToken_shouldReturnToken() {
         Authentication authentication =
-                authenticationService.getAuthentication(userDetailsService.loadUserByUsername("user@mail.com"));
+                authenticationService.getUsernamePasswordAuthenticationToken(
+                        userDetailsService.loadUserByUsername("user@mail.com"), "userPswd1");
 
         assertThat(authentication).isNotNull();
         assertThat(authentication.getName()).isEqualTo("user@mail.com");
+        assertThat(authentication.getCredentials()).isEqualTo("userPswd1");
+    }
+
+    @Test
+    public void getUsernamePasswordAuthenticationTokenWithoutCredentials_shouldReturnToken() {
+        Authentication authentication =
+                authenticationService.getUsernamePasswordAuthenticationTokenWithoutCredentials("user@mail.com");
+
+        assertThat(authentication).isNotNull();
+        assertThat(authentication.getName()).isEqualTo("user@mail.com");
+        assertThat(authentication.getCredentials()).isNull();
     }
 
     @Test
     public void getAuthenticationFromContext() {
-        UserDetails userDetails = userDetailsService.loadUserByUsername("user@mail.com");
-        authenticationService.setAuthentication(userDetails);
+        authenticationService.setAuthentication("user@mail.com");
 
         Authentication authentication = authenticationService.getAuthenticationFromContext();
 

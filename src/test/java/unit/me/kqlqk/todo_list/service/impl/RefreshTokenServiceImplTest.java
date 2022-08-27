@@ -68,7 +68,7 @@ public class RefreshTokenServiceImplTest extends UnitServiceParent {
 
     @Test
     public void create_shouldThrowsUserNotFoundException(){
-        assertThrows(UserNotFoundException.class, () -> refreshTokenServiceImpl.createAndAddToken(user));
+        assertThrows(UserNotFoundException.class, () -> refreshTokenServiceImpl.createAndGetToken(user));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class RefreshTokenServiceImplTest extends UnitServiceParent {
 
     @Test
     public void updateRefreshToken_shouldThrowsUserNotFoundException(){
-        assertThrows(UserNotFoundException.class, () -> refreshTokenServiceImpl.createAndAddToken(user));
+        assertThrows(UserNotFoundException.class, () -> refreshTokenServiceImpl.createAndGetToken(user));
     }
 
     @Test

@@ -1,9 +1,9 @@
 package me.kqlqk.todo_list.controllers;
 
-import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.dto.LoginDTO;
 import me.kqlqk.todo_list.dto.RegistrationDTO;
 import me.kqlqk.todo_list.models.User;
+import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.util.UtilCookie;
@@ -71,13 +71,7 @@ public class    MainController {
             return "main-pages/login";
         }
 
-        refreshTokenService.updateRefreshToken(user);
-
-        String accessToken = accessTokenService.createToken(user.getEmail());
-        String refreshToken = refreshTokenService.getByUser(user).getToken();
-
-        UtilCookie.createOrUpdateCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
-        UtilCookie.createOrUpdateCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
+        refreshTokenService.updateAccessAndRefreshTokens(user, request, response, true);
 
         return "redirect:/home";
     }
@@ -102,20 +96,19 @@ public class    MainController {
         }
 
         if(userService.getByEmail(registrationDTO.getEmail()) != null){
-            model.addAttribute("emailIsAlreadyRegistered", true);
+            model.addAttribute("emailAlreadyRegistered", true);
             return "main-pages/registration";
         }
         if(userService.getByLogin(registrationDTO.getLogin()) != null){
-            model.addAttribute("loginIsAlreadyRegistered", true);
+            model.addAttribute("loginAlreadyRegistered", true);
             return "main-pages/registration";
         }
 
         User user = registrationDTO.convertToUser();
         userService.add(user);
 
-        refreshTokenService.createAndAddToken(user);
+        String refreshToken = refreshTokenService.createAndGetToken(user);
         String accessToken = accessTokenService.createToken(user.getEmail());
-        String refreshToken = refreshTokenService.getByUser(user).getToken();
 
         UtilCookie.createOrUpdateCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
         UtilCookie.createOrUpdateCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);

@@ -13,7 +13,7 @@ public interface RefreshTokenService {
     boolean existsById(long id);
     RefreshToken getByUser(User user);
 
-    void createAndAddToken(User user);
+    String createAndGetToken(User user);
     String getEmail(String token);
     long getValidity();
     boolean isValid(RefreshToken refreshToken);

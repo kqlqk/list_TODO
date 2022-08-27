@@ -1,11 +1,11 @@
 package me.kqlqk.todo_list.controllers.rest;
 
-import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.dto.LoginDTO;
 import me.kqlqk.todo_list.dto.RegistrationDTO;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.User;
+import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.util.UtilCookie;
@@ -47,22 +47,9 @@ public class MainRestController {
             throw new UserNotFoundException("Email/Username or password incorrect");
         }
 
-        refreshTokenService.updateRefreshToken(user);
+        Map<String, String> tokens = refreshTokenService.updateAccessAndRefreshTokens(user, request, response, loginDTO.isSetCookie());
 
-        String accessToken = accessTokenService.createToken(user.getEmail());
-        String refreshToken = refreshTokenService.getByUser(user).getToken();
-
-        if(loginDTO.isSetCookie()) {
-            UtilCookie.createOrUpdateCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
-            UtilCookie.createOrUpdateCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
-        }
-
-        Map<Object, Object> responseEntity = new HashMap<>();
-
-        responseEntity.put("access_token", accessToken);
-        responseEntity.put("refresh_token", refreshToken);
-
-        return ResponseEntity.ok(responseEntity);
+        return ResponseEntity.ok(tokens);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/registration")
@@ -78,19 +65,18 @@ public class MainRestController {
         User user = registrationDTO.convertToUser();
         userService.add(user);
 
-        refreshTokenService.createAndAddToken(user);
+        String refreshToken = refreshTokenService.createAndGetToken(user);
         String accessToken = accessTokenService.createToken(user.getEmail());
-        String refreshToken = refreshTokenService.getByUser(user).getToken();
 
-        if(registrationDTO.isSetCookie()){
+        if(registrationDTO.isSetCookie()) {
             UtilCookie.createOrUpdateCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
             UtilCookie.createOrUpdateCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
         }
 
-        Map<Object, Object> responseEntity = new HashMap<>();
-        responseEntity.put("access_token", accessToken);
-        responseEntity.put("refresh_token", refreshToken);
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access_token", accessToken);
+        tokens.put("refresh_token", refreshToken);
 
-        return ResponseEntity.ok(responseEntity);
+        return ResponseEntity.ok(tokens);
     }
 }

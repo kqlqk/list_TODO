@@ -34,8 +34,9 @@ public class RefreshTokenServiceImplTest extends IntegrationServiceParent {
 
         assertThat(user.getRefreshToken()).isNull();
 
-        refreshTokenService.createAndAddToken(user);
+        String token = refreshTokenService.createAndGetToken(user);
 
+        assertThat(token).isNotNull();
         assertThat(user.getRefreshToken()).isNotNull();
     }
 
@@ -46,7 +47,7 @@ public class RefreshTokenServiceImplTest extends IntegrationServiceParent {
         user.setLogin("randomLogin");
         user.setPassword("randomPswd1");
         userService.add(user);
-        refreshTokenService.createAndAddToken(user);
+        refreshTokenService.createAndGetToken(user);
 
         String email = refreshTokenService.getEmail(user.getRefreshToken().getToken());
 

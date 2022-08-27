@@ -39,7 +39,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private final List<String> URIs = Arrays.asList(
             "/home",
-            "/home/",
+            "/logout",
             "/admin",
 
             "/api/notes",

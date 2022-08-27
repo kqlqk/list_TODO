@@ -66,7 +66,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public void createAndAddToken(User user) {
+    public String createAndGetToken(User user) {
         if(!userService.isValid(user)){
             throw new UserNotFoundException("User with id = " +  user.getId() + " not found");
         }
@@ -90,6 +90,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         user.setRefreshToken(refreshToken);
 
         refreshTokenRepository.save(refreshToken);
+
+        return refreshTokenString;
     }
 
     @Override

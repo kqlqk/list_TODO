@@ -12,10 +12,9 @@ import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.AuthenticationService;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
-import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import me.kqlqk.todo_list.util.UtilCookie;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -35,7 +34,6 @@ public class JWTFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final RestGlobalExceptionHandler restExceptionHandler;
     private final AuthenticationService authenticationService;
-    private final UserDetailsServiceImpl userDetailsService;
 
     private final List<String> URIs = Arrays.asList(
             "/home",
@@ -50,13 +48,13 @@ public class JWTFilter extends OncePerRequestFilter {
     public JWTFilter(AccessTokenService accessTokenService,
                      RefreshTokenService refreshTokenService,
                      UserService userService,
-                     RestGlobalExceptionHandler restExceptionHandler, AuthenticationService authenticationService, UserDetailsServiceImpl userDetailsService) {
+                     RestGlobalExceptionHandler restExceptionHandler,
+                     AuthenticationService authenticationService) {
         this.accessTokenService = accessTokenService;
         this.refreshTokenService = refreshTokenService;
         this.userService = userService;
         this.restExceptionHandler = restExceptionHandler;
         this.authenticationService = authenticationService;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -89,6 +87,10 @@ public class JWTFilter extends OncePerRequestFilter {
                     exceptionDTO = restExceptionHandler.handleNotFoundAndNotValidExceptions(e);
                     postException(response, exceptionDTO);
                 }
+                else{
+                    response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
+                    response.setHeader("Location", "/login");
+                }
                 return;
             }
         }
@@ -109,7 +111,7 @@ public class JWTFilter extends OncePerRequestFilter {
             try {
                 user = userService.getCurrentUser();
             }
-            catch (UserNotFoundException e) {
+            catch (UserNotFoundException | NullPointerException e) {
                 try {
                     user = userService.getByEmail(refreshTokenService.getEmail(refreshTokenString));
                 }
@@ -118,6 +120,10 @@ public class JWTFilter extends OncePerRequestFilter {
                         exceptionDTO = new ExceptionDTO();
                         exceptionDTO.setInfo("Access and refresh tokens aren't valid, try to log in one more time");
                         postException(response, exceptionDTO);
+                    }
+                    else{
+                        response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
+                        response.setHeader("Location", "/login");
                     }
                     return;
                 }
@@ -138,13 +144,16 @@ public class JWTFilter extends OncePerRequestFilter {
                     exceptionDTO.setInfo("Access and refresh tokens aren't valid, try to log in one more time");
                     postException(response, exceptionDTO);
                 }
+                else{
+                    response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
+                    response.setHeader("Location", "/login");
+                }
                 return;
             }
         }
 
-        String email = accessTokenService.getEmail(accessTokenString);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        authenticationService.setAuthentication(userDetails);
+        String email = refreshTokenService.getEmail(refreshTokenString);
+        authenticationService.setAuthentication(email);
 
         filterChain.doFilter(request, response);
     }
@@ -154,5 +163,6 @@ public class JWTFilter extends OncePerRequestFilter {
         response.getWriter().write(new ObjectMapper().writeValueAsString(exceptionDTO));
         response.getWriter().flush();
     }
+
 
 }

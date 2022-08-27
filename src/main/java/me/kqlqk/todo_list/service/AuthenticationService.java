@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface AuthenticationService {
+    void setAuthentication(String loginObj);
     void setAuthentication(UserDetails userDetails);
-
     void setAuthentication(Authentication authentication);
-    Authentication getAuthentication(UserDetails userDetails);
-
+    Authentication getUsernamePasswordAuthenticationToken(UserDetails userDetails, String rawPassword);
+    Authentication getUsernamePasswordAuthenticationTokenWithoutCredentials(UserDetails userDetails);
     Authentication getAuthenticationFromContext();
 
 }

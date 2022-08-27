@@ -42,19 +42,11 @@ public class    MainController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String showMainPage(){
-        if(userService.getCurrentUser() != null){
-            return "redirect:/home";
-        }
-
         return "main-pages/main";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/login")
     public String showLoginPage( Model model){
-        if(userService.getCurrentUser() != null){
-            return "redirect:/home";
-        }
-
         model.addAttribute("loginDTO", new LoginDTO());
         return "main-pages/login";
     }

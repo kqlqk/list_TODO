@@ -46,20 +46,20 @@ public class    MainController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/login")
-    public String showLoginPage( Model model){
+    public String showLoginPage(Model model){
         model.addAttribute("loginDTO", new LoginDTO());
         return "main-pages/login";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     public String logIn(@ModelAttribute("loginDTO") LoginDTO loginDTO,
-                        @ModelAttribute("rememberMe") String rememberMe,
                         HttpServletRequest request,
                         HttpServletResponse response) {
         User user = userService.getByLoginObj(loginDTO.getLoginObj());
 
         if(user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())){
             loginDTO.setFormCorrect(false);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "main-pages/login";
         }
 
@@ -84,14 +84,17 @@ public class    MainController {
                          HttpServletRequest request,
                          HttpServletResponse response){
         if(bindingResult.hasErrors() || !registrationDTO.getConfirmPassword().equals(registrationDTO.getPassword())){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "main-pages/registration";
         }
 
         if(userService.getByEmail(registrationDTO.getEmail()) != null){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             model.addAttribute("emailAlreadyRegistered", true);
             return "main-pages/registration";
         }
         if(userService.getByLogin(registrationDTO.getLogin()) != null){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             model.addAttribute("loginAlreadyRegistered", true);
             return "main-pages/registration";
         }

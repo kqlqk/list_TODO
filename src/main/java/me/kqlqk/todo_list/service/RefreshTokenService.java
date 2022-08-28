@@ -18,6 +18,6 @@ public interface RefreshTokenService {
     long getValidity();
     boolean isValid(RefreshToken refreshToken);
     String resolveToken(HttpServletRequest request);
-    void updateRefreshToken(User user);
+    String updateRefreshToken(User user);
     Map<String, String> updateAccessAndRefreshTokens(User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie);
 }

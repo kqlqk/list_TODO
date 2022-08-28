@@ -1,6 +1,6 @@
 package integration.me.kqlqk.todo_list.service.impl;
 
-import integration.me.kqlqk.todo_list.service.IntegrationServiceParent;
+import integration.me.kqlqk.todo_list.IntegrationServiceParent;
 import me.kqlqk.todo_list.service.impl.AuthenticationServiceImpl;
 import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;

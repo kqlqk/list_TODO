@@ -10,11 +10,11 @@
 <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 col-md-8 col-lg-6">
-            <h1 th:text="${'Site works till ' + startTime}">fff</h1>
+            <h1 th:text="${'Site works till ' + startTime}"></h1>
             <br/>
 
             <div class="form-group">
-                <h4 th:text="'Test connection to database'">ddd</h4>
+                <h4 th:text="'Test connection to database'"></h4>
                 <form th:method="patch" th:action="@{/admin}">
                     <input class="btn btn-outline-primary btn-lg" th:type="submit" th:value="Test">
                 </form>

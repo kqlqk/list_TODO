@@ -73,7 +73,7 @@ TODO List is a simple way to write down all your plans, tasks, ideas in one plac
 
 
 ## AUTH
-Authentication works with JWT.
+Authentication and authorization works with JWT.
 
 Below is a small example of authentication using postman
 
@@ -105,8 +105,8 @@ and if in request `setCookie = true` we also will get 2 cookie files with access
 <img src="images/auth/login3.png">
 
 Keys:
-* `Authentication_access` for access token 
-* `Authentication_refresh` for refresh token
+* `Authorization_access` for access token 
+* `Authorization_refresh` for refresh token
 
 
 <li><p>Values:</p>
@@ -116,7 +116,7 @@ Keys:
       </ul>
 
 * `prefix` is `Bearer_`
-* `token` for `Authentication_access` is `access_token` for `Authentication_refresh` is `refresh_token` that we got in response on the step 2
+* `token` for `Authorization_access` is `access_token` for `Authorization_refresh` is `refresh_token` that we got in response on the step 2
 
 Log in passed successfully. Now we can go to <a href="##REST API">REST API</a>
 
@@ -333,7 +333,7 @@ Below you can find all available requests and descriptions for them.
 </details>
 
 
-#CONFIGURATION
+## CONFIGURATION
 You should create `application.properties` in `src/main/resources/`, that consist of
 ```
 spring.datasource.url=yourValue

@@ -6,13 +6,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletResponseNotFoundException;
-import me.kqlqk.todo_list.service.AccessTokenService;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RefreshTokenRepository;
+import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.util.UtilCookie;
@@ -141,7 +141,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public void updateRefreshToken(User user) {
+    public String updateRefreshToken(User user) {
         if(!userService.isValid(user)){
             throw new UserNotFoundException("User not found, if you hasn't account try to sign up");
         }
@@ -163,6 +163,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         refreshToken.setExpiresIn(validity.getTime());
 
         refreshTokenRepository.save(refreshToken);
+
+        return token;
     }
 
     @Override

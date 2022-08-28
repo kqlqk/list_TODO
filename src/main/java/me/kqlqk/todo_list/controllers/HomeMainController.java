@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @Controller
@@ -90,8 +91,11 @@ public class HomeMainController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value ="/new")
-    public String createNote(@ModelAttribute("noteDTO") @Valid NoteDTO noteDTO, BindingResult bindingResult){
+    public String createNote(@ModelAttribute("noteDTO") @Valid NoteDTO noteDTO,
+                             BindingResult bindingResult,
+                             HttpServletResponse response){
         if(bindingResult.hasErrors()){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "home-main-pages/new";
         }
 
@@ -139,6 +143,6 @@ public class HomeMainController {
 
         noteService.update(noteDTO.convertToEditedNote(noteService, id));
 
-        return "redirect:/home/{id}";
+        return "redirect:/home";
     }
 }

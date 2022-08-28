@@ -1,6 +1,6 @@
 package integration.me.kqlqk.todo_list.service.impl;
 
-import integration.me.kqlqk.todo_list.service.IntegrationServiceParent;
+import integration.me.kqlqk.todo_list.IntegrationServiceParent;
 import me.kqlqk.todo_list.service.impl.AccessTokenServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

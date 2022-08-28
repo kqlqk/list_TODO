@@ -1,4 +1,4 @@
-package integration.me.kqlqk.todo_list.service;
+package integration.me.kqlqk.todo_list;
 
 import me.kqlqk.todo_list.Init;
 import org.springframework.boot.test.context.SpringBootTest;

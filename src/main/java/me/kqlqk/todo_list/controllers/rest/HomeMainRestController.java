@@ -31,10 +31,11 @@ public class HomeMainRestController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/notes/{id}")
     public ResponseEntity<?> getNoteForUser(@PathVariable long id){
-        if((noteService.existsForUser(userService.getCurrentUser(), id))){
-            return ResponseEntity.ok(new NoteDTO(noteService.getById(id)));
+        if(!(noteService.existsForUser(userService.getCurrentUser(), id))){
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(new NoteDTO(noteService.getById(id)));
     }
 
 
@@ -54,13 +55,12 @@ public class HomeMainRestController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/notes/{id}")
     public ResponseEntity<?> deleteNote(@PathVariable long id){
-        if (noteService.existsForUser(userService.getCurrentUser(), id)){
-            noteService.delete(id);
-            return ResponseEntity.ok(getAllNotesForUser());
+        if (!noteService.existsForUser(userService.getCurrentUser(), id)){
+            return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.notFound().build();
-
+        noteService.delete(id);
+        return ResponseEntity.ok(getAllNotesForUser());
     }
 
 }

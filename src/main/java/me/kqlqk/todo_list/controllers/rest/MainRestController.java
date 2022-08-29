@@ -10,10 +10,12 @@ import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.util.UtilCookie;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +41,6 @@ public class MainRestController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/login")
-    @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response){
         User user = userService.getByLoginObj(loginDTO.getLoginObj());
 
@@ -49,11 +50,10 @@ public class MainRestController {
 
         Map<String, String> tokens = refreshTokenService.updateAccessAndRefreshTokens(user, request, response, loginDTO.isSetCookie());
 
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.accepted().body(tokens);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/registration")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> signUp(@Valid @RequestBody RegistrationDTO registrationDTO, HttpServletRequest request, HttpServletResponse response){
         if(userService.getByEmail(registrationDTO.getEmail()) != null){
             throw new UserAlreadyExistsException("Email " + registrationDTO.getEmail() + " already registered");
@@ -77,6 +77,6 @@ public class MainRestController {
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
 
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.accepted().body(tokens);
     }
 }

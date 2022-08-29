@@ -46,7 +46,7 @@ public class MainControllerTest extends IntegrationControllerParent {
     }
 
     @Test
-    public void logIn_shouldBadLogIn() throws Exception {
+    public void logIn_shouldIncorrectLogIn() throws Exception {
         mockMvc.perform(post("/login")
                     .param("loginObj", "userLogin")
                     .param("password", "badPswd"))
@@ -94,7 +94,7 @@ public class MainControllerTest extends IntegrationControllerParent {
     }
 
     @Test
-    public void signUp_shouldBadSignUp() throws Exception {
+    public void signUp_shouldIncorrectSignUp() throws Exception {
         mockMvc.perform(post("/registration")
                         .param("email", "user@mail.com")
                         .param("login", "newUserLogin")

@@ -67,4 +67,8 @@ public class RecoveryRestController {
 
         return ResponseEntity.ok(response);
     }
+
+    public Map<Integer, String> getRecoveryPageIdEmail() {
+        return recoveryPageIdEmail;
+    }
 }

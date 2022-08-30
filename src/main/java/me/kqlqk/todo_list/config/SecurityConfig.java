@@ -1,6 +1,7 @@
 package me.kqlqk.todo_list.config;
 
 import me.kqlqk.todo_list.config.filters.JWTFilter;
+import me.kqlqk.todo_list.config.filters.RequestRejectedExceptionFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
@@ -17,6 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final DaoAuthenticationProvider daoAuthenticationProvider;
     private final JWTFilter jwtFilter;
+    private final RequestRejectedExceptionFilter requestRejectedExceptionFilter;
 
     public static final String[] urlsForGuests = {
             "/",
@@ -40,9 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Autowired
-    public SecurityConfig(DaoAuthenticationProvider daoAuthenticationProvider, JWTFilter jwtFilter) {
+    public SecurityConfig(DaoAuthenticationProvider daoAuthenticationProvider, JWTFilter jwtFilter, RequestRejectedExceptionFilter requestRejectedExceptionFilter) {
         this.daoAuthenticationProvider = daoAuthenticationProvider;
         this.jwtFilter = jwtFilter;
+        this.requestRejectedExceptionFilter = requestRejectedExceptionFilter;
     }
 
 
@@ -59,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers(urlsForUser).hasAnyRole("USER", "ADMIN")
                         .antMatchers(urlsForAdmins).hasRole("ADMIN")
                 .and()
+                    .addFilterBefore(requestRejectedExceptionFilter, WebAsyncManagerIntegrationFilter.class)
                     .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                     .logout()
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))

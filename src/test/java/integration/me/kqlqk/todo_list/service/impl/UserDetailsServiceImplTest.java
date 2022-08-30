@@ -1,13 +1,14 @@
 package integration.me.kqlqk.todo_list.service.impl;
 
-import integration.me.kqlqk.todo_list.IntegrationServiceParent;
+import annotations.TestService;
 import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserDetailsServiceImplTest extends IntegrationServiceParent {
+@TestService
+public class UserDetailsServiceImplTest {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 

@@ -1,11 +1,12 @@
 package integration.me.kqlqk.todo_list.service.impl;
 
-import integration.me.kqlqk.todo_list.IntegrationServiceParent;
+import annotations.TestService;
 import me.kqlqk.todo_list.service.impl.EmailSenderServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class EmailSenderServiceImplTest extends IntegrationServiceParent {
+@TestService
+public class EmailSenderServiceImplTest {
 
     @Autowired
     private EmailSenderServiceImpl emailSenderService;

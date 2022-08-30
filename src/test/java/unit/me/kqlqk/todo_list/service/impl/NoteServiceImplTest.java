@@ -9,15 +9,17 @@ import me.kqlqk.todo_list.repositories.NoteRepository;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.service.impl.NoteServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import unit.me.kqlqk.todo_list.service.UnitServiceParent;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class NoteServiceImplTest extends UnitServiceParent {
+@ExtendWith(MockitoExtension.class)
+public class NoteServiceImplTest {
 
     @InjectMocks
     private NoteServiceImpl noteServiceImpl;

@@ -1,7 +1,7 @@
 package integration.me.kqlqk.todo_list.controllers.rest;
 
+import annotations.TestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import integration.me.kqlqk.todo_list.IntegrationControllerParent;
 import me.kqlqk.todo_list.dto.LoginDTO;
 import me.kqlqk.todo_list.dto.RegistrationDTO;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MainRestControllerTest extends IntegrationControllerParent {
+@TestController
+public class MainRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 

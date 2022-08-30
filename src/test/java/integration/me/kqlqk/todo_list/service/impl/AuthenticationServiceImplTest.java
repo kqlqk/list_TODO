@@ -1,6 +1,6 @@
 package integration.me.kqlqk.todo_list.service.impl;
 
-import integration.me.kqlqk.todo_list.IntegrationServiceParent;
+import annotations.TestService;
 import me.kqlqk.todo_list.service.impl.AuthenticationServiceImpl;
 import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,8 @@ import org.springframework.security.core.Authentication;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AuthenticationServiceImplTest extends IntegrationServiceParent {
+@TestService
+public class AuthenticationServiceImplTest {
 
     @Autowired
     private AuthenticationServiceImpl authenticationService;

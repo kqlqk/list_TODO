@@ -1,6 +1,6 @@
 package integration.me.kqlqk.todo_list.controllers;
 
-import integration.me.kqlqk.todo_list.IntegrationControllerParent;
+import annotations.TestController;
 import me.kqlqk.todo_list.controllers.RecoveryController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class RecoveryControllerTest extends IntegrationControllerParent {
+@TestController
+public class RecoveryControllerTest {
     @Autowired
     private RecoveryController recoveryController;
 

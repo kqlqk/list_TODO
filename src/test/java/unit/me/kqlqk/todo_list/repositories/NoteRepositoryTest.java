@@ -1,5 +1,6 @@
 package unit.me.kqlqk.todo_list.repositories;
 
+import annotations.TestRepository;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.NoteRepository;
@@ -14,7 +15,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class NoteRepositoryTest extends RepositoryParent{
+@TestRepository
+public class NoteRepositoryTest{
     @Autowired
     private NoteRepository noteRepository;
 

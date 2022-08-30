@@ -1,6 +1,6 @@
 package integration.me.kqlqk.todo_list.service.impl;
 
-import integration.me.kqlqk.todo_list.IntegrationServiceParent;
+import annotations.TestService;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.AuthenticationService;
 import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserServiceImplTest extends IntegrationServiceParent {
+@TestService
+public class UserServiceImplTest {
     @Autowired
     private UserServiceImpl userService;
 

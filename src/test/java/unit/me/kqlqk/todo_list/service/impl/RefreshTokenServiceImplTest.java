@@ -11,9 +11,10 @@ import me.kqlqk.todo_list.repositories.RefreshTokenRepository;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.service.impl.RefreshTokenServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import unit.me.kqlqk.todo_list.service.UnitServiceParent;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class RefreshTokenServiceImplTest extends UnitServiceParent {
+@ExtendWith(MockitoExtension.class)
+public class RefreshTokenServiceImplTest {
     @InjectMocks
     private RefreshTokenServiceImpl refreshTokenServiceImpl;
 

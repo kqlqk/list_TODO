@@ -3,9 +3,10 @@ package unit.me.kqlqk.todo_list.service.impl;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
 import me.kqlqk.todo_list.service.impl.ErrorsHandlerServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import unit.me.kqlqk.todo_list.service.UnitServiceParent;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 
-public class ErrorsHandlerServiceImplTest extends UnitServiceParent {
+@ExtendWith(MockitoExtension.class)
+public class ErrorsHandlerServiceImplTest {
     @InjectMocks
     private ErrorsHandlerServiceImpl errorsHandlerServiceImpl;
 

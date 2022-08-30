@@ -1,6 +1,6 @@
 package integration.me.kqlqk.todo_list.controllers.rest;
 
-import integration.me.kqlqk.todo_list.IntegrationControllerParent;
+import annotations.TestController;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AdminRestControllerTest extends IntegrationControllerParent {
+@TestController
+public class AdminRestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

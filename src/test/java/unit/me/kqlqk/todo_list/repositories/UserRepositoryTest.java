@@ -1,5 +1,6 @@
 package unit.me.kqlqk.todo_list.repositories;
 
+import annotations.TestRepository;
 import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RefreshTokenRepository;
@@ -13,7 +14,8 @@ import javax.persistence.EntityNotFoundException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class UserRepositoryTest extends RepositoryParent{
+@TestRepository
+public class UserRepositoryTest{
 
     @Autowired
     private UserRepository userRepository;

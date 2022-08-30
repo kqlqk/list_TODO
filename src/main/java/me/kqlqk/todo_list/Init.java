@@ -22,7 +22,6 @@ public class Init {
  * TODO:
  *  check registrationDTO validation
  *  check if user has necessary cookies || headers auto redirect to home page
- *  change test parent class to annotation
  *  change npe to iae
  *  add sign up button to login page v2.5 dev
  *  improve remember me button v2.5 dev

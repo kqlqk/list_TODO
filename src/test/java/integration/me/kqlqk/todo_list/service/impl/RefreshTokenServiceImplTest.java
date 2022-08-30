@@ -1,6 +1,6 @@
 package integration.me.kqlqk.todo_list.service.impl;
 
-import integration.me.kqlqk.todo_list.IntegrationServiceParent;
+import annotations.TestService;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.service.impl.RefreshTokenServiceImpl;
@@ -15,7 +15,8 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RefreshTokenServiceImplTest extends IntegrationServiceParent {
+@TestService
+public class RefreshTokenServiceImplTest {
 
     @Autowired
     private RefreshTokenServiceImpl refreshTokenService;

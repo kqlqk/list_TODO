@@ -1,5 +1,6 @@
 package unit.me.kqlqk.todo_list.repositories;
 
+import annotations.TestRepository;
 import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.repositories.RefreshTokenRepository;
 import org.junit.jupiter.api.Test;
@@ -7,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RefreshTokenRepositoryTest extends RepositoryParent {
+@TestRepository
+public class RefreshTokenRepositoryTest {
 
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;

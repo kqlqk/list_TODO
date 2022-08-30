@@ -6,16 +6,18 @@ import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
-import unit.me.kqlqk.todo_list.service.UnitServiceParent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 
-public class UserDetailsServiceImplTest extends UnitServiceParent {
+@ExtendWith(MockitoExtension.class)
+public class UserDetailsServiceImplTest {
 
     @InjectMocks
     private UserDetailsServiceImpl userDetailsServiceImpl;

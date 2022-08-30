@@ -1,6 +1,6 @@
 package integration.me.kqlqk.todo_list.service.impl;
 
-import integration.me.kqlqk.todo_list.IntegrationServiceParent;
+import annotations.TestService;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.UserService;
@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
-public class NoteServiceImplTest extends IntegrationServiceParent {
+@TestService
+public class NoteServiceImplTest {
 
     @Autowired
     private NoteServiceImpl noteService;

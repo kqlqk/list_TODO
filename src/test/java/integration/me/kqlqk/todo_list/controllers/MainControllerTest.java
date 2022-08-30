@@ -1,6 +1,6 @@
 package integration.me.kqlqk.todo_list.controllers;
 
-import integration.me.kqlqk.todo_list.IntegrationControllerParent;
+import annotations.TestController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -13,7 +13,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class MainControllerTest extends IntegrationControllerParent {
+@TestController
+public class MainControllerTest {
     @Autowired
     private MockMvc mockMvc;
 

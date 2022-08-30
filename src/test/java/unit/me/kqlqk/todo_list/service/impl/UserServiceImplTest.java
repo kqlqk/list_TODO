@@ -10,18 +10,19 @@ import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.AuthenticationService;
 import me.kqlqk.todo_list.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import unit.me.kqlqk.todo_list.service.UnitServiceParent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-
-public class UserServiceImplTest extends UnitServiceParent {
+@ExtendWith(MockitoExtension.class)
+public class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userServiceImpl;
 

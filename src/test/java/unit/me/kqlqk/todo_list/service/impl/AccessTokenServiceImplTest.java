@@ -8,9 +8,10 @@ import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.service.impl.AccessTokenServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import unit.me.kqlqk.todo_list.service.UnitServiceParent;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 
-public class AccessTokenServiceImplTest extends UnitServiceParent {
+@ExtendWith(MockitoExtension.class)
+public class AccessTokenServiceImplTest {
     @InjectMocks
     private AccessTokenServiceImpl accessTokenService;
 

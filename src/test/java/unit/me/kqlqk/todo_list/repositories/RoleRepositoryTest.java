@@ -1,5 +1,6 @@
 package unit.me.kqlqk.todo_list.repositories;
 
+import annotations.TestRepository;
 import me.kqlqk.todo_list.models.Role;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,8 @@ import javax.persistence.EntityNotFoundException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RoleRepositoryTest extends RepositoryParent{
+@TestRepository
+public class RoleRepositoryTest{
 
     @Autowired
     private RoleRepository roleRepository;

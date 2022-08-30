@@ -2,16 +2,18 @@ package unit.me.kqlqk.todo_list.service.impl;
 
 import me.kqlqk.todo_list.service.impl.AuthenticationServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import unit.me.kqlqk.todo_list.service.UnitServiceParent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class AuthenticationServiceImplTest extends UnitServiceParent {
+@ExtendWith(MockitoExtension.class)
+public class AuthenticationServiceImplTest {
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;
 

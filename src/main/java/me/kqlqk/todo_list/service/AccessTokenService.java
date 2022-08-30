@@ -10,5 +10,5 @@ public interface AccessTokenService {
     String getEmail(String token);
     long getValidity();
     String resolveToken(HttpServletRequest request);
-    boolean validateToken(String token);
+    boolean isValid(String token);
 }

@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.kqlqk.todo_list.dto.ExceptionDTO;
 import me.kqlqk.todo_list.exceptions_handling.RestGlobalExceptionHandler;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotValidException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
-import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.AuthenticationService;
@@ -24,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,107 +59,109 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         boolean isRest = request.getRequestURI().contains("/api");
         ExceptionDTO exceptionDTO;
+        boolean setCookie;
 
+        if(!shouldCheckRequest(request)){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Map<String, String> tokens;
+
+        try {
+            tokens = getTokensByCookie(request);
+            setCookie = true;
+        }
+        catch (TokenNotFoundException e){
+            try {
+                tokens = getTokensByHeaders(request);
+                setCookie = false;
+            }
+            catch (TokenNotFoundException nestedEx){
+                exceptionDTO = restExceptionHandler.handleNotFoundAndNotValidExceptions(nestedEx);
+                postException(response, exceptionDTO, isRest);
+                return;
+            }
+        }
+
+        String accessTokenString = tokens.get("access_token");
+        String refreshTokenString = tokens.get("refresh_token");
+
+        if(!accessTokenService.isValid(accessTokenString)){
+            if(!refreshTokenService.isValid(refreshTokenString)){
+                exceptionDTO = new ExceptionDTO();
+                exceptionDTO.setInfo("Access and refresh tokens aren't valid, try to log in one more time");
+                postException(response, exceptionDTO, isRest);
+                return;
+            }
+
+            User user = userService.getByEmail(refreshTokenService.getEmail(refreshTokenString));
+            tokens = refreshTokenService.updateAccessAndRefreshTokens(user, request, response, setCookie);
+            refreshTokenString = tokens.get("refresh_token");
+            response.setHeader("Authorization_access", "Bearer_" + tokens.get("access_token"));
+            response.setHeader("Authorization_refresh", "Bearer_" + tokens.get("refresh_token"));
+        }
+
+        if(!refreshTokenService.isValid(refreshTokenString)){
+            exceptionDTO = new ExceptionDTO();
+            exceptionDTO.setInfo("Refresh token aren't valid, try to log in one more time");
+            postException(response, exceptionDTO, isRest);
+            return;
+        }
+
+        String email = refreshTokenService.getEmail(tokens.get("refresh_token"));
+        authenticationService.setAuthentication(email);
+        filterChain.doFilter(request, response);
+    }
+
+    private boolean shouldCheckRequest(HttpServletRequest request){
         int count = 0;
+
         for(String uri : URIs){
             if(!request.getRequestURI().startsWith(uri)){
                 count++;
             }
             if(count == URIs.size()){
-                filterChain.doFilter(request, response);
-                return;
+                return false;
             }
         }
-
-
-        String accessTokenString = null;
-        String refreshTokenString = null;
-
-        if (!UtilCookie.isCookieExistsByName("at", request) || !UtilCookie.isCookieExistsByName("rt", request)){
-            try {
-                accessTokenString = accessTokenService.resolveToken(request);
-                refreshTokenString = refreshTokenService.resolveToken(request);
-            }
-            catch (TokenNotFoundException e){
-                if(isRest) {
-                    exceptionDTO = restExceptionHandler.handleNotFoundAndNotValidExceptions(e);
-                    postException(response, exceptionDTO);
-                }
-                else{
-                    response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
-                    response.setHeader("Location", "/login");
-                }
-                return;
-            }
-        }
-
-        boolean setCookie;
-
-        if (UtilCookie.getCookieByName("at", request) != null) {
-            setCookie = true;
-            accessTokenString = UtilCookie.getCookieByName("at", request).getValue();
-            refreshTokenString = UtilCookie.getCookieByName("rt", request).getValue();
-        }
-        else {
-            setCookie = false;
-        }
-
-        if (!accessTokenService.validateToken(accessTokenString)) {
-            User user = null;
-            try {
-                user = userService.getCurrentUser();
-            }
-            catch (UserNotFoundException | NullPointerException e) {
-                try {
-                    user = userService.getByEmail(refreshTokenService.getEmail(refreshTokenString));
-                }
-                catch (UserNotFoundException | TokenNotValidException ex){
-                    if(isRest) {
-                        exceptionDTO = new ExceptionDTO();
-                        exceptionDTO.setInfo("Access and refresh tokens aren't valid, try to log in one more time");
-                        postException(response, exceptionDTO);
-                    }
-                    else{
-                        response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
-                        response.setHeader("Location", "/login");
-                    }
-                    return;
-                }
-            }
-
-            RefreshToken refreshTokenFromDb = refreshTokenService.getByUser(user);
-
-            if (refreshTokenString.equals(refreshTokenFromDb.getToken())) {
-                Map<String, String> tokens = refreshTokenService.updateAccessAndRefreshTokens(user, request, response, setCookie);
-                accessTokenString = tokens.get("access_token");
-                refreshTokenString = tokens.get("refresh_token");
-                response.setHeader("Authorization_access", "Bearer_" + accessTokenString);
-                response.setHeader("Authorization_refresh", "Bearer_" + refreshTokenString);
-            }
-            else {
-                if(isRest) {
-                    exceptionDTO = new ExceptionDTO();
-                    exceptionDTO.setInfo("Access and refresh tokens aren't valid, try to log in one more time");
-                    postException(response, exceptionDTO);
-                }
-                else{
-                    response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
-                    response.setHeader("Location", "/login");
-                }
-                return;
-            }
-        }
-
-        String email = refreshTokenService.getEmail(refreshTokenString);
-        authenticationService.setAuthentication(email);
-
-        filterChain.doFilter(request, response);
+        return true;
     }
 
-    private void postException(HttpServletResponse response, ExceptionDTO exceptionDTO) throws IOException {
-        response.setContentType("application/json");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(exceptionDTO));
-        response.getWriter().flush();
+    private Map<String, String> getTokensByCookie(HttpServletRequest request) {
+        if(!UtilCookie.isCookieExistsByName("at", request) ||
+                !UtilCookie.isCookieExistsByName("rt", request)){
+            throw new TokenNotFoundException("There's no cookie with tokens");
+        }
+
+        String accessToken = UtilCookie.getCookieByName("at", request).getValue();
+        String refreshToken = UtilCookie.getCookieByName("rt", request).getValue();
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access_token", accessToken);
+        tokens.put("refresh_token", refreshToken);
+        return tokens;
+    }
+
+    private Map<String, String> getTokensByHeaders(HttpServletRequest request){
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access_token", accessTokenService.resolveToken(request));
+        tokens.put("refresh_token", refreshTokenService.resolveToken(request));
+
+        return tokens;
+    }
+
+    private void postException(HttpServletResponse response, ExceptionDTO exceptionDTO, boolean isRest) throws IOException {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        if(isRest) {
+            response.setContentType("application/json");
+            response.getWriter().write(new ObjectMapper().writeValueAsString(exceptionDTO));
+            response.getWriter().flush();
+        }
+        else{
+            response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
+            response.setHeader("Location", "/login");
+        }
     }
 
 

@@ -17,7 +17,6 @@ import unit.me.kqlqk.todo_list.service.UnitServiceParent;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -84,10 +83,6 @@ public class RefreshTokenServiceImplTest extends UnitServiceParent {
     @Test
     public void isValid_shouldChecksIsTokenValid(){
         assertThat(refreshTokenServiceImpl.isValid(null)).isFalse();
-
-        doReturn(new Date().getTime() + 1000).when(refreshToken).getExpiresIn();
-
-        assertThat(refreshTokenServiceImpl.isValid(refreshToken)).isTrue();
     }
 
     @Test

@@ -25,13 +25,13 @@ public class AccessServiceImplTest extends IntegrationServiceParent {
 
 
     @Test
-    public void validateToken_shouldValidateToken() {
+    public void isValid_shouldCheckToken() {
         String token = accessTokenService.createToken("user@mail.com");
 
-        assertThat(accessTokenService.validateToken(token)).isTrue();
+        assertThat(accessTokenService.isValid(token)).isTrue();
 
         String invalidToken = token + 'g';
 
-        assertThat(accessTokenService.validateToken(invalidToken)).isFalse();
+        assertThat(accessTokenService.isValid(invalidToken)).isFalse();
     }
 }

@@ -61,7 +61,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
         try{
             return Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getSubject();
         }
-        catch (JwtException | IllegalArgumentException e){
+        catch (Exception e){
             throw new TokenNotValidException("Access token cannot be parsed");
         }
     }
@@ -83,13 +83,18 @@ public class AccessTokenServiceImpl implements AccessTokenService {
         return bearerWithToken.substring(7);
     }
 
-    public boolean validateToken(String token){
+    public boolean isValid(String token){
         if(token == null){
             return false;
         }
 
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token);
+
+            String email = getEmail(token);
+            if(!userService.isValid(userService.getByEmail(email))){
+                return false;
+            }
 
             return claims.getBody().getExpiration().after(new Date());
         }

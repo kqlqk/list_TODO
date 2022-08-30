@@ -76,7 +76,7 @@ public class AccessTokenServiceImplTest extends UnitServiceParent {
 
     @Test
     public void validateToken_shouldValidatesToken(){
-        assertThat(accessTokenService.validateToken(null)).isFalse();
-        assertThat(accessTokenService.validateToken("anyToken")).isFalse();
+        assertThat(accessTokenService.isValid(null)).isFalse();
+        assertThat(accessTokenService.isValid("anyToken")).isFalse();
     }
 }

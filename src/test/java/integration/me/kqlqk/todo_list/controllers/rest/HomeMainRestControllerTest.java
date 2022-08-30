@@ -39,8 +39,8 @@ public class HomeMainRestControllerTest extends IntegrationControllerParent {
     @Test
     public void getAllNotesForUser_shouldReturnNotes() throws Exception {
         mockMvc.perform(get("/api/notes")
-                .header("Authorization_access", "Bearer_random")
-                .header("Authorization_refresh", "Bearer_" + userRefreshToken))
+                        .header("Authorization_access", "Bearer_random")
+                        .header("Authorization_refresh", "Bearer_" + userRefreshToken))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())

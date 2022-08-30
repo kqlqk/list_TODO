@@ -66,6 +66,14 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
+    public RefreshToken getByStringToken(String token) {
+        if(token == null){
+            throw new TokenNotFoundException("Token cannot be null");
+        }
+        return refreshTokenRepository.getByToken(token);
+    }
+
+    @Override
     public String createAndGetToken(User user) {
         if(!userService.isValid(user)){
             throw new UserNotFoundException("User with id = " +  user.getId() + " not found");
@@ -114,12 +122,24 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public boolean isValid(RefreshToken refreshToken) {
-        if (refreshToken == null){
+    public boolean isValid(String refreshTokenString) {
+        if (refreshTokenString == null || refreshTokenString.equals("")){
+            return false;
+        }
+        RefreshToken refreshToken = getByStringToken(refreshTokenString);
+
+        try {
+            String email = getEmail(refreshToken.getToken());
+            if(!userService.isValid(userService.getByEmail(email))){
+                return false;
+            }
+
+            return new Date(refreshToken.getExpiresIn()).after(new Date());
+        }
+        catch (Exception e){
             return false;
         }
 
-        return new Date(refreshToken.getExpiresIn()).after(new Date());
     }
 
     @Override
@@ -188,6 +208,23 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             UtilCookie.createOrUpdateCookie("at", newAccessToken, (int) (getValidity() / 1000), request, response);
             UtilCookie.createOrUpdateCookie("rt", newRefreshToken, (int) (getValidity() / 1000), request, response);
         }
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access_token", newAccessToken);
+        tokens.put("refresh_token", newRefreshToken);
+
+        return tokens;
+    }
+
+    @Override
+    public Map<String, String> updateAccessAndRefreshTokens(User user) {
+        if(!userService.isValid(user)){
+            throw new UserNotFoundException("User not found");
+        }
+        updateRefreshToken(user);
+
+        String newAccessToken = accessTokenService.createToken(user.getEmail());
+        String newRefreshToken = getByUser(user).getToken();
 
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", newAccessToken);

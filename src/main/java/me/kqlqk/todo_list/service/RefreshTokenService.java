@@ -12,12 +12,14 @@ import java.util.Map;
 public interface RefreshTokenService {
     boolean existsById(long id);
     RefreshToken getByUser(User user);
+    RefreshToken getByStringToken(String token);
 
     String createAndGetToken(User user);
     String getEmail(String token);
     long getValidity();
-    boolean isValid(RefreshToken refreshToken);
+    boolean isValid(String refreshToken);
     String resolveToken(HttpServletRequest request);
     String updateRefreshToken(User user);
     Map<String, String> updateAccessAndRefreshTokens(User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie);
+    Map<String, String> updateAccessAndRefreshTokens(User user);
 }

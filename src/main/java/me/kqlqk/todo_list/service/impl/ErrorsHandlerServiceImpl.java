@@ -1,6 +1,5 @@
 package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
 import me.kqlqk.todo_list.service.ErrorsHandlerService;
 import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class ErrorsHandlerServiceImpl implements ErrorsHandlerService {
     @Override
     public int getErrorCode(HttpServletRequest request) {
         if(request == null){
-            throw new HttpServletRequestNotFoundException("HttpServletRequest cannot be null");
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }
 
         return (int) (request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) != null ?
@@ -32,7 +31,7 @@ public class ErrorsHandlerServiceImpl implements ErrorsHandlerService {
     @Override
     public String getErrorCodeWithDetails(HttpServletRequest request) {
         if(request == null){
-            throw new HttpServletRequestNotFoundException("HttpServletRequest cannot be null");
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }
 
         int status = getErrorCode(request);

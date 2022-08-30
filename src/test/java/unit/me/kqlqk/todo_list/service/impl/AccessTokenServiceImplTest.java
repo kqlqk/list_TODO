@@ -1,8 +1,8 @@
 package unit.me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotValidException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.HttpServletRequestNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.UserService;

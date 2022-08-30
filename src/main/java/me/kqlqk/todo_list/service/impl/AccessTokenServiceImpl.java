@@ -1,9 +1,8 @@
 package me.kqlqk.todo_list.service.impl;
 
 import io.jsonwebtoken.*;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotValidException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.UserService;
@@ -68,7 +67,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 
     public String resolveToken(HttpServletRequest request){
         if(request == null){
-            throw new HttpServletRequestNotFoundException("HttpServletRequest cannot be null");
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }
 
         String bearerWithToken = request.getHeader("Authorization_access");

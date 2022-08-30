@@ -25,6 +25,5 @@ public class Init {
  *  change npe to iae
  *  add sign up button to login page v2.5 dev
  *  improve remember me button v2.5 dev
- *  integrated tests v2.5 dev
  */
 

@@ -4,10 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletResponseNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotValidException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
@@ -104,7 +102,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public String getEmail(String token) {
-        if(token == null){
+        if(token == null || token.equals("")){
             throw new TokenNotFoundException("Refresh token cannot be null");
         }
 
@@ -145,7 +143,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public String resolveToken(HttpServletRequest request){
         if(request == null){
-            throw new HttpServletRequestNotFoundException("HttpServletRequest cannot be null");
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }
 
         String bearerWithToken = request.getHeader("Authorization_refresh");
@@ -193,10 +191,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             throw new UserNotFoundException("User not found");
         }
         if(request == null){
-            throw new HttpServletRequestNotFoundException("HttpServletRequest cannot be null");
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }
         if(response == null){
-            throw new HttpServletResponseNotFoundException("HttpServletResponse cannot be null");
+            throw new IllegalArgumentException("HttpServletResponse cannot be null");
         }
 
         updateRefreshToken(user);

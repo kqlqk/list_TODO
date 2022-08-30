@@ -1,7 +1,7 @@
 package unit.me.kqlqk.todo_list.util;
 
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletRequestNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.HttpServletResponseNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.HttpServletRequestNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.HttpServletResponseNotFoundException;
 import me.kqlqk.todo_list.util.UtilCookie;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

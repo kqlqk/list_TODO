@@ -3,7 +3,7 @@ package me.kqlqk.todo_list.config.filters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.kqlqk.todo_list.dto.ExceptionDTO;
 import me.kqlqk.todo_list.exceptions_handling.RestGlobalExceptionHandler;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.AuthenticationService;

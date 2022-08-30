@@ -36,7 +36,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     public void sendEmail(String subject, String text, String... to) {
         if(to == null || text == null){
             throw new MailSendException("'to' and 'text' cannot be null, \n" +
-                    "to = " + to + "\n" +
+                    "to = " + Arrays.toString(to) + "\n" +
                     "text = " + text);
         }
 

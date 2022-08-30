@@ -21,7 +21,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void setAuthentication(String loginObj) {
         if(loginObj == null || loginObj.equals("")){
-            throw new NullPointerException("LoginObj cannot be null");
+            throw new IllegalArgumentException("LoginObj cannot be null");
         }
 
         SecurityContextHolder.getContext().setAuthentication(
@@ -31,7 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void setAuthentication(Authentication authentication) {
         if(authentication == null){
-            throw new NullPointerException("Auth cannot be null");
+            throw new IllegalArgumentException("Auth cannot be null");
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -40,10 +40,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Authentication getUsernamePasswordAuthenticationToken(UserDetails userDetails, String rawPassword) {
         if(userDetails == null){
-            throw new NullPointerException("UserDetails cannot be null");
+            throw new IllegalArgumentException("UserDetails cannot be null");
         }
         if(rawPassword == null || rawPassword.equals("")){
-            throw new NullPointerException("If you want to get authentication without password," +
+            throw new IllegalArgumentException("If you want to get authentication without password," +
                     " please use getUsernamePasswordAuthenticationTokenWithoutCredentials(UserDetails userDetails)");
         }
 
@@ -53,7 +53,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Authentication getUsernamePasswordAuthenticationTokenWithoutCredentials(String loginObj) {
         if(loginObj == null || loginObj.equals("")){
-            throw new NullPointerException("LoginObj cannot be null");
+            throw new IllegalArgumentException("LoginObj cannot be null");
         }
 
         return new UsernamePasswordAuthenticationToken(

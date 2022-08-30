@@ -17,7 +17,7 @@ public class UtilMethods {
 
     public static String getImprovedUrl(String url){
         if(url == null || url.equals("")){
-            throw new NullPointerException("Url cannot be null");
+            throw new IllegalArgumentException("Url cannot be null");
         }
 
         StringBuilder improvedUrl = new StringBuilder();
@@ -38,7 +38,7 @@ public class UtilMethods {
 
     public static String getURLPath(JoinPoint joinPoint, String[] URIs){
         if(joinPoint == null){
-            throw new NullPointerException("JoinPoint cannot be null");
+            throw new IllegalArgumentException("JoinPoint cannot be null");
         }
 
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
@@ -69,7 +69,7 @@ public class UtilMethods {
 
     public static String getUserFromJoinPoint(UserService userService){
         if (userService == null){
-            throw new NullPointerException("UserService cannot be null");
+            throw new IllegalArgumentException("UserService cannot be null");
         }
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();

@@ -121,7 +121,7 @@ Keys:
 Log in passed successfully. Now we can go to <a href="##REST API">REST API</a>
 
 
-##REST API
+## REST API
 Below you can find all available requests and descriptions for them.
 
 <img src="images/rest/rest1.png">

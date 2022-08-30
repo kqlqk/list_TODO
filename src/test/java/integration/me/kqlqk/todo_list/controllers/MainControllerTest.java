@@ -97,6 +97,15 @@ public class MainControllerTest {
     @Test
     public void signUp_shouldIncorrectSignUp() throws Exception {
         mockMvc.perform(post("/registration")
+                        .param("email", "")
+                        .param("login", "newUserLogin")
+                        .param("password", "User1234")
+                        .param("confirmPassword", "User1234"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Email must be valid")));
+
+        mockMvc.perform(post("/registration")
                         .param("email", "user@mail.com")
                         .param("login", "newUserLogin")
                         .param("password", "User1234")

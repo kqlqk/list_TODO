@@ -134,6 +134,6 @@ public class MainRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$", aMapWithSize(1)))
-                .andExpect(jsonPath("$.info").exists());
+                .andExpect(jsonPath("$.info", is("Email must be valid")));
     }
 }

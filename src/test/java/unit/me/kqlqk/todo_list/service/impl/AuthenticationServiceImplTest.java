@@ -22,22 +22,22 @@ public class AuthenticationServiceImplTest {
 
     @Test
     public void setAuthentication_shouldThrowNPE() {
-        assertThrows(NullPointerException.class, () -> authenticationService.setAuthentication((String) null));
-        assertThrows(NullPointerException.class, () -> authenticationService.setAuthentication((Authentication) null));
+        assertThrows(IllegalArgumentException.class, () -> authenticationService.setAuthentication((String) null));
+        assertThrows(IllegalArgumentException.class, () -> authenticationService.setAuthentication((Authentication) null));
     }
 
 
     @Test
     public void getUsernamePasswordAuthenticationToken_shouldThrowNPE() {
-        assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> authenticationService.getUsernamePasswordAuthenticationToken(null, "any"));
-        assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> authenticationService.getUsernamePasswordAuthenticationToken(userDetails, null));
     }
 
     @Test
     public void getUsernamePasswordAuthenticationTokenWithoutCredentials_shouldThrowNPE() {
-        assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> authenticationService.getUsernamePasswordAuthenticationTokenWithoutCredentials(null));
     }
 

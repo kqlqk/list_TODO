@@ -1,6 +1,5 @@
 package unit.me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions_handling.exceptions.token.HttpServletRequestNotFoundException;
 import me.kqlqk.todo_list.service.impl.ErrorsHandlerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +34,7 @@ public class ErrorsHandlerServiceImplTest {
 
     @Test
     public void getErrorCode_shouldThrowsHttpServletRequestNotFoundException() {
-        assertThrows(HttpServletRequestNotFoundException.class, () -> errorsHandlerServiceImpl.getErrorCode(null));
+        assertThrows(IllegalArgumentException.class, () -> errorsHandlerServiceImpl.getErrorCode(null));
     }
 
     @Test
@@ -49,6 +48,6 @@ public class ErrorsHandlerServiceImplTest {
 
     @Test
     public void getErrorCodeWithDetails_shouldThrowsHttpServletRequestNotFoundException() {
-        assertThrows(HttpServletRequestNotFoundException.class, () -> errorsHandlerServiceImpl.getErrorCodeWithDetails(null));
+        assertThrows(IllegalArgumentException.class, () -> errorsHandlerServiceImpl.getErrorCodeWithDetails(null));
     }
 }

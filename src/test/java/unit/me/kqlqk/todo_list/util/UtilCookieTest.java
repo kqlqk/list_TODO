@@ -1,7 +1,5 @@
 package unit.me.kqlqk.todo_list.util;
 
-import me.kqlqk.todo_list.exceptions_handling.exceptions.token.HttpServletRequestNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.token.HttpServletResponseNotFoundException;
 import me.kqlqk.todo_list.util.UtilCookie;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,19 +32,19 @@ public class UtilCookieTest {
 
     @Test
     public void createOrUpdateCookie_shouldThrowsAllExceptions() {
-        assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> UtilCookie.createOrUpdateCookie(null, "anyValue", 10, request, response));
 
-        assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> UtilCookie.createOrUpdateCookie("anyName", null, 10, request, response));
 
         assertThrows(IllegalArgumentException.class,
                 () -> UtilCookie.createOrUpdateCookie("anyName", "anyValue", -3, request, response));
 
-        assertThrows(HttpServletRequestNotFoundException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> UtilCookie.createOrUpdateCookie("anyName", "anyValue", 10, null, response));
 
-        assertThrows(HttpServletResponseNotFoundException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> UtilCookie.createOrUpdateCookie("anyName", "anyValue", 10, request, null));
     }
 
@@ -62,10 +60,10 @@ public class UtilCookieTest {
 
     @Test
     public void getCookieByName_shouldThrowsAllExceptions(){
-        assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> UtilCookie.getCookieByName(null, request));
 
-        assertThrows(HttpServletRequestNotFoundException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> UtilCookie.getCookieByName("anyName", null));
     }
 

@@ -16,7 +16,7 @@ public class UserDetailsServiceImplTest {
     @Test
     public void loadUserByUsername_shouldReturnValidUserDetails() {
         assertThat(userDetailsService.loadUserByUsername("userLogin").toString()).isEqualTo(
-                "org.springframework.token.core.userdetails.User" +
+                "org.springframework.security.core.userdetails.User" +
                         " [Username=user@mail.com, Password=[PROTECTED]," +
                         " Enabled=true," +
                         " AccountNonExpired=true," +

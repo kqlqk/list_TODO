@@ -17,18 +17,18 @@ public class UtilMethodsTest {
 
     @Test
     public void getImprovedUrl_shouldThrowsNPE() {
-        assertThrows(NullPointerException.class, () -> UtilMethods.getImprovedUrl(null));
-        assertThrows(NullPointerException.class, () -> UtilMethods.getImprovedUrl(""));
+        assertThrows(IllegalArgumentException.class, () -> UtilMethods.getImprovedUrl(null));
+        assertThrows(IllegalArgumentException.class, () -> UtilMethods.getImprovedUrl(""));
 
     }
 
     @Test
     public void getURLPath_shouldThrowsNPE() {
-        assertThrows(NullPointerException.class, () -> UtilMethods.getURLPath(null, new String[]{"1"}));
+        assertThrows(IllegalArgumentException.class, () -> UtilMethods.getURLPath(null, new String[]{"1"}));
     }
 
     @Test
     public void getUserFromJoinPoint_shouldThrowsNPE() {
-        assertThrows(NullPointerException.class, () -> UtilMethods.getUserFromJoinPoint(null));
+        assertThrows(IllegalArgumentException.class, () -> UtilMethods.getUserFromJoinPoint(null));
     }
 }

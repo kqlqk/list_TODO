@@ -1,7 +1,5 @@
 package unit.me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions_handling.exceptions.token.HttpServletRequestNotFoundException;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.token.HttpServletResponseNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
@@ -98,7 +96,7 @@ public class RefreshTokenServiceImplTest {
 
     @Test
     public void resolveToken_shouldThrowsHttpServletRequestNotFoundException(){
-        assertThrows(HttpServletRequestNotFoundException.class, () -> refreshTokenServiceImpl.resolveToken(null));
+        assertThrows(IllegalArgumentException.class, () -> refreshTokenServiceImpl.resolveToken(null));
     }
 
     @Test
@@ -130,7 +128,7 @@ public class RefreshTokenServiceImplTest {
     public void updateAccessAndRefreshTokens_shouldThrowsHttpServletRequestNotFoundException(){
         doReturn(true).when(userService).isValid(user);
 
-        assertThrows(HttpServletRequestNotFoundException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, null, response, false));
     }
 
@@ -138,7 +136,7 @@ public class RefreshTokenServiceImplTest {
     public void updateAccessAndRefreshTokens_shouldThrowsHttpServletResponseNotFoundException(){
         doReturn(true).when(userService).isValid(user);
 
-        assertThrows(HttpServletResponseNotFoundException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, request, null, false));
     }
 }

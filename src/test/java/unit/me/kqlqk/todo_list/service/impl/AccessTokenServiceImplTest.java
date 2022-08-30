@@ -1,6 +1,5 @@
 package unit.me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions_handling.exceptions.token.HttpServletRequestNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
@@ -59,7 +58,7 @@ public class AccessTokenServiceImplTest {
 
     @Test
     public void resolveToken_shouldThrowsHttpServletRequestNotFoundException(){
-        assertThrows(HttpServletRequestNotFoundException.class, () -> accessTokenService.resolveToken(null));
+        assertThrows(IllegalArgumentException.class, () -> accessTokenService.resolveToken(null));
     }
 
     @Test

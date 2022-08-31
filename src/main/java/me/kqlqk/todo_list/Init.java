@@ -18,5 +18,5 @@ public class Init {
         logger.info("Todo_list was started");
     }
 }
-//v2
+//v2.5
 

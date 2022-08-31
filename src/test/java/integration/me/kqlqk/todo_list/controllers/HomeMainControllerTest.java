@@ -29,7 +29,6 @@ public class HomeMainControllerTest {
     @BeforeEach
     public void init(){
         userRefreshToken = refreshTokenService.updateRefreshToken(userService.getByEmail("user@mail.com"));
-        System.out.println(userRefreshToken);
     }
 
     @Test
@@ -65,6 +64,7 @@ public class HomeMainControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/home"));
 
+        userRefreshToken = refreshTokenService.updateRefreshToken(userService.getByEmail("user@mail.com"));
 
         mockMvc.perform(get("/home/3")
                         .header("Authorization_access", "Bearer_random")
@@ -93,6 +93,7 @@ public class HomeMainControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/home"));
 
+        userRefreshToken = refreshTokenService.updateRefreshToken(userService.getByEmail("user@mail.com"));
 
         mockMvc.perform(delete("/home/3")
                         .header("Authorization_access", "Bearer_random")

@@ -32,7 +32,7 @@ public class AdminController {
     public String getAdminMenu(Model model){
         SimpleDateFormat format = new SimpleDateFormat("MMMM-dd, HH:mm:ss");
 
-        model.addAttribute("startTime", format.format(Init.appStartTime));
+        model.addAttribute("startTime", format.format(Init.startTime));
         model.addAttribute("users", UserDTO.convertListOfUsersToListOfUserDTOs(userService.getAll()));
         model.addAttribute("validConnection", connection);
         model.addAttribute("log", log);

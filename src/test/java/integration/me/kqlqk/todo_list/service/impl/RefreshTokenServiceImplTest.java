@@ -77,6 +77,7 @@ public class RefreshTokenServiceImplTest {
                 user,
                 Mockito.mock(HttpServletRequest.class),
                 Mockito.mock(HttpServletResponse.class),
+                false,
                 false);
 
         assertThat(tokens).isNotNull();

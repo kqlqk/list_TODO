@@ -40,6 +40,12 @@
                     <input class="form-check-input" type="checkbox" name="showPassword" id="showPassword" onclick="showPassword()">
                     <br/>
                     </div>
+
+                    <div class="form-check">
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                        <input class="form-check-input" type="checkbox" name="rememberMe" th:checked="*{rememberMe}" id="rememberMe"/>
+                    </div>
+
                 </div>
                 <br/>
                 <button class="btn btn-outline-primary btn-lg" type="submit">Sign up</button>

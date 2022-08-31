@@ -6,6 +6,7 @@ import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
+import me.kqlqk.todo_list.util.GlobalVariables;
 import me.kqlqk.todo_list.util.UtilCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,7 +64,8 @@ public class    MainController {
             return "main-pages/login";
         }
 
-        refreshTokenService.updateAccessAndRefreshTokens(user, request, response, true);
+        GlobalVariables.REMEMBER_ME = loginDTO.isRememberMe();
+        refreshTokenService.updateAccessAndRefreshTokens(user, request, response, true, GlobalVariables.REMEMBER_ME);
 
         return "redirect:/home";
     }
@@ -104,6 +106,8 @@ public class    MainController {
 
         String refreshToken = refreshTokenService.createAndGetToken(user);
         String accessToken = accessTokenService.createToken(user.getEmail());
+
+        GlobalVariables.REMEMBER_ME = registrationDTO.isRememberMe();
 
         UtilCookie.createOrUpdateCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
         UtilCookie.createOrUpdateCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);

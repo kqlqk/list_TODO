@@ -22,6 +22,9 @@ public class RegistrationDTO {
     private boolean setCookie = true;
 
     @JsonIgnore
+    private boolean rememberMe = false;
+
+    @JsonIgnore
     private String confirmPassword;
 
     public String getEmail() {
@@ -64,6 +67,14 @@ public class RegistrationDTO {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 
     public User convertToUser(){

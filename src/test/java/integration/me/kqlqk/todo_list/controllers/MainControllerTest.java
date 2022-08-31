@@ -1,6 +1,8 @@
 package integration.me.kqlqk.todo_list.controllers;
 
 import annotations.TestController;
+import me.kqlqk.todo_list.util.GlobalVariables;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,7 +37,7 @@ public class MainControllerTest {
     }
 
     @Test
-    public void logIn_shouldCorrectLogIn() throws Exception {
+    public void logIn_shouldCorrectLogInWithoutRememberMe() throws Exception {
         mockMvc.perform(post("/login")
                     .param("loginObj", "userLogin")
                     .param("password", "User1234"))
@@ -44,6 +46,22 @@ public class MainControllerTest {
                 .andExpect(cookie().exists("rt"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/home"));
+        Assertions.assertThat(GlobalVariables.REMEMBER_ME).isFalse();
+    }
+
+    @Test
+    public void logIn_shouldCorrectLoginWithRememberMe() throws Exception{
+        mockMvc.perform(post("/login")
+                        .param("loginObj", "userLogin")
+                        .param("password", "User1234")
+                        .param("rememberMe", "on"))
+                .andDo(print())
+                .andExpect(cookie().exists("at"))
+                .andExpect(cookie().exists("rt"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/home"));
+
+        Assertions.assertThat(GlobalVariables.REMEMBER_ME).isTrue();
     }
 
     @Test

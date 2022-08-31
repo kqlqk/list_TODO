@@ -9,6 +9,7 @@ import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.AuthenticationService;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
+import me.kqlqk.todo_list.util.GlobalVariables;
 import me.kqlqk.todo_list.util.UtilCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -96,7 +97,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
             User user = userService.getByEmail(refreshTokenService.getEmail(refreshTokenString));
-            tokens = refreshTokenService.updateAccessAndRefreshTokens(user, request, response, setCookie);
+            tokens = refreshTokenService.updateAccessAndRefreshTokens(user, request, response, setCookie, GlobalVariables.REMEMBER_ME);
             refreshTokenString = tokens.get("refresh_token");
             response.setHeader("Authorization_access", "Bearer_" + tokens.get("access_token"));
             response.setHeader("Authorization_refresh", "Bearer_" + tokens.get("refresh_token"));

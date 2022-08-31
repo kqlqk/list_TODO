@@ -121,7 +121,7 @@ public class RefreshTokenServiceImplTest {
     @Test
     public void updateAccessAndRefreshTokens_shouldThrowsUserNotFoundException(){
         assertThrows(UserNotFoundException.class,
-                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, request, response, false));
+                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, request, response, false, false));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class RefreshTokenServiceImplTest {
         doReturn(true).when(userService).isValid(user);
 
         assertThrows(IllegalArgumentException.class,
-                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, null, response, false));
+                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, null, response, false, false));
     }
 
     @Test
@@ -137,6 +137,6 @@ public class RefreshTokenServiceImplTest {
         doReturn(true).when(userService).isValid(user);
 
         assertThrows(IllegalArgumentException.class,
-                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, request, null, false));
+                () -> refreshTokenServiceImpl.updateAccessAndRefreshTokens(user, request, null, false, false));
     }
 }

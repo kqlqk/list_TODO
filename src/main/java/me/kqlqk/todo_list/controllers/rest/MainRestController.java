@@ -48,7 +48,7 @@ public class MainRestController {
             throw new UserNotFoundException("Email/Username or password incorrect");
         }
 
-        Map<String, String> tokens = refreshTokenService.updateAccessAndRefreshTokens(user, request, response, loginDTO.isSetCookie());
+        Map<String, String> tokens = refreshTokenService.updateAccessAndRefreshTokens(user, request, response, loginDTO.isSetCookie(), false);
 
         return ResponseEntity.accepted().body(tokens);
     }

@@ -20,6 +20,6 @@ public interface RefreshTokenService {
     boolean isValid(String refreshToken);
     String resolveToken(HttpServletRequest request);
     String updateRefreshToken(User user);
-    Map<String, String> updateAccessAndRefreshTokens(User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie);
+    Map<String, String> updateAccessAndRefreshTokens(User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie, boolean rememberMe);
     Map<String, String> updateAccessAndRefreshTokens(User user);
 }

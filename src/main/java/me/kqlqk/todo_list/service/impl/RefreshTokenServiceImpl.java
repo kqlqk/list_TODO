@@ -186,7 +186,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public Map<String, String> updateAccessAndRefreshTokens(User user, HttpServletRequest request, HttpServletResponse response, boolean setCookie) {
+    public Map<String, String> updateAccessAndRefreshTokens(User user,
+                                                            HttpServletRequest request,
+                                                            HttpServletResponse response,
+                                                            boolean setCookie,
+                                                            boolean rememberMe) {
         if(!userService.isValid(user)){
             throw new UserNotFoundException("User not found");
         }
@@ -202,9 +206,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String newAccessToken = accessTokenService.createToken(user.getEmail());
         String newRefreshToken = getByUser(user).getToken();
 
-        if(setCookie) {
+        if(setCookie && rememberMe) {
             UtilCookie.createOrUpdateCookie("at", newAccessToken, (int) (getValidity() / 1000), request, response);
             UtilCookie.createOrUpdateCookie("rt", newRefreshToken, (int) (getValidity() / 1000), request, response);
+        }
+        if(setCookie && !rememberMe){
+            UtilCookie.createOrUpdateCookie("at", newAccessToken, -1, request, response);
+            UtilCookie.createOrUpdateCookie("rt", newRefreshToken, -1, request, response);
         }
 
         Map<String, String> tokens = new HashMap<>();

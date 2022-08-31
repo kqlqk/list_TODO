@@ -14,6 +14,10 @@
 ## About The Project
 TODO List is a simple way to write down all your plans, tasks, ideas in one place.
 
+<b>Devs:</b> <a href="https://github.com/kqlqk">Kqlqk</a> <br/>
+<b>Current version:</b> 2.5 <br/>
+<a href="https://github.com/kqlqk/list_TODO/tree/dev">Click</a> To see development process
+
 
 ## Technologies Used
 <details>

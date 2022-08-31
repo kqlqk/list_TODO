@@ -18,8 +18,3 @@ public class Init {
         logger.info("Todo_list was started");
     }
 }
-/*
- * TODO:
- *  improve remember me button v2.5 dev
- */
-

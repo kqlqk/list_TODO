@@ -6,6 +6,22 @@ import javax.servlet.http.HttpServletResponse;
 
 public class UtilCookie {
     public static void createOrUpdateCookie(String name, String value, int maxAge, HttpServletRequest request, HttpServletResponse response) {
+        if(name == null || name.equals("")){
+            throw new IllegalArgumentException("Name cannot be null");
+        }
+        if(value == null || value.equals("")){
+            throw new IllegalArgumentException("Value cannot be null");
+        }
+        if(request == null){
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
+        }
+        if(response == null){
+            throw new IllegalArgumentException("HttpServletResponse cannot be null");
+        }
+        if(maxAge < -1){
+            throw new IllegalArgumentException("Max age cannot be less -1");
+        }
+
         Cookie cookie = getCookieByName(name, request);
         if(cookie != null){
             cookie.setValue(value);
@@ -20,6 +36,13 @@ public class UtilCookie {
     }
 
     public static Cookie getCookieByName(String name, HttpServletRequest request){
+        if(name == null || name.equals("")){
+            throw new IllegalArgumentException("Name cannot be null");
+        }
+        if(request == null){
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
+        }
+
         try {
             if(request.getCookies().length < 1){
                 return null;
@@ -37,6 +60,13 @@ public class UtilCookie {
     }
 
     public static boolean isCookieExistsByName(String name, HttpServletRequest request){
+        if(name == null || name.equals("")){
+            throw new IllegalArgumentException("Name cannot be null");
+        }
+        if(request == null){
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
+        }
+
         try {
             if(request.getCookies().length < 1){
                 return false;

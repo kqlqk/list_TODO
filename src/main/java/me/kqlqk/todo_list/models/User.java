@@ -9,41 +9,34 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, unique = true)
     private long id;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "login")
+    @Column(name = "login", nullable = false, unique = true)
     private String login;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @ManyToOne
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Note> notes;
 
-    @Column(name = "oauth2")
+    @Column(name = "oauth2", nullable = false)
     private boolean isOAuth2;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne
+    @JoinColumn(name = "refresh_token_id")
     private RefreshToken refreshToken;
 
     @Transient
     private String confirmPassword;
 
-    public User(String email, String login, String password, Role role) {
-        this.email = email;
-        this.login = login;
-        this.password = password;
-        this.role = role;
-    }
-
-    public User(){}
 
     public long getId() {
         return id;

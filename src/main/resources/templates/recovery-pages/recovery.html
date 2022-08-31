@@ -15,7 +15,8 @@
             <form th:method="post" th:action="@{/recovery}" th:object="${recoveryDTO}">
                 <label class="form-label" for="email">Enter your email:</label>
                 <input class="form-control" th:style="*{formCorrect == true} ? 'border-color: #0d6efd' : 'border-color: #ff0000'" type="text" name="email" placeholder="e.g. Fgfdi$fisj88!!!a" th:field="*{email}" id="email">
-                <div th:style="'color: #ff0000'" th:text="*{formCorrect == true} ? '' : 'Email incorrect, try one more time'"></div>
+                <div th:style="'color: #ff0000'" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                <div th:style="'color: #ff0000'" th:text="*{formCorrect == true} ? '' : 'User with this email doesn\'t exist'"></div>
                 <br/>
                 <input class="btn btn-outline-primary btn-lg btn-block" type="submit" value="Send">
             </form>

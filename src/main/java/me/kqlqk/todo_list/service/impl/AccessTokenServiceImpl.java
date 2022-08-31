@@ -1,13 +1,13 @@
 package me.kqlqk.todo_list.service.impl;
 
 import io.jsonwebtoken.*;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.service.AccessTokenService;
+import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -17,17 +17,16 @@ import java.util.Date;
 
 @Service
 public class AccessTokenServiceImpl implements AccessTokenService {
+    private final UserService userService;
     @Value("${jwt.access.secret}")
     private String secret;
 
     @Value("${jwt.access.expired}")
     private long validityInMillis;
 
-    private final UserDetailsService userDetailsService;
-
     @Autowired
-    public AccessTokenServiceImpl(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public AccessTokenServiceImpl(UserService userService) {
+        this.userService = userService;
     }
 
     @PostConstruct
@@ -36,6 +35,10 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     }
 
     public String createToken(String email){
+        if(userService.getByEmail(email) == null){
+            throw new UserNotFoundException("User with email = " + email + " not found");
+        }
+
         Claims claims = Jwts.claims().setSubject(email);
 
         Date now = new Date();
@@ -49,36 +52,37 @@ public class AccessTokenServiceImpl implements AccessTokenService {
                 .compact();
     }
 
-    public Authentication getAuthentication(String token){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getEmail(token));
-
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
     public String getEmail(String token){
+        if(token == null){
+            throw new TokenNotFoundException("Access token cannot be null");
+        }
+
         try{
             return Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getSubject();
         }
-        catch (JwtException e){
-            return null;
+        catch (Exception e){
+            throw new TokenNotValidException("Access token cannot be parsed");
         }
-    }
-
-    public long getValidity() {
-        return validityInMillis;
     }
 
     public String resolveToken(HttpServletRequest request){
-        String bearerWithToken = request.getHeader("Authorization_access");
-
-        if(bearerWithToken != null && bearerWithToken.startsWith("Bearer_")){
-            return bearerWithToken.substring(7);
+        if(request == null){
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }
 
-        return null;
+        String bearerWithToken = request.getHeader("Authorization_access");
+
+        if(bearerWithToken == null){
+            throw new TokenNotFoundException("Authorization_access header not found");
+        }
+        if(!bearerWithToken.startsWith("Bearer_")){
+            throw new TokenNotFoundException("Access token should starts with Bearer_");
+        }
+
+        return bearerWithToken.substring(7);
     }
 
-    public boolean validateToken(String token){
+    public boolean isValid(String token){
         if(token == null){
             return false;
         }
@@ -86,10 +90,19 @@ public class AccessTokenServiceImpl implements AccessTokenService {
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token);
 
+            String email = getEmail(token);
+            if(!userService.isValid(userService.getByEmail(email))){
+                return false;
+            }
+
             return claims.getBody().getExpiration().after(new Date());
         }
-        catch (JwtException e){
+        catch (JwtException | IllegalArgumentException e){
             return false;
         }
+    }
+
+    public long getValidity() {
+        return validityInMillis;
     }
 }

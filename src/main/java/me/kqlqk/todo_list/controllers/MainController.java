@@ -1,11 +1,12 @@
 package me.kqlqk.todo_list.controllers;
 
-import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.dto.LoginDTO;
 import me.kqlqk.todo_list.dto.RegistrationDTO;
 import me.kqlqk.todo_list.models.User;
+import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
+import me.kqlqk.todo_list.util.GlobalVariables;
 import me.kqlqk.todo_list.util.UtilCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @Controller
-public class MainController {
+public class    MainController {
     private final AccessTokenService accessTokenService;
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
@@ -42,42 +43,29 @@ public class MainController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String showMainPage(){
-        if(userService.getCurrentUser() != null){
-            return "redirect:/home";
-        }
-
         return "main-pages/main";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/login")
-    public String showLoginPage( Model model){
-        if(userService.getCurrentUser() != null){
-            return "redirect:/home";
-        }
-
+    public String showLoginPage(Model model){
         model.addAttribute("loginDTO", new LoginDTO());
         return "main-pages/login";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     public String logIn(@ModelAttribute("loginDTO") LoginDTO loginDTO,
-                        @ModelAttribute("rememberMe") String rememberMe,
                         HttpServletRequest request,
                         HttpServletResponse response) {
         User user = userService.getByLoginObj(loginDTO.getLoginObj());
 
         if(user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())){
             loginDTO.setFormCorrect(false);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "main-pages/login";
         }
 
-        refreshTokenService.update(user);
-
-        String accessToken = accessTokenService.createToken(user.getEmail());
-        String refreshToken = refreshTokenService.getByUser(user).getToken();
-
-        UtilCookie.createOrUpdateCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
-        UtilCookie.createOrUpdateCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
+        GlobalVariables.REMEMBER_ME = loginDTO.isRememberMe();
+        refreshTokenService.updateAccessAndRefreshTokens(user, request, response, true, GlobalVariables.REMEMBER_ME);
 
         return "redirect:/home";
     }
@@ -98,24 +86,28 @@ public class MainController {
                          HttpServletRequest request,
                          HttpServletResponse response){
         if(bindingResult.hasErrors() || !registrationDTO.getConfirmPassword().equals(registrationDTO.getPassword())){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "main-pages/registration";
         }
 
         if(userService.getByEmail(registrationDTO.getEmail()) != null){
-            model.addAttribute("emailIsAlreadyRegistered", true);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            model.addAttribute("emailAlreadyRegistered", true);
             return "main-pages/registration";
         }
         if(userService.getByLogin(registrationDTO.getLogin()) != null){
-            model.addAttribute("loginIsAlreadyRegistered", true);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            model.addAttribute("loginAlreadyRegistered", true);
             return "main-pages/registration";
         }
 
         User user = registrationDTO.convertToUser();
         userService.add(user);
 
-        refreshTokenService.create(user);
+        String refreshToken = refreshTokenService.createAndGetToken(user);
         String accessToken = accessTokenService.createToken(user.getEmail());
-        String refreshToken = refreshTokenService.getByUser(user).getToken();
+
+        GlobalVariables.REMEMBER_ME = registrationDTO.isRememberMe();
 
         UtilCookie.createOrUpdateCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
         UtilCookie.createOrUpdateCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);

@@ -6,7 +6,7 @@
 
   <groupId>me.kqlqk</groupId>
   <artifactId>todo_list</artifactId>
-  <version>2</version>
+  <version>2.5</version>
   <packaging>war</packaging>
 
   <name>TODO_LIST</name>
@@ -110,6 +110,13 @@
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
       <version>2.3.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>2.1.214</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

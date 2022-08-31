@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 public interface EmailSenderService {
     void sendEmail(MailMessage mailMessage);
-    void sendEmail(String to, String subject, String text);
+    void sendEmail(String subject, String text, String... to);
 
 }

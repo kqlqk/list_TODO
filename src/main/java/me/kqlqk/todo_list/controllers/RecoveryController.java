@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,12 +40,11 @@ public class RecoveryController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String sendEmail(@ModelAttribute("recoveryDTO") @Valid RecoveryDTO recoveryDTO, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "recovery-pages/recovery";
-        }
-
-        if(userService.getByEmail(recoveryDTO.getEmail()) == null){
+    public String sendEmail(@ModelAttribute("recoveryDTO") @Valid RecoveryDTO recoveryDTO,
+                            BindingResult bindingResult,
+                            HttpServletResponse response){
+        if(bindingResult.hasErrors() || userService.getByEmail(recoveryDTO.getEmail()) == null){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             recoveryDTO.setFormCorrect(false);
             return "recovery-pages/recovery";
         }
@@ -53,11 +53,11 @@ public class RecoveryController {
         recoveryPageIdEmail.put(pageId, recoveryDTO.getEmail());
 
         emailSenderService.sendEmail(
-                recoveryDTO.getEmail(),
                 "Password recovery",
                 "Follow the link to reset your password." +
                         " http://localhost:8080/recovery/" + pageId  +
-                        " If you didn't request a restore, please ignore this message.");
+                        " If you didn't request a restore, please ignore this message.",
+                recoveryDTO.getEmail());
 
         return "recovery-pages/successRecovery";
     }
@@ -76,8 +76,12 @@ public class RecoveryController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/{pageId}")
     public String changePassword(@ModelAttribute("recoveryDTO") @Valid RecoveryDTO recoveryDTO, BindingResult bindingResult,
-                                 @PathVariable int pageId){
+                                 @PathVariable int pageId, HttpServletResponse response){
+        if(this.recoveryPageIdEmail.get(pageId) == null){
+            return "redirect:/";
+        }
         if(bindingResult.hasErrors() || !recoveryDTO.getPassword().equals(recoveryDTO.getConfirmPassword())){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "recovery-pages/changePassword";
         }
 
@@ -90,4 +94,7 @@ public class RecoveryController {
         return "recovery-pages/passwordWasChanged";
     }
 
+    public Map<Integer, String> getRecoveryPageIdEmail() {
+        return recoveryPageIdEmail;
+    }
 }

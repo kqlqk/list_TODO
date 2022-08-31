@@ -10,7 +10,6 @@ import java.util.List;
 public interface NoteService{
     Note getById(long noteId);
     List<Note> getByUser(User user);
-    List<Note> getByUserId(long userId);
     boolean existsById(long id);
 
     void add(Note note);
@@ -18,4 +17,6 @@ public interface NoteService{
     void delete(long id);
     boolean existsForUser(User user, long noteId);
     void update(Note note);
+    boolean isValid(Note note);
+    boolean isValid(long noteId);
 }

@@ -20,13 +20,20 @@ public class ErrorsHandlerServiceImpl implements ErrorsHandlerService {
 
     @Override
     public int getErrorCode(HttpServletRequest request) {
+        if(request == null){
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
+        }
+
         return (int) (request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) != null ?
                 request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) : 0);
-
     }
 
     @Override
     public String getErrorCodeWithDetails(HttpServletRequest request) {
+        if(request == null){
+            throw new IllegalArgumentException("HttpServletRequest cannot be null");
+        }
+
         int status = getErrorCode(request);
 
         String details = "";
@@ -39,6 +46,7 @@ public class ErrorsHandlerServiceImpl implements ErrorsHandlerService {
                 details = "Error " + status + " Page forbidden";
             }
             if (userService.getCurrentUser() == null) {
+                //FIXME
                 return "shouldLogIn";
             }
         }

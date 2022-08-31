@@ -11,6 +11,5 @@ import java.util.List;
 public interface NoteRepository extends JpaRepository<Note, Long> {
     Note getById(long id);
     List<Note> getByUser(User user);
-    List<Note> getByUserId(long id);
     boolean existsById(long id);
 }

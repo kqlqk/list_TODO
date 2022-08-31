@@ -1,11 +1,11 @@
 package me.kqlqk.todo_list.controllers.rest;
 
 import me.kqlqk.todo_list.dto.daoDTOs.NoteDTO;
-import me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotFoundException;
 import me.kqlqk.todo_list.models.Note;
 import me.kqlqk.todo_list.service.NoteService;
 import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,11 +30,12 @@ public class HomeMainRestController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/notes/{id}")
-    public NoteDTO getNoteForUser(@PathVariable long id){
-        if(! (noteService.existsById(id) && noteService.existsForUser(userService.getCurrentUser(), id))){
-            throw new NoteNotFoundException("Note with id = " + id + " not found OR note isn't available for current user");
+    public ResponseEntity<?> getNoteForUser(@PathVariable long id){
+        if(!(noteService.existsForUser(userService.getCurrentUser(), id))){
+            return ResponseEntity.notFound().build();
         }
-        return new NoteDTO(noteService.getById(id));
+
+        return ResponseEntity.ok(new NoteDTO(noteService.getById(id)));
     }
 
 
@@ -46,24 +47,20 @@ public class HomeMainRestController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/notes/{id}")
-    public NoteDTO editNote(@PathVariable long id, @Valid @RequestBody NoteDTO noteDTO){
-        if(!noteService.existsById(id)){
-            throw new NoteNotFoundException("Note with id = " + id + " not found");
-        }
+    public ResponseEntity<?> editNote(@PathVariable long id, @Valid @RequestBody NoteDTO noteDTO){
         noteService.update(noteDTO.convertToEditedNote(noteService, id));
 
         return getNoteForUser(id);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/notes/{id}")
-    public List<NoteDTO> deleteNote(@PathVariable long id){
-        if (!noteService.existsById(id) || !noteService.existsForUser(userService.getCurrentUser(), id)){
-            throw new NoteNotFoundException("Note with id = " + id + " not found OR note is not for current user");
+    public ResponseEntity<?> deleteNote(@PathVariable long id){
+        if (!noteService.existsForUser(userService.getCurrentUser(), id)){
+            return ResponseEntity.notFound().build();
         }
 
         noteService.delete(id);
-
-        return getAllNotesForUser();
+        return ResponseEntity.ok(getAllNotesForUser());
     }
 
 }

@@ -1,57 +1,61 @@
 package me.kqlqk.todo_list.service.impl;
 
-import me.kqlqk.todo_list.exceptions_handling.exceptions.security.TokenNotFoundException;
+import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
+import me.kqlqk.todo_list.service.AuthenticationService;
 import me.kqlqk.todo_list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @PersistenceContext
-    private EntityManager entityManager;
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationService authenticationService;
 
-    @Value("${temp.password.oauth2}")
-    private String tempPassword;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
-                           UserDetailsService userDetailsService,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           AuthenticationService authenticationService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationService = authenticationService;
     }
 
-    //JPA-repository methods
     @Override
     public User getByEmail(String email) {
         if(email == null){
             throw new UserNotFoundException("Email cannot be null");
         }
+
         return userRepository.getByEmail(email.toLowerCase());
+    }
+
+    @Override
+    public User getById(long id) {
+        try {
+            User user = userRepository.getById(id);
+            user.getEmail();
+            return user;
+        }
+        catch (EntityNotFoundException e) {
+            return null;
+        }
     }
 
     @Override
@@ -87,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
     //UserService methods
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void add(User user) {
         if(getByEmail(user.getEmail()) != null){
             throw new UserAlreadyExistsException(user + " already exists");
@@ -100,7 +104,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAll() {
-       return entityManager.createQuery("from User", User.class).getResultList();
+       return userRepository.findAll();
     }
 
     @Override
@@ -110,17 +114,6 @@ public class UserServiceImpl implements UserService {
         }
 
         return getByEmail(loginObj.toLowerCase()) == null ? getByLogin(loginObj) : getByEmail(loginObj.toLowerCase());
-    }
-
-    @Override
-    public OAuth2User getOAuth2UserFromSecurityContextHolder() {
-        OAuth2User oAuth2User = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(oAuth2User == null) {
-            throw new UserNotFoundException("OAuth2User not found, SecurityContextHolder principals " +
-                    SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        }
-        SecurityContextHolder.clearContext();
-        return oAuth2User;
     }
 
     @Override
@@ -141,29 +134,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getCurrentEmail() {
-        try{
-            return SecurityContextHolder.getContext().getAuthentication().getName();
-        }
-        catch (NullPointerException e){
-            return null;
-        }
+        return authenticationService.getAuthenticationFromContext().getName();
     }
 
     @Override
-    public User convertOAuth2UserToUserAndSave(OAuth2User oAuth2User) {
-        User user = new User();
-        user.setEmail(oAuth2User.getAttribute("email").toString().toLowerCase());
-        user.setLogin(oAuth2User.getAttribute("name"));
-        user.setPassword(passwordEncoder.encode(tempPassword));
-        user.setOAuth2(true);
-        user.setRole(roleRepository.getById(1L));
-        userRepository.save(user);
-
-        return user;
+    public boolean isValid(User user){
+        if(user == null || !existsById(user.getId()) || user.getEmail() == null || user.getLogin() == null){
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public boolean isUserUsedOAuth2Login() {
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal() != "anonymousUser";
+    public boolean isValid(long userId){
+        return isValid(getById(userId));
     }
 }

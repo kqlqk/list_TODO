@@ -8,9 +8,10 @@ import java.sql.Timestamp;
 public class Note {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
     private long id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false, length = 100)
     private String title;
 
     @Column(name = "body")
@@ -22,15 +23,9 @@ public class Note {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @Column(name = "full_title")
+    @Column(name = "full_title", nullable = false)
     private String fullTitle;
 
-    public Note(String fullTitle, String body) {
-        this.fullTitle = fullTitle;
-        this.body = body;
-    }
-
-    public Note(){}
 
     public long getId() {
         return id;
@@ -84,6 +79,7 @@ public class Note {
     public String toString() {
         return "Note{" +
                 "id=" + id +
+                "title=" + title +
                 '}';
     }
 }

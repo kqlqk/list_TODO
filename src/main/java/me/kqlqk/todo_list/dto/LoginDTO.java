@@ -9,7 +9,9 @@ public class LoginDTO {
     private String password;
     private boolean setCookie = true;
     @JsonIgnore
-    private boolean isFormCorrect = true;
+    private boolean formCorrect = true;
+    @JsonIgnore
+    private boolean rememberMe = false;
 
     public String getLoginObj() {
         return loginObj;
@@ -38,10 +40,18 @@ public class LoginDTO {
     }
 
     public boolean isFormCorrect() {
-        return isFormCorrect;
+        return formCorrect;
     }
 
     public void setFormCorrect(boolean formCorrect) {
-        isFormCorrect = formCorrect;
+        this.formCorrect = formCorrect;
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 }

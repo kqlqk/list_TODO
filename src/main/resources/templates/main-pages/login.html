@@ -33,18 +33,10 @@
             <br/>
             <a class="btn btn-outline-danger btn-sm" th:href="@{/recovery}">Forgot password?</a>
 
-            <section class="py text-center container">
-                <div class="row py-lg-1">
-                    <div class="col-lg-6 col-md-8 mx-auto">
-                        <h3 class="fw-light">Or</h3>
-
-                        <h3>Login with:</h3>
-                        <h4>
-                            <a th:text="Google" th:href="@{/oauth2/authorization/google}"></a>
-                        </h4>
-                    </div>
-                </div>
-            </section>
+            <p>
+                Have not account?
+                <a th:href="@{/registration}">Sign up</a>
+            </p>
         </div>
     </div>
 </div>

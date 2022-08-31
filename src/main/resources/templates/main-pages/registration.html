@@ -43,20 +43,12 @@
                 </div>
                 <br/>
                 <button class="btn btn-outline-primary btn-lg" type="submit">Sign up</button>
-
-                <section class="py-5 text-center container">
-                    <div class="row py-lg-1">
-                        <div class="col-lg-6 col-md-8 mx-auto">
-                            <h3 class="fw-light">Or</h3>
-
-                            <h3>Login with:</h3>
-                            <h4>
-                                <a th:text="Google" th:href="@{/oauth2/authorization/google}"></a>
-                            </h4>
-                        </div>
-                    </div>
-                </section>
             </form>
+
+            <p>
+                Already have account?
+                <a th:href="@{/login}">Sign in</a>
+            </p>
         </div>
     </div>
 </div>

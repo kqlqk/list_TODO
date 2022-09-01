@@ -24,7 +24,7 @@ public class UtilMethodsTest {
 
     @Test
     public void getURLPath_shouldThrowsNPE() {
-        assertThrows(IllegalArgumentException.class, () -> UtilMethods.getURLPath(null, new String[]{"1"}));
+        assertThrows(IllegalArgumentException.class, () -> UtilMethods.getURLPath(null));
     }
 
     @Test

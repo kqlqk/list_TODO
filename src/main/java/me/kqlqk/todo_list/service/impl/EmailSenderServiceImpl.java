@@ -1,6 +1,9 @@
 package me.kqlqk.todo_list.service.impl;
 
+import me.kqlqk.todo_list.aspects.LoggingAspect;
 import me.kqlqk.todo_list.service.EmailSenderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailMessage;
 import org.springframework.mail.MailSendException;
@@ -12,6 +15,8 @@ import java.util.Arrays;
 
 @Service
 public class EmailSenderServiceImpl implements EmailSenderService {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
     private final MailSender mailSender;
 
     @Autowired
@@ -30,6 +35,8 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         }
 
         mailSender.send(simpleMessage);
+
+        logger.info("Was sent mail to " + Arrays.toString(simpleMessage.getTo()));
     }
 
     @Override
@@ -45,5 +52,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         message.setSubject(subject);
         message.setText(text);
         mailSender.send(message);
+
+        logger.info("Was sent mail to " + to);
     }
 }

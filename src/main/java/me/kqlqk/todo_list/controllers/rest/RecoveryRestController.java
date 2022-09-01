@@ -49,18 +49,18 @@ public class RecoveryRestController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/{pageId}")
-    public ResponseEntity<?> changePassword(@PathVariable int pageId,
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}")
+    public ResponseEntity<?> changePassword(@PathVariable int id,
                                             @RequestBody @Valid RecoveryDTO recoveryDTO){
-        if(!recoveryPageIdEmail.containsKey(pageId)){
+        if(!recoveryPageIdEmail.containsKey(id)){
             return ResponseEntity.notFound().build();
         }
 
-        User user = userService.getByEmail(recoveryPageIdEmail.get(pageId));
+        User user = userService.getByEmail(recoveryPageIdEmail.get(id));
         user.setPassword(recoveryDTO.getPassword());
         userService.update(user);
 
-        recoveryPageIdEmail.remove(pageId);
+        recoveryPageIdEmail.remove(id);
 
         Map<String, String> response = new HashMap<>();
         response.put("info", "Password was successfully changed");

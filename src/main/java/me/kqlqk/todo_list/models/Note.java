@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "notes")
-public class Note {
+public class    Note {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
@@ -79,7 +79,6 @@ public class Note {
     public String toString() {
         return "Note{" +
                 "id=" + id +
-                "title=" + title +
                 '}';
     }
 }

@@ -36,32 +36,34 @@ public class UtilMethods {
         return improvedUrl.toString();
     }
 
-    public static String getURLPath(JoinPoint joinPoint, String[] URIs){
+    public static String getURLPath(JoinPoint joinPoint){
         if(joinPoint == null){
             throw new IllegalArgumentException("JoinPoint cannot be null");
         }
 
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-
         StringBuilder path = new StringBuilder();
+
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        RequestMapping currentMethodAnnotation = method.getAnnotation(RequestMapping.class);
+        String[] methodURIs = currentMethodAnnotation.value();
 
         Class<?> declaringClass = method.getDeclaringClass();
 
         if(declaringClass.getAnnotation(RequestMapping.class) != null) {
-            path.append(Arrays.toString(declaringClass.getAnnotation(RequestMapping.class).value()));
-            path.append(Arrays.toString(URIs));
+            RequestMapping currentClassAnnotation = declaringClass.getAnnotation(RequestMapping.class);
+            String[] classURIs = currentClassAnnotation.value();
+
+            path.append(Arrays.toString(classURIs)
+                    .replace("[", "")
+                    .replace("]", ""));
+            path.append(Arrays.toString(methodURIs)
+                    .replace("[", "")
+                    .replace("]", ""));
         }
         else {
-            path.append(Arrays.toString(URIs));
-        }
-
-        if(path.indexOf("{id}") != -1){
-            for(Object arg : joinPoint.getArgs()) {
-                if (arg instanceof Long) {
-                    path.replace(path.indexOf("{"), path.indexOf("{") + 4   , Long.toString((Long) arg));
-                    break;
-                }
-            }
+            path.append(Arrays.toString(methodURIs)
+                    .replace("[", "")
+                    .replace("]", ""));
         }
 
         return path.toString();

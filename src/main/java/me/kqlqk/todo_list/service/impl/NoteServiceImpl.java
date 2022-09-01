@@ -1,5 +1,6 @@
 package me.kqlqk.todo_list.service.impl;
 
+import me.kqlqk.todo_list.aspects.LoggingAspect;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteAlreadyExistsException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotValidException;
@@ -8,6 +9,8 @@ import me.kqlqk.todo_list.models.User;
 import me.kqlqk.todo_list.repositories.NoteRepository;
 import me.kqlqk.todo_list.service.NoteService;
 import me.kqlqk.todo_list.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +23,8 @@ import java.util.List;
 
 @Service
 public class NoteServiceImpl implements NoteService {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
     private final NoteRepository noteRepository;
     private final UserService userService;
 
@@ -79,6 +84,8 @@ public class NoteServiceImpl implements NoteService {
         note.setLastEdited(new Timestamp(new Date().getTime()));
 
         noteRepository.save(note);
+
+        logger.info("Was crated note " + note);
     }
 
     @Override
@@ -89,6 +96,8 @@ public class NoteServiceImpl implements NoteService {
         }
 
         noteRepository.delete(note);
+
+        logger.info("Was deleted note " + note);
     }
 
     @Override
@@ -98,7 +107,11 @@ public class NoteServiceImpl implements NoteService {
             throw new NoteNotValidException("Note with id = " + id + " not found");
         }
 
-        noteRepository.delete(getById(id));
+        Note note = getById(id);
+
+        noteRepository.delete(note);
+
+        logger.info("Was deleted note " + note);
     }
 
     @Override
@@ -129,6 +142,8 @@ public class NoteServiceImpl implements NoteService {
         note.setLastEdited(new Timestamp(new java.util.Date().getTime()));
 
         noteRepository.save(note);
+
+        logger.info("Was updated note " + note);
     }
 
     @Override

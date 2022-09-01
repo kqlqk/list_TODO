@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import me.kqlqk.todo_list.aspects.LoggingAspect;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
@@ -14,6 +15,8 @@ import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.util.UtilCookie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,8 @@ import java.util.Map;
 
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
     @Value("${jwt.refresh.expired}")
     private Long validityInMillis;
     @Value("${jwt.refresh.secret}")
@@ -96,6 +101,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         user.setRefreshToken(refreshToken);
 
         refreshTokenRepository.save(refreshToken);
+
+        logger.info("Was created refresh token for " + user.getEmail());
 
         return refreshTokenString;
     }
@@ -182,6 +189,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         refreshTokenRepository.save(refreshToken);
 
+        logger.info("Was updated refresh token for " + user.getEmail());
+
         return token;
     }
 
@@ -219,6 +228,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         tokens.put("access_token", newAccessToken);
         tokens.put("refresh_token", newRefreshToken);
 
+        logger.info("Was updated access nad refresh tokens for " + user.getEmail());
+
         return tokens;
     }
 
@@ -235,6 +246,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", newAccessToken);
         tokens.put("refresh_token", newRefreshToken);
+
+        logger.info("Was updated access nad refresh tokens for " + user.getEmail());
 
         return tokens;
     }

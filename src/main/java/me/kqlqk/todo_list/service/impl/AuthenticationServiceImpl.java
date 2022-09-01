@@ -1,6 +1,9 @@
 package me.kqlqk.todo_list.service.impl;
 
+import me.kqlqk.todo_list.aspects.LoggingAspect;
 import me.kqlqk.todo_list.service.AuthenticationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
     private final UserDetailsService userDetailsService;
 
     @Autowired
@@ -26,6 +31,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         SecurityContextHolder.getContext().setAuthentication(
                 getUsernamePasswordAuthenticationTokenWithoutCredentials(loginObj));
+
+        logger.info("Was set auth for " + loginObj);
     }
 
     @Override
@@ -35,6 +42,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        logger.info("Was set auth for " + authentication.getName());
     }
 
     @Override

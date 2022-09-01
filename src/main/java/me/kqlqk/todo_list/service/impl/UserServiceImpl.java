@@ -1,5 +1,6 @@
 package me.kqlqk.todo_list.service.impl;
 
+import me.kqlqk.todo_list.aspects.LoggingAspect;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
@@ -9,6 +10,8 @@ import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.AuthenticationService;
 import me.kqlqk.todo_list.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,8 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -100,6 +105,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleRepository.getById(1L));
         userRepository.save(user);
+
+        logger.info("Was created new user " + user.getEmail());
     }
 
     @Override
@@ -125,6 +132,8 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+
+        logger.info("Was updated user " + user.getEmail());
     }
 
     @Override

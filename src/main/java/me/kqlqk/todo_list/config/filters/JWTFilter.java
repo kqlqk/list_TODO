@@ -1,6 +1,7 @@
 package me.kqlqk.todo_list.config.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.kqlqk.todo_list.aspects.LoggingAspect;
 import me.kqlqk.todo_list.dto.ExceptionDTO;
 import me.kqlqk.todo_list.exceptions_handling.RestGlobalExceptionHandler;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
@@ -11,6 +12,8 @@ import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.util.GlobalVariables;
 import me.kqlqk.todo_list.util.UtilCookie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -28,6 +31,8 @@ import java.util.Map;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
     private final AccessTokenService accessTokenService;
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
@@ -79,6 +84,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 setCookie = false;
             }
             catch (TokenNotFoundException nestedEx){
+                logger.info("TokenNotFoundException: " + nestedEx);
                 exceptionDTO = restExceptionHandler.handleNotFoundAndNotValidExceptions(nestedEx);
                 postException(response, exceptionDTO, isRest);
                 return;
@@ -90,6 +96,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if(!accessTokenService.isValid(accessTokenString)){
             if(!refreshTokenService.isValid(refreshTokenString)){
+                logger.info("Access " + accessTokenString + " and refresh token " + refreshTokenString + " aren't valid");
                 exceptionDTO = new ExceptionDTO();
                 exceptionDTO.setInfo("Access and refresh tokens aren't valid, try to log in one more time");
                 postException(response, exceptionDTO, isRest);
@@ -104,6 +111,7 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         if(!refreshTokenService.isValid(refreshTokenString)){
+            logger.info("RefreshToken " + refreshTokenString + " aren't valid ");
             exceptionDTO = new ExceptionDTO();
             exceptionDTO.setInfo("Refresh token aren't valid, try to log in one more time");
             postException(response, exceptionDTO, isRest);

@@ -1,11 +1,14 @@
 package me.kqlqk.todo_list.service.impl;
 
 import io.jsonwebtoken.*;
+import me.kqlqk.todo_list.aspects.LoggingAspect;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.service.AccessTokenService;
 import me.kqlqk.todo_list.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,8 @@ import java.util.Date;
 
 @Service
 public class AccessTokenServiceImpl implements AccessTokenService {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
     private final UserService userService;
     @Value("${jwt.access.secret}")
     private String secret;
@@ -43,6 +48,8 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMillis);
+
+        logger.info("Was created access token for " + email);
 
         return Jwts.builder()
                 .setClaims(claims)

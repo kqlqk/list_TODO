@@ -3,7 +3,6 @@ package me.kqlqk.todo_list.config;
 import me.kqlqk.todo_list.config.filters.JWTFilter;
 import me.kqlqk.todo_list.config.filters.RequestRejectedExceptionFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,7 +14,6 @@ import org.springframework.security.web.context.request.async.WebAsyncManagerInt
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
-@EnableAspectJAutoProxy
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final DaoAuthenticationProvider daoAuthenticationProvider;
     private final JWTFilter jwtFilter;

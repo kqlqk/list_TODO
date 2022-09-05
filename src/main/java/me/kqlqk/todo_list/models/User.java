@@ -2,36 +2,37 @@ package me.kqlqk.todo_list.models;
 
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(name = "id", unique = true, nullable = false, updatable = false, insertable = false)
     private long id;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "login", nullable = false, unique = true)
+    @Column(name = "login", unique = true, nullable = false)
     private String login;
 
     @Column(name = "password", nullable = false)
     private String password;
 
     @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<Note> notes;
+    @OneToMany(mappedBy = "user")
+    private List<Note> notes;
 
     @Column(name = "oauth2", nullable = false)
     private boolean isOAuth2;
 
     @OneToOne
-    @JoinColumn(name = "refresh_token_id")
+    @JoinColumn(name = "refresh_token_id", referencedColumnName = "id")
     private RefreshToken refreshToken;
 
     @Transient
@@ -86,11 +87,11 @@ public class User {
         this.confirmPassword = confirmPassword;
     }
 
-    public Set<Note> getNotes() {
+    public List<Note> getNotes() {
         return notes;
     }
 
-    public void setNotes(Set<Note> notes) {
+    public void setNotes(List<Note> notes) {
         this.notes = notes;
     }
 

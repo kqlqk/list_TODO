@@ -54,7 +54,7 @@ public class UserServiceImplTest {
 
         userServiceImpl.getByEmail(email);
 
-        verify(userRepository, times(1)).getByEmail(email.toLowerCase());
+        verify(userRepository, times(1)).findByEmail(email.toLowerCase());
     }
 
     @Test
@@ -64,11 +64,11 @@ public class UserServiceImplTest {
 
     @Test
     public void getById_shouldCallsUserRepository(){
-        doReturn(user).when(userRepository).getById(10L);
+        doReturn(user).when(userRepository).findById(10L);
 
         userServiceImpl.getById(10L);
 
-        verify(userRepository, times(1)).getById(10L);
+        verify(userRepository, times(1)).findById(10L);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class UserServiceImplTest {
 
         userServiceImpl.getByLogin(login);
 
-        verify(userRepository, times(1)).getByLogin(login);
+        verify(userRepository, times(1)).findByLogin(login);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class UserServiceImplTest {
     public void getByRefreshToken_shouldCallsUserRepository(){
         userServiceImpl.getByRefreshToken(refreshToken);
 
-        verify(userRepository, times(1)).getByRefreshToken(refreshToken);
+        verify(userRepository, times(1)).findByRefreshToken(refreshToken);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class UserServiceImplTest {
     @Test
     public void add_shouldThrowsUserAlreadyExistsException(){
         doReturn("anyEmail").when(user).getEmail();
-        doReturn(user).when(userRepository).getByEmail("anyemail");
+        doReturn(user).when(userRepository).findByEmail("anyemail");
 
         assertThrows(UserAlreadyExistsException.class, () -> userServiceImpl.add(user));
     }
@@ -146,8 +146,8 @@ public class UserServiceImplTest {
 
     @Test
     public void update_shouldCallsUserRepository(){
-        doReturn("anyEmail").when(user).getEmail();
-        doReturn(user).when(userRepository).getByEmail("anyemail");
+        doReturn(1L).when(user).getId();
+        doReturn(true).when(userRepository).existsById(1L);
 
         userServiceImpl.update(user);
 
@@ -155,9 +155,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void update_shouldThrowUserAlreadyExistsException(){
-        doReturn("anyEmail").when(user).getEmail();
-
+    public void update_shouldThrowUserNotFoundException(){
         assertThrows(UserNotFoundException.class, () -> userServiceImpl.update(user));
     }
 

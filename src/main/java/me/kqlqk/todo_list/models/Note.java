@@ -5,25 +5,27 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "notes")
-public class    Note {
+public class Note {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(name = "id", unique = true, nullable = false, insertable = false, updatable = false)
     private long id;
 
-    @Column(name = "title", nullable = false, length = 100)
+    @Column(name = "title", nullable = false, length = 50)
     private String title;
 
-    @Column(name = "body")
+    @Lob
+    @Column(name = "body", columnDefinition = "TEXT")
     private String body;
 
     @Column(name = "last_edited")
-    private Timestamp lastEdited;
+    private Timestamp lastEdited;//FIXME
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column(name = "full_title", nullable = false)
+    @Column(name = "full_title", nullable = false, length = 100)
     private String fullTitle;
 
 

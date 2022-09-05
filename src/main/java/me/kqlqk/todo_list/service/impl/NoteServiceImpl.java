@@ -13,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -36,16 +33,8 @@ public class NoteServiceImpl implements NoteService {
 
 
     @Override
-    @Transactional
     public Note getById(long id) {
-        try {
-            Note note = noteRepository.getById(id);
-            note.getTitle();
-            return note;
-        }
-        catch (EntityNotFoundException e){
-            return null;
-        }
+        return noteRepository.findById(id);
     }
 
     @Override
@@ -53,7 +42,7 @@ public class NoteServiceImpl implements NoteService {
         if(!userService.isValid(user)){
             throw new UserNotValidException("User = " + user + " not valid");
         }
-        return noteRepository.getByUser(user);
+        return noteRepository.findByUser(user);
     }
 
 
@@ -63,7 +52,6 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void add(Note note) {
         if(note.getFullTitle() == null){
             throw new NoteNotValidException("Note isn't valid. Note should has at least full title. \n" +
@@ -89,7 +77,6 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void delete(Note note) {
         if(!isValid(note)) {
             throw new NoteNotValidException("Note with id = " + note.getId() + " not found");
@@ -101,7 +88,6 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void delete(long id) {
         if(!isValid(id)){
             throw new NoteNotValidException("Note with id = " + id + " not found");
@@ -127,7 +113,6 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void update(Note note) {
         if(!isValid(note)){
             throw new NoteNotValidException("Note with id = " + note.getId() + " not found");

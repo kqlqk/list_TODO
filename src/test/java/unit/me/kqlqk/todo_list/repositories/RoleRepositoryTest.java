@@ -5,12 +5,8 @@ import me.kqlqk.todo_list.models.Role;
 import me.kqlqk.todo_list.repositories.RoleRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestRepository
 public class RoleRepositoryTest{
@@ -20,9 +16,8 @@ public class RoleRepositoryTest{
 
 
     @Test
-    @Transactional
-    public void getById() {
-        Role role = roleRepository.getById(1);
+    public void findById() {
+        Role role = roleRepository.findById(1);
 
         assertThat(role).isNotNull();
         assertThat(role.getId()).isEqualTo(1);
@@ -30,8 +25,7 @@ public class RoleRepositoryTest{
     }
 
     @Test
-    @Transactional
-    public void getById_shouldThrowsEntityNotFoundException(){
-        assertThrows(EntityNotFoundException.class, () -> roleRepository.getById(99).getName());
+    public void findById_shouldReturnNull(){
+        assertThat(roleRepository.findById(99)).isNull();
     }
 }

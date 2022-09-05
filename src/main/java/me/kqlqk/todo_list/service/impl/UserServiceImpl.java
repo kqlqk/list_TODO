@@ -15,10 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -48,19 +45,12 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("Email cannot be null");
         }
 
-        return userRepository.getByEmail(email.toLowerCase());
+        return userRepository.findByEmail(email.toLowerCase());
     }
 
     @Override
     public User getById(long id) {
-        try {
-            User user = userRepository.getById(id);
-            user.getEmail();
-            return user;
-        }
-        catch (EntityNotFoundException e) {
-            return null;
-        }
+        return userRepository.findById(id);
     }
 
     @Override
@@ -68,7 +58,7 @@ public class UserServiceImpl implements UserService {
         if(login == null){
             throw new UserNotFoundException("Login cannot be null");
         }
-        return userRepository.getByLogin(login);
+        return userRepository.findByLogin(login);
     }
 
     @Override
@@ -76,7 +66,7 @@ public class UserServiceImpl implements UserService {
         if(refreshToken == null){
             throw new TokenNotFoundException("Refresh token cannot be null");
         }
-        return userRepository.getByRefreshToken(refreshToken);
+        return userRepository.findByRefreshToken(refreshToken);
     }
 
     @Override
@@ -96,14 +86,13 @@ public class UserServiceImpl implements UserService {
 
     //UserService methods
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void add(User user) {
         if(getByEmail(user.getEmail()) != null){
             throw new UserAlreadyExistsException(user + " already exists");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(roleRepository.getById(1L));
+        user.setRole(roleRepository.findById(1L));
         userRepository.save(user);
 
         logger.info("Was created new user " + user.getEmail());
@@ -124,10 +113,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void update(User user) {
-        if(getByEmail(user.getEmail()) == null){
-            throw new UserNotFoundException(user + " already exists");
+        if(!userRepository.existsById(user.getId())){
+            throw new UserNotFoundException("User not found");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));

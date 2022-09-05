@@ -11,7 +11,7 @@ create table roles(
 
 create table refresh_tokens(
     id bigint not null unique auto_increment,
-    token varchar(255) not null unique,
+    token varchar(255) not null,
     expires_in bigint not null,
 
     primary key (id));
@@ -36,11 +36,11 @@ create table users(
 
 create table notes(
     id bigint not null unique auto_increment,
-    title varchar(100) not null,
+    title varchar(50) not null,
     body text,
     last_edited timestamp default now(),
     user_id bigint not null,
-    full_title text not null,
+    full_title varchar(100) not null,
 
     primary key (id),
 

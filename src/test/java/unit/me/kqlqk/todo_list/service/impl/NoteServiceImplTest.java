@@ -38,10 +38,10 @@ public class NoteServiceImplTest {
 
     @Test
     public void getById_shouldCallsNoteRepository(){
-        doReturn(note).when(noteRepository).getById(10L);
+        doReturn(note).when(noteRepository).findById(10L);
         noteServiceImpl.getById(10L);
 
-        verify(noteRepository, times(1)).getById(10L);
+        verify(noteRepository, times(1)).findById(10L);
     }
 
 
@@ -51,7 +51,7 @@ public class NoteServiceImplTest {
 
         noteServiceImpl.getByUser(user);
 
-        verify(noteRepository, times(1)).getByUser(user);
+        verify(noteRepository, times(1)).findByUser(user);
     }
 
     @Test

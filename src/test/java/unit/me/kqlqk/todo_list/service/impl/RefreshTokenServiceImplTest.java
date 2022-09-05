@@ -57,7 +57,7 @@ public class RefreshTokenServiceImplTest {
 
         refreshTokenServiceImpl.getByUser(user);
 
-        verify(refreshTokenRepository, times(1)).getByUserId(0L);
+        verify(refreshTokenRepository, times(1)).findByUserId(0L);
     }
 
     @Test

@@ -7,7 +7,6 @@ import me.kqlqk.todo_list.service.impl.UserDetailsServiceImpl;
 import me.kqlqk.todo_list.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,11 +21,6 @@ public class UserServiceImplTest {
     @Autowired
     private AuthenticationService authenticationService;
 
-    @Test
-    @Transactional
-    public void getById_shouldReturnNull(){
-        assertThat(userService.getById(99)).isNull();
-    }
 
     @Test
     public void add_shouldAddUserToDb(){
@@ -48,9 +42,28 @@ public class UserServiceImplTest {
     }
 
     @Test
+    public void update_shouldUpdateUser(){
+        User user = userService.getById(1);
+        user.setEmail("userNewMail@mail.com");
+
+        userService.update(user);
+
+        assertThat(user.getEmail()).isEqualTo("userNewMail@mail.com");
+    }
+
+    @Test
     public void getCurrentEmail_shouldGetEmailFromAuth(){
         authenticationService.setAuthentication("user@mail.com");
 
         assertThat(userService.getCurrentEmail()).isEqualTo("user@mail.com");
+    }
+
+    @Test
+    public void getCurrentUser_shouldReturnCurrentUser(){
+        authenticationService.setAuthentication("user@mail.com");
+
+        assertThat(userService.getCurrentUser().getEmail())
+                .isEqualTo(
+                        userService.getByEmail("user@mail.com").getEmail());
     }
 }

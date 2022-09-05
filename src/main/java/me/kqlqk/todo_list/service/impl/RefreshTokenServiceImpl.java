@@ -43,7 +43,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final UserService userService;
 
     @Autowired
-    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository, AccessTokenService accessTokenService, UserService userService) {
+    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository,
+                                   AccessTokenService accessTokenService,
+                                   UserService userService) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.accessTokenService = accessTokenService;
         this.userService = userService;
@@ -65,7 +67,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             throw new UserNotFoundException("User with id = " +  user.getId() + " not found");
         }
 
-        return refreshTokenRepository.getByUserId(user.getId());
+        return refreshTokenRepository.findByUserId(user.getId());
     }
 
     @Override
@@ -73,7 +75,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         if(token == null){
             throw new TokenNotFoundException("Token cannot be null");
         }
-        return refreshTokenRepository.getByToken(token);
+        return refreshTokenRepository.findByToken(token);
     }
 
     @Override
@@ -184,8 +186,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .compact();
 
         RefreshToken refreshToken = getByUser(user);
-        refreshToken.setToken(token);
         refreshToken.setExpiresIn(validity.getTime());
+        refreshToken.setToken(token);
+        user.setRefreshToken(refreshToken);
 
         refreshTokenRepository.save(refreshToken);
 

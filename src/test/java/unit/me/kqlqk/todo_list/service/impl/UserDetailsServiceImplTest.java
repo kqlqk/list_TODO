@@ -33,7 +33,7 @@ public class UserDetailsServiceImplTest {
 
     @Test
     public void loadUserByUsername_shouldReturnsValidSpringSecurityUser(){
-        doReturn(user).when(userRepository).getByEmail("anyLoginObj");
+        doReturn(user).when(userRepository).findByEmail("anyLoginObj");
         doReturn(role).when(user).getRole();
         doReturn("anyRole").when(role).getName();
         doReturn("anyEmail").when(user).getEmail();

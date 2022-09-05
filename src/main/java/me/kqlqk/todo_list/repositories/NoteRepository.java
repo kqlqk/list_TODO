@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
-    Note getById(long id);
-    List<Note> getByUser(User user);
+    Note findById(long id);
+    List<Note> findByUser(User user);
     boolean existsById(long id);
 }

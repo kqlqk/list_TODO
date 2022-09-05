@@ -23,12 +23,6 @@ public class NoteServiceImplTest {
     private UserService userService;
 
     @Test
-    @Transactional
-    public void getById_shouldReturnNull(){
-        assertThat(noteService.getById(99)).isNull();
-    }
-
-    @Test
     public void add_shouldAddNoteToDB(){
         User user = userService.getByEmail("user@mail.com");
         doReturn(user).when(userService).getCurrentUser();
@@ -37,6 +31,7 @@ public class NoteServiceImplTest {
         note.setFullTitle("Any title");
         note.setBody("Any body");
 
+        System.out.println("****************************************");
         noteService.add(note);
 
         assertThat(note.getId()).isGreaterThan(0);

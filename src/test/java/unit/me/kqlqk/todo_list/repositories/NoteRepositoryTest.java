@@ -7,13 +7,10 @@ import me.kqlqk.todo_list.repositories.NoteRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestRepository
 public class NoteRepositoryTest{
@@ -24,9 +21,8 @@ public class NoteRepositoryTest{
     private UserRepository userRepository;
 
     @Test
-    @Transactional
-    public void getById_shouldReturnValidNote(){
-        Note note = noteRepository.getById(1);
+    public void findById_shouldReturnValidNote(){
+        Note note = noteRepository.findById(1);
 
         assertThat(note).isNotNull();
         assertThat(note.getTitle()).isEqualTo("anyTitle");
@@ -35,16 +31,15 @@ public class NoteRepositoryTest{
     }
 
     @Test
-    @Transactional
-    public void getById_shouldThrowsEntityNotFoundException(){
-        assertThrows(EntityNotFoundException.class, () -> noteRepository.getById(99).getTitle());
+    public void findById_shouldReturnNull(){
+        assertThat(noteRepository.findById(99)).isNull();
     }
 
     @Test
-    public void getByUser_shouldReturnValidNote(){
-        User user = userRepository.getById(1);
+    public void findByUser_shouldReturnValidNote(){
+        User user = userRepository.findById(1);
 
-        List<Note> notes = noteRepository.getByUser(user);
+        List<Note> notes = noteRepository.findByUser(user);
 
         assertThat(notes).hasSize(2);
         assertThat(notes.get(0)).isInstanceOf(Note.class);
@@ -55,8 +50,8 @@ public class NoteRepositoryTest{
     }
 
     @Test
-    public void getByUser_shouldReturnEmptyList(){
-        assertThat(noteRepository.getByUser(null)).isEmpty();
+    public void findByUser_shouldReturnEmptyList(){
+        assertThat(noteRepository.findByUser(null)).isEmpty();
     }
 
     @Test

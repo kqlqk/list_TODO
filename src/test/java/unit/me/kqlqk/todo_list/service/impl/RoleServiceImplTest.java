@@ -25,10 +25,10 @@ public class RoleServiceImplTest {
 
     @Test
     public void getById_shouldCallsRoleRepository(){
-        doReturn(role).when(roleRepository).getById(10L);
+        doReturn(role).when(roleRepository).findById(10L);
 
         roleServiceImpl.getById(10L);
 
-        verify(roleRepository, times(1)).getById(10L);
+        verify(roleRepository, times(1)).findById(10L);
     }
 }

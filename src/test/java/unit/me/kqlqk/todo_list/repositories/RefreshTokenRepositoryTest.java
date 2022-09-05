@@ -22,8 +22,8 @@ public class RefreshTokenRepositoryTest {
     }
 
     @Test
-    public void getByUserId_shouldGetByUserId() {
-        RefreshToken refreshToken = refreshTokenRepository.getByUserId(1);
+    public void findByUserId_shouldFindByUserId() {
+        RefreshToken refreshToken = refreshTokenRepository.findByUserId(1);
 
         assertThat(refreshToken).isNotNull();
         assertThat(refreshToken.getId()).isEqualTo(1);
@@ -31,8 +31,8 @@ public class RefreshTokenRepositoryTest {
     }
 
     @Test
-    public void getByToken_shouldGetByStringToken(){
-        RefreshToken refreshToken = refreshTokenRepository.getByToken(
+    public void findByToken_shouldFindByStringToken(){
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(
                 "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQG1haWwuY29tIiwiaWF0IjoxNjYwNDkzMzEzLCJleHAiOjk2NjMwODUzMTN9._dP6FpQNAkT7fX8KTeQ5JwCdZEosvSszTHRJ9a5lelA");
 
         assertThat(refreshToken).isNotNull();

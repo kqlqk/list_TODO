@@ -7,13 +7,13 @@ import javax.persistence.*;
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(name = "id", unique = true, nullable = false, updatable = false, insertable = false)
     private long id;
 
     @OneToOne(mappedBy = "refreshToken")
     private User user;
 
-    @Column(name = "token", nullable = false, unique = true)
+    @Column(name = "token", unique = true, nullable = false)
     private String token;
 
     @Column(name = "expires_in", nullable = false)

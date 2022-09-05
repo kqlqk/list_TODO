@@ -32,9 +32,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(loginObj == null){
             throw new UserNotFoundException("LoginObj cannot be a null");
         }
-        User user = userRepository.getByEmail(loginObj) == null ?
-                userRepository.getByLogin(loginObj) :
-                userRepository.getByEmail(loginObj);
+        User user = userRepository.findByEmail(loginObj) == null ?
+                userRepository.findByLogin(loginObj) :
+                userRepository.findByEmail(loginObj);
 
         if(user == null){
             throw new UserNotFoundException("User with loginObj = " + loginObj + " not found");

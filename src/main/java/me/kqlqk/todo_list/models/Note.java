@@ -1,7 +1,10 @@
 package me.kqlqk.todo_list.models;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "notes")
@@ -15,11 +18,13 @@ public class Note {
     private String title;
 
     @Lob
-    @Column(name = "body", columnDefinition = "TEXT")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "body")
     private String body;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_edited")
-    private Timestamp lastEdited;//FIXME
+    private Date lastEdited;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -53,7 +58,7 @@ public class Note {
         this.body = body;
     }
 
-    public Timestamp getLastEdited() {
+    public Date getLastEdited() {
         return lastEdited;
     }
 

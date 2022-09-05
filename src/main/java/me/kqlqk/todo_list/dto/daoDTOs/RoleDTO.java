@@ -4,11 +4,6 @@ public class RoleDTO {
     private long id;
     private String name;
 
-    public RoleDTO(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     public long getId() {
         return id;
     }

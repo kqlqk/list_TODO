@@ -18,5 +18,7 @@ public class Init {
         logger.info("Todo_list was started");
     }
 }
-//v2.5
-
+/*
+TODO
+add home button to '/', redirect to '/login' if was set bad auth
+ */

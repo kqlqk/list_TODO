@@ -5,8 +5,8 @@ import me.kqlqk.todo_list.service.NoteService;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class NoteDTO {
@@ -20,7 +20,7 @@ public class NoteDTO {
     @Size(max = 65000, message = "Message is too long")
     private String body;
 
-    private Timestamp lastEdited;
+    private Date lastEdited;
 
     private long userId;
 
@@ -33,7 +33,7 @@ public class NoteDTO {
         this.body = body;
     }
 
-    public NoteDTO(long id, String title, String body, Timestamp lastEdited, long userId) {
+    public NoteDTO(long id, String title, String body, Date lastEdited, long userId) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -74,11 +74,11 @@ public class NoteDTO {
         this.body = body;
     }
 
-    public Timestamp getLastEdited() {
+    public Date getLastEdited() {
         return lastEdited;
     }
 
-    public void setLastEdited(Timestamp lastEdited) {
+    public void setLastEdited(Date lastEdited) {
         this.lastEdited = lastEdited;
     }
 

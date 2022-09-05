@@ -9,9 +9,6 @@ public class UtilCookie {
         if(name == null || name.equals("")){
             throw new IllegalArgumentException("Name cannot be null");
         }
-        if(value == null || value.equals("")){
-            throw new IllegalArgumentException("Value cannot be null");
-        }
         if(request == null){
             throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }

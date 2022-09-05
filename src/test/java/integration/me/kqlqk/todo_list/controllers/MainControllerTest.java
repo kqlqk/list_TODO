@@ -25,7 +25,7 @@ public class MainControllerTest {
         mockMvc.perform(get("/"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("TODO List")));
+                .andExpect(content().string(containsString("TODO list")));
     }
 
     @Test

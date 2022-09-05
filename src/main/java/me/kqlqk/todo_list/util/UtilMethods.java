@@ -76,6 +76,11 @@ public class UtilMethods {
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        return userService.getCurrentEmail().equals("anonymousUser") ? request.getRemoteAddr() :  userService.getCurrentEmail();
+        try{
+            return userService.getCurrentEmail();
+        }
+        catch (NullPointerException e){
+            return request.getRemoteAddr();
+        }
     }
 }

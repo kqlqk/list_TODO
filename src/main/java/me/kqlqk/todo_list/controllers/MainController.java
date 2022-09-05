@@ -71,7 +71,7 @@ public class    MainController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/registration")
-    public String showRegistrationPage(Model model){
+    public String showSignUpPage(Model model){
         model.addAttribute("registrationDTO", new RegistrationDTO());
         model.addAttribute("emailAlreadyRegistered", false);
         model.addAttribute("loginAlreadyRegistered", false);

@@ -19,6 +19,8 @@ public class Init {
     }
 }
 /*
-TODO
-add home button to '/', redirect to '/login' if was set bad auth
+    oauth2
+    authn(pass key apple)
+    refactoring to microservices
+    javadoc
  */

@@ -1,7 +1,6 @@
 package me.kqlqk.todo_list.config.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.kqlqk.todo_list.aspects.LoggingAspect;
 import me.kqlqk.todo_list.dto.ExceptionDTO;
 import me.kqlqk.todo_list.exceptions_handling.RestGlobalExceptionHandler;
 import me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException;
@@ -12,8 +11,6 @@ import me.kqlqk.todo_list.service.RefreshTokenService;
 import me.kqlqk.todo_list.service.UserService;
 import me.kqlqk.todo_list.util.GlobalVariables;
 import me.kqlqk.todo_list.util.UtilCookie;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -31,8 +28,6 @@ import java.util.Map;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
-    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
-
     private final AccessTokenService accessTokenService;
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
@@ -62,7 +57,9 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws IOException, ServletException {
         boolean isRest = request.getRequestURI().contains("/api");
         ExceptionDTO exceptionDTO;
         boolean setCookie;
@@ -75,18 +72,17 @@ public class JWTFilter extends OncePerRequestFilter {
         Map<String, String> tokens;
 
         try {
-            tokens = getTokensByCookie(request);
+            tokens = getTokensFromCookie(request);
             setCookie = true;
         }
         catch (TokenNotFoundException e){
             try {
-                tokens = getTokensByHeaders(request);
+                tokens = getTokensFromHeaders(request);
                 setCookie = false;
             }
             catch (TokenNotFoundException nestedEx){
-                logger.info("TokenNotFoundException: " + nestedEx);
                 exceptionDTO = restExceptionHandler.handleNotFoundAndNotValidExceptions(nestedEx);
-                postException(response, exceptionDTO, isRest);
+                postException(exceptionDTO, isRest, response);
                 return;
             }
         }
@@ -96,10 +92,9 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if(!accessTokenService.isValid(accessTokenString)){
             if(!refreshTokenService.isValid(refreshTokenString)){
-                logger.info("Access " + accessTokenString + " and refresh token " + refreshTokenString + " aren't valid");
                 exceptionDTO = new ExceptionDTO();
                 exceptionDTO.setInfo("Access and refresh tokens aren't valid, try to log in one more time");
-                postException(response, exceptionDTO, isRest);
+                postException(exceptionDTO, isRest, response);
                 return;
             }
 
@@ -111,10 +106,9 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         if(!refreshTokenService.isValid(refreshTokenString)){
-            logger.info("RefreshToken " + refreshTokenString + " aren't valid ");
             exceptionDTO = new ExceptionDTO();
             exceptionDTO.setInfo("Refresh token aren't valid, try to log in one more time");
-            postException(response, exceptionDTO, isRest);
+            postException(exceptionDTO, isRest, response);
             return;
         }
 
@@ -137,7 +131,7 @@ public class JWTFilter extends OncePerRequestFilter {
         return true;
     }
 
-    private Map<String, String> getTokensByCookie(HttpServletRequest request) {
+    private Map<String, String> getTokensFromCookie(HttpServletRequest request) {
         if(!UtilCookie.isCookieExistsByName("at", request) ||
                 !UtilCookie.isCookieExistsByName("rt", request)){
             throw new TokenNotFoundException("There's no cookie with tokens");
@@ -152,7 +146,7 @@ public class JWTFilter extends OncePerRequestFilter {
         return tokens;
     }
 
-    private Map<String, String> getTokensByHeaders(HttpServletRequest request){
+    private Map<String, String> getTokensFromHeaders(HttpServletRequest request){
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessTokenService.resolveToken(request));
         tokens.put("refresh_token", refreshTokenService.resolveToken(request));
@@ -160,7 +154,9 @@ public class JWTFilter extends OncePerRequestFilter {
         return tokens;
     }
 
-    private void postException(HttpServletResponse response, ExceptionDTO exceptionDTO, boolean isRest) throws IOException {
+    private void postException(ExceptionDTO exceptionDTO,
+                               boolean isRest,
+                               HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         if(isRest) {
             response.setContentType("application/json");

@@ -36,9 +36,6 @@ public class UtilCookieTest {
                 () -> UtilCookie.createOrUpdateCookie(null, "anyValue", 10, request, response));
 
         assertThrows(IllegalArgumentException.class,
-                () -> UtilCookie.createOrUpdateCookie("anyName", null, 10, request, response));
-
-        assertThrows(IllegalArgumentException.class,
                 () -> UtilCookie.createOrUpdateCookie("anyName", "anyValue", -3, request, response));
 
         assertThrows(IllegalArgumentException.class,

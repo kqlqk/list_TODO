@@ -74,7 +74,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Authentication getAuthenticationFromContext() {
         try {
-            return SecurityContextHolder.getContext().getAuthentication();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if(authentication.getPrincipal().toString().equals("anonymousUser")){
+                return null;
+            }
+
+            return authentication;
         }
         catch (NullPointerException e){
             return null;

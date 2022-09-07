@@ -5,9 +5,9 @@ import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsE
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
-import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.AuthenticationService;
+import me.kqlqk.todo_list.service.RoleService;
 import me.kqlqk.todo_list.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ public class UserServiceImplTest {
     private UserRepository userRepository;
 
     @Mock
-    private RoleRepository roleRepository;
+    private RoleService roleService;
 
     @Mock
     private User user;
@@ -125,6 +125,7 @@ public class UserServiceImplTest {
     @Test
     public void add_shouldCallsUserRepository(){
         doReturn("anyEmail").when(user).getEmail();
+        doReturn("anyPswd").when(user).getPassword();
 
         userServiceImpl.add(user);
 
@@ -148,6 +149,7 @@ public class UserServiceImplTest {
     public void update_shouldCallsUserRepository(){
         doReturn(1L).when(user).getId();
         doReturn(true).when(userRepository).existsById(1L);
+        doReturn("anyPswd").when(user).getPassword();
 
         userServiceImpl.update(user);
 

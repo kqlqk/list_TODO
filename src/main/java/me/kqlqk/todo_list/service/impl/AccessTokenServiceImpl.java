@@ -23,6 +23,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
     private final UserService userService;
+
     @Value("${jwt.access.secret}")
     private String secret;
 

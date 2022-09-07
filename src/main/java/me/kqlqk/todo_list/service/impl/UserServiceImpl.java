@@ -6,13 +6,14 @@ import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsE
 import me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException;
 import me.kqlqk.todo_list.models.RefreshToken;
 import me.kqlqk.todo_list.models.User;
-import me.kqlqk.todo_list.repositories.RoleRepository;
 import me.kqlqk.todo_list.repositories.UserRepository;
 import me.kqlqk.todo_list.service.AuthenticationService;
+import me.kqlqk.todo_list.service.RoleService;
 import me.kqlqk.todo_list.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,20 +24,19 @@ public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
     private final AuthenticationService authenticationService;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder,
+                           RoleService roleService,
                            AuthenticationService authenticationService) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
         this.authenticationService = authenticationService;
+        this.passwordEncoder = new BCryptPasswordEncoder(12);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(roleRepository.findById(1L));
+        user.setRole(roleService.getById(1L));
         userRepository.save(user);
 
         logger.info("Was created new user " + user.getEmail());

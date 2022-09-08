@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.Pattern;
 
+/**
+ * Represents Data Transfer Object for {@link me.kqlqk.todo_list.models.User}
+ */
 public class RecoveryDTO {
     @Pattern(regexp = "^[^\\s@]{3,}@[^\\s@]{2,}\\.[^\\s@]{2,}$", message = "Email must be valid")
     private String email;

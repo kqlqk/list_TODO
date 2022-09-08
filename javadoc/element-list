@@ -1,0 +1,17 @@
+me.kqlqk.todo_list
+me.kqlqk.todo_list.aspects
+me.kqlqk.todo_list.config
+me.kqlqk.todo_list.config.filters
+me.kqlqk.todo_list.controllers
+me.kqlqk.todo_list.controllers.rest
+me.kqlqk.todo_list.dto
+me.kqlqk.todo_list.dto.daoDTOs
+me.kqlqk.todo_list.exceptions_handling
+me.kqlqk.todo_list.exceptions_handling.exceptions.note
+me.kqlqk.todo_list.exceptions_handling.exceptions.token
+me.kqlqk.todo_list.exceptions_handling.exceptions.user
+me.kqlqk.todo_list.models
+me.kqlqk.todo_list.repositories
+me.kqlqk.todo_list.service
+me.kqlqk.todo_list.service.impl
+me.kqlqk.todo_list.util

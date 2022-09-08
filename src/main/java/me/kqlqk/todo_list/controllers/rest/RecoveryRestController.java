@@ -13,6 +13,11 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents rest endpoints for guests
+ * <p>
+ * For more information of endpoints please visit our <a href="https://github.com/kqlqk/list_TODO#rest-api">github repository</a>
+ */
 @RestController
 @RequestMapping("/api/recovery")
 public class RecoveryRestController {
@@ -27,9 +32,17 @@ public class RecoveryRestController {
         recoveryPageIdEmail = new HashMap<>();
     }
 
+    /**
+     * Represents <b>"/api/recovery" [POST]</b> endpoint
+     *
+     * @return ok-json OR json with exception
+     *
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException auto handling by
+     * {@link me.kqlqk.todo_list.exceptions_handling.RestGlobalExceptionHandler}
+     */
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> sendEmail(@RequestBody @Valid RecoveryDTO recoveryDTO){
-        if(userService.getByEmail(recoveryDTO.getEmail()) == null){
+    public ResponseEntity<?> sendEmail(@RequestBody @Valid RecoveryDTO recoveryDTO) {
+        if (userService.getByEmail(recoveryDTO.getEmail()) == null) {
             throw new UserNotFoundException("User with email = " + recoveryDTO.getEmail() + " not found");
         }
 
@@ -39,7 +52,7 @@ public class RecoveryRestController {
         emailSenderService.sendEmail(
                 "Password recovery",
                 "Follow the link to reset your password." +
-                        " http://localhost:8080/api/recovery/" + tempPageId  +
+                        " http://localhost:8080/api/recovery/" + tempPageId +
                         " If you didn't request a restore, please ignore this message.",
                 recoveryDTO.getEmail());
 
@@ -49,10 +62,15 @@ public class RecoveryRestController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Represents <b>"/api/recovery/{recovery id}" [POST]</b> endpoint
+     *
+     * @return ok json OR json with exception
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/{id}")
     public ResponseEntity<?> changePassword(@PathVariable int id,
-                                            @RequestBody @Valid RecoveryDTO recoveryDTO){
-        if(!recoveryPageIdEmail.containsKey(id)){
+                                            @RequestBody @Valid RecoveryDTO recoveryDTO) {
+        if (!recoveryPageIdEmail.containsKey(id)) {
             return ResponseEntity.notFound().build();
         }
 
@@ -68,6 +86,9 @@ public class RecoveryRestController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * @return map that contains pageId-email
+     */
     public Map<Integer, String> getRecoveryPageIdEmail() {
         return recoveryPageIdEmail;
     }

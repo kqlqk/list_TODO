@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
 
+/**
+ * Represents Data Access Object
+ */
 @Entity
 @Table(name = "notes")
 public class Note {

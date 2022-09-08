@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
+/**
+ * Represents implementation for {@link me.kqlqk.todo_list.service.AccessTokenService}
+ */
 @Service
 public class AccessTokenServiceImpl implements AccessTokenService {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
@@ -36,12 +39,21 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     }
 
     @PostConstruct
-    protected void init(){
+    protected void init() {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String createToken(String email){
-        if(userService.getByEmail(email) == null){
+
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException if param email is null,
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if {@link me.kqlqk.todo_list.models.User} isn't exist by email
+     */
+    @Override
+    public String createAndGetToken(String email) {
+        if(email == null || email.equals("")){
+            throw new TokenNotFoundException("Email cannot be null");
+        }
+        if (userService.getByEmail(email) == null) {
             throw new UserNotFoundException("User with email = " + email + " not found");
         }
 
@@ -60,38 +72,48 @@ public class AccessTokenServiceImpl implements AccessTokenService {
                 .compact();
     }
 
-    public String getEmail(String token){
-        if(token == null){
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException if param token is null,
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException if access token cannot be parsed
+     */
+    @Override
+    public String getEmail(String token) {
+        if (token == null || token.equals("")) {
             throw new TokenNotFoundException("Access token cannot be null");
         }
 
-        try{
+        try {
             return Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getSubject();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new TokenNotValidException("Access token cannot be parsed");
         }
     }
 
-    public String resolveToken(HttpServletRequest request){
-        if(request == null){
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException if token not found in header,
+     * @throws IllegalArgumentException if param HttpServletRequest is null
+     */
+    @Override
+    public String resolveToken(HttpServletRequest request) {
+        if (request == null) {
             throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }
 
         String bearerWithToken = request.getHeader("Authorization_access");
 
-        if(bearerWithToken == null){
+        if (bearerWithToken == null) {
             throw new TokenNotFoundException("Authorization_access header not found");
         }
-        if(!bearerWithToken.startsWith("Bearer_")){
+        if (!bearerWithToken.startsWith("Bearer_")) {
             throw new TokenNotFoundException("Access token should starts with Bearer_");
         }
 
         return bearerWithToken.substring(7);
     }
 
-    public boolean isValid(String token){
-        if(token == null){
+    @Override
+    public boolean isValid(String token) {
+        if (token == null) {
             return false;
         }
 
@@ -99,17 +121,17 @@ public class AccessTokenServiceImpl implements AccessTokenService {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token);
 
             String email = getEmail(token);
-            if(!userService.isValid(userService.getByEmail(email))){
+            if (!userService.isValid(userService.getByEmail(email))) {
                 return false;
             }
 
             return claims.getBody().getExpiration().after(new Date());
-        }
-        catch (JwtException | IllegalArgumentException e){
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
+    @Override
     public long getValidity() {
         return validityInMillis;
     }

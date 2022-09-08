@@ -7,15 +7,17 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * Represents exception handler for endpoints
+ */
 @ControllerAdvice
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({NoteNotFoundException.class, TokenNotFoundException.class})
-    public String handleNoteNotFoundEx(){
+    public String handleNoteNotFoundEx() {
         return "redirect:/home";
     }
-
 
 
 }

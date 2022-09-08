@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+
+/**
+ * Represents logging functionality by using AOP
+ */
+
 @Component
 @Aspect
 public class LoggingAspect {
@@ -29,11 +34,11 @@ public class LoggingAspect {
     }
 
     @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
-    private void allMappingAnnotations(){}
-
+    private void allMappingAnnotations() {
+    }
 
     @Before("allMappingAnnotations()")
-    public void beforeRequestMappingLoggingAdvice(JoinPoint joinPoint){
+    public void beforeRequestMappingLoggingAdvice(JoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
         RequestMapping currentRequestMappingAnnotation = method.getAnnotation(RequestMapping.class);

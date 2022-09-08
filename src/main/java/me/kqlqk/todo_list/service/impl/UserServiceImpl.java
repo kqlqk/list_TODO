@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Represents implementation for {@link me.kqlqk.todo_list.service.UserService}
+ */
 @Service
 public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
@@ -39,6 +42,11 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = new BCryptPasswordEncoder(12);
     }
 
+
+    /**
+     * @return {@link me.kqlqk.todo_list.models.User} or null, if {@link me.kqlqk.todo_list.models.User} not found
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if param email is null
+     */
     @Override
     public User getByEmail(String email) {
         if(email == null){
@@ -48,11 +56,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email.toLowerCase());
     }
 
+    /**
+     * @return {@link me.kqlqk.todo_list.models.User} or null, if {@link me.kqlqk.todo_list.models.User} not found
+     */
     @Override
     public User getById(long id) {
         return userRepository.findById(id);
     }
 
+    /**
+     * @return {@link me.kqlqk.todo_list.models.User} or null, if {@link me.kqlqk.todo_list.models.User} not found
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if param loginObj is null
+     */
     @Override
     public User getByLogin(String login) {
         if(login == null){
@@ -61,6 +76,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByLogin(login);
     }
 
+    /**
+     * @return {@link me.kqlqk.todo_list.models.User} or null, if {@link me.kqlqk.todo_list.models.User} not found
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException if param token is null
+     */
     @Override
     public User getByRefreshToken(RefreshToken refreshToken) {
         if(refreshToken == null){
@@ -84,7 +103,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByLogin(login);
     }
 
-    //UserService methods
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsException if {@link me.kqlqk.todo_list.models.User} already exists
+     */
     @Override
     public void add(User user) {
         if(getByEmail(user.getEmail()) != null){
@@ -98,11 +119,18 @@ public class UserServiceImpl implements UserService {
         logger.info("Was created new user " + user.getEmail());
     }
 
+    /**
+     * @return List of {@link me.kqlqk.todo_list.models.User} OR empty list
+     */
     @Override
     public List<User> getAll() {
        return userRepository.findAll();
     }
 
+    /**
+     * @return {@link me.kqlqk.todo_list.models.User} or null, if {@link me.kqlqk.todo_list.models.User} not found
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if param loginObj is null
+     */
     @Override
     public User getByLoginObj(String loginObj) {
         if(loginObj == null){
@@ -112,6 +140,9 @@ public class UserServiceImpl implements UserService {
         return getByEmail(loginObj.toLowerCase()) == null ? getByLogin(loginObj) : getByEmail(loginObj.toLowerCase());
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if {@link me.kqlqk.todo_list.models.User} not found
+     */
     @Override
     public void update(User user) {
         if(!userRepository.existsById(user.getId())){
@@ -124,11 +155,17 @@ public class UserServiceImpl implements UserService {
         logger.info("Was updated user " + user.getEmail());
     }
 
+    /**
+     * Calls {@linkplain UserServiceImpl#getByEmail(String)} which calls {@linkplain UserServiceImpl#getCurrentEmail()}
+     */
     @Override
     public User getCurrentUser() {
         return getByEmail(getCurrentEmail());
     }
 
+    /**
+     * Gets current email from SecurityContextHolder
+     */
     @Override
     public String getCurrentEmail() {
         return authenticationService.getAuthenticationFromContext().getName();

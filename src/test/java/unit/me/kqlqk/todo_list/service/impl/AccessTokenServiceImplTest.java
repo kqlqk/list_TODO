@@ -34,7 +34,7 @@ public class AccessTokenServiceImplTest {
 
     @Test
     public void createToken_shouldThrowsUserNotFoundException(){
-        assertThrows(UserNotFoundException.class, () -> accessTokenService.createToken("anyEmail"));
+        assertThrows(UserNotFoundException.class, () -> accessTokenService.createAndGetToken("anyEmail"));
     }
 
     @Test

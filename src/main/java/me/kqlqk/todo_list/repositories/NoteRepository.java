@@ -7,9 +7,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Represents JPA repository for {@link me.kqlqk.todo_list.models.Note}
+ */
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
     Note findById(long id);
+
     List<Note> findByUser(User user);
+
     boolean existsById(long id);
 }

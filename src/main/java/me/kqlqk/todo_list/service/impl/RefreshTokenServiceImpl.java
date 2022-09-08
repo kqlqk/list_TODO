@@ -29,6 +29,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents implementation for {@link me.kqlqk.todo_list.service.RefreshTokenService}
+ */
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
@@ -37,7 +40,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private Long validityInMillis;
     @Value("${jwt.refresh.secret}")
     private String secret;
-
     private final RefreshTokenRepository refreshTokenRepository;
     private final AccessTokenService accessTokenService;
     private final UserService userService;
@@ -52,36 +54,48 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @PostConstruct
-    protected void init(){
+    protected void init() {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
+
 
     @Override
     public boolean existsById(long id) {
         return refreshTokenRepository.existsById(id);
     }
 
+    /**
+     * @return {@link me.kqlqk.todo_list.models.RefreshToken} or null, if {@link me.kqlqk.todo_list.models.RefreshToken} not found
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if {@link me.kqlqk.todo_list.models.User} not found
+     */
     @Override
     public RefreshToken getByUser(User user) {
-        if(!userService.isValid(user)){
-            throw new UserNotFoundException("User with id = " +  user.getId() + " not found");
+        if (!userService.isValid(user)) {
+            throw new UserNotFoundException("User with id = " + user.getId() + " not found");
         }
 
         return refreshTokenRepository.findByUserId(user.getId());
     }
 
+    /**
+     * @return {@link me.kqlqk.todo_list.models.RefreshToken} or null, if {@link me.kqlqk.todo_list.models.RefreshToken} not found
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException if param token is null
+     */
     @Override
     public RefreshToken getByStringToken(String token) {
-        if(token == null){
+        if (token == null || token.equals("")) {
             throw new TokenNotFoundException("Token cannot be null");
         }
         return refreshTokenRepository.findByToken(token);
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if {@link me.kqlqk.todo_list.models.User} not found
+     */
     @Override
     public String createAndGetToken(User user) {
-        if(!userService.isValid(user)){
-            throw new UserNotFoundException("User with id = " +  user.getId() + " not found");
+        if (!userService.isValid(user)) {
+            throw new UserNotFoundException("User with id = " + user.getId() + " not found");
         }
 
         Claims claims = Jwts.claims().setSubject(user.getEmail());
@@ -90,11 +104,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         Date validity = new Date(now.getTime() + validityInMillis);
 
         String refreshTokenString = Jwts.builder()
-                        .setClaims(claims)
-                        .setIssuedAt(now)
-                        .setExpiration(validity)
-                        .signWith(SignatureAlgorithm.HS256, secret)
-                        .compact();
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(refreshTokenString);
@@ -109,68 +123,77 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return refreshTokenString;
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException if param token is null,
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotValidException if param token cannot be parsed
+     */
     @Override
     public String getEmail(String token) {
-        if(token == null || token.equals("")){
+        if (token == null || token.equals("")) {
             throw new TokenNotFoundException("Refresh token cannot be null");
         }
 
         try {
             return Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getSubject();
-        }
-        catch (JwtException | IllegalArgumentException e){
+        } catch (JwtException | IllegalArgumentException e) {
             throw new TokenNotValidException("Refresh token cannot be parsed");
         }
     }
 
     @Override
-    public long getValidity(){
+    public long getValidity() {
         return validityInMillis;
     }
 
     @Override
     public boolean isValid(String refreshTokenString) {
-        if (refreshTokenString == null || refreshTokenString.equals("")){
+        if (refreshTokenString == null || refreshTokenString.equals("")) {
             return false;
         }
         RefreshToken refreshToken = getByStringToken(refreshTokenString);
 
         try {
             String email = getEmail(refreshToken.getToken());
-            if(!userService.isValid(userService.getByEmail(email))){
+            if (!userService.isValid(userService.getByEmail(email))) {
                 return false;
             }
 
             return new Date(refreshToken.getExpiresIn()).after(new Date());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
 
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.token.TokenNotFoundException if {@link me.kqlqk.todo_list.models.RefreshToken} not found,
+     * @throws IllegalArgumentException if param HttpServletRequest is null
+     */
     @Override
-    public String resolveToken(HttpServletRequest request){
-        if(request == null){
+    public String resolveToken(HttpServletRequest request) {
+        if (request == null) {
             throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }
 
         String bearerWithToken = request.getHeader("Authorization_refresh");
 
-        if(bearerWithToken == null){
+        if (bearerWithToken == null) {
             throw new TokenNotFoundException("Authorization_refresh header not found");
         }
-        if(!bearerWithToken.startsWith("Bearer_")){
+        if (!bearerWithToken.startsWith("Bearer_")) {
             throw new TokenNotFoundException("Refresh token should starts with Bearer_");
         }
 
         return bearerWithToken.substring(7);
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if {@link me.kqlqk.todo_list.models.User} not found
+     */
     @Override
     public String updateRefreshToken(User user) {
-        if(!userService.isValid(user)){
-            throw new UserNotFoundException("User not found, if you hasn't account try to sign up");
+        if (!userService.isValid(user)) {
+            throw new UserNotFoundException("User not found, if you haven't account, please, sign up");
         }
 
         Claims claims = Jwts.claims().setSubject(user.getEmail());
@@ -197,34 +220,38 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return token;
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if {@link me.kqlqk.todo_list.models.User} not found,
+     * @throws IllegalArgumentException if param HttpServletRequest OR HttpServletResponse are null
+     */
     @Override
     public Map<String, String> updateAccessAndRefreshTokens(User user,
                                                             HttpServletRequest request,
                                                             HttpServletResponse response,
                                                             boolean setCookie,
                                                             boolean rememberMe) {
-        if(!userService.isValid(user)){
+        if (!userService.isValid(user)) {
             throw new UserNotFoundException("User not found");
         }
-        if(request == null){
+        if (request == null) {
             throw new IllegalArgumentException("HttpServletRequest cannot be null");
         }
-        if(response == null){
+        if (response == null) {
             throw new IllegalArgumentException("HttpServletResponse cannot be null");
         }
 
         updateRefreshToken(user);
 
-        String newAccessToken = accessTokenService.createToken(user.getEmail());
+        String newAccessToken = accessTokenService.createAndGetToken(user.getEmail());
         String newRefreshToken = getByUser(user).getToken();
 
-        if(setCookie && rememberMe) {
-            UtilCookie.createOrUpdateCookie("at", newAccessToken, (int) (getValidity() / 1000), request, response);
-            UtilCookie.createOrUpdateCookie("rt", newRefreshToken, (int) (getValidity() / 1000), request, response);
+        if (setCookie && rememberMe) {
+            UtilCookie.createOrUpdateOrDeleteCookie("at", newAccessToken, (int) (getValidity() / 1000), request, response);
+            UtilCookie.createOrUpdateOrDeleteCookie("rt", newRefreshToken, (int) (getValidity() / 1000), request, response);
         }
-        if(setCookie && !rememberMe){
-            UtilCookie.createOrUpdateCookie("at", newAccessToken, -1, request, response);
-            UtilCookie.createOrUpdateCookie("rt", newRefreshToken, -1, request, response);
+        if (setCookie && !rememberMe) {
+            UtilCookie.createOrUpdateOrDeleteCookie("at", newAccessToken, -1, request, response);
+            UtilCookie.createOrUpdateOrDeleteCookie("rt", newRefreshToken, -1, request, response);
         }
 
         Map<String, String> tokens = new HashMap<>();
@@ -236,14 +263,17 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return tokens;
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if {@link me.kqlqk.todo_list.models.User} not found,
+     */
     @Override
     public Map<String, String> updateAccessAndRefreshTokens(User user) {
-        if(!userService.isValid(user)){
+        if (!userService.isValid(user)) {
             throw new UserNotFoundException("User not found");
         }
         updateRefreshToken(user);
 
-        String newAccessToken = accessTokenService.createToken(user.getEmail());
+        String newAccessToken = accessTokenService.createAndGetToken(user.getEmail());
         String newRefreshToken = getByUser(user).getToken();
 
         Map<String, String> tokens = new HashMap<>();

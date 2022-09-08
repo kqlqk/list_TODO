@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents exception handler for rest endpoints
+ */
 @RestControllerAdvice(basePackages = "me.kqlqk.todo_list.controllers.rest")
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestGlobalExceptionHandler {
@@ -30,7 +33,7 @@ public class RestGlobalExceptionHandler {
             UserNotValidException.class,
             TokenNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionDTO handleNotFoundAndNotValidExceptions(RuntimeException e){
+    public ExceptionDTO handleNotFoundAndNotValidExceptions(RuntimeException e) {
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setInfo(e.getMessage());
         return exceptionDTO;
@@ -38,7 +41,7 @@ public class RestGlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionDTO handleUserAlreadyExistsEx(UserAlreadyExistsException e){
+    public ExceptionDTO handleUserAlreadyExistsEx(UserAlreadyExistsException e) {
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setInfo(e.getMessage());
 
@@ -47,7 +50,7 @@ public class RestGlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleNonValidDataEx(MethodArgumentNotValidException e){
+    public Map<String, String> handleNonValidDataEx(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
 
         e.getBindingResult().getFieldErrors().forEach(error -> errors.put("info", error.getDefaultMessage()));
@@ -57,7 +60,7 @@ public class RestGlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionDTO handleHttpMessageNotReadableEx(){
+    public ExceptionDTO handleHttpMessageNotReadableEx() {
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setInfo("Required request body is missing");
 

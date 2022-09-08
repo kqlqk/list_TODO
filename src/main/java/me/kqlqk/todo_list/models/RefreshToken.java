@@ -2,6 +2,9 @@ package me.kqlqk.todo_list.models;
 
 import javax.persistence.*;
 
+/**
+ * Represents Data Access Object
+ */
 @Entity
 @Table(name = "refresh_tokens")
 public class RefreshToken {

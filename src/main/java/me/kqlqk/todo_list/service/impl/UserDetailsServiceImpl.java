@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents implementation for {@link org.springframework.security.core.userdetails.UserDetailsService}
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
@@ -27,6 +30,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException if param loginObj is null
+     */
     @Override
     public UserDetails loadUserByUsername(String loginObj) {
         if(loginObj == null){

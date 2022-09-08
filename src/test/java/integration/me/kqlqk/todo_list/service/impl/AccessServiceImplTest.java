@@ -14,12 +14,12 @@ public class AccessServiceImplTest {
 
     @Test
     public void createToken_shouldReturnValidToken() {
-        assertThat(accessTokenService.createToken("user@mail.com")).isNotNull();
+        assertThat(accessTokenService.createAndGetToken("user@mail.com")).isNotNull();
     }
 
     @Test
     public void getEmail_shouldReturnValidEmail() {
-        String email = accessTokenService.getEmail(accessTokenService.createToken("user@mail.com"));
+        String email = accessTokenService.getEmail(accessTokenService.createAndGetToken("user@mail.com"));
 
         assertThat(email).isEqualTo("user@mail.com");
     }
@@ -27,7 +27,7 @@ public class AccessServiceImplTest {
 
     @Test
     public void isValid_shouldCheckToken() {
-        String token = accessTokenService.createToken("user@mail.com");
+        String token = accessTokenService.createAndGetToken("user@mail.com");
 
         assertThat(accessTokenService.isValid(token)).isTrue();
 

@@ -21,8 +21,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+/**
+ * Represents endpoints for guests
+ */
 @Controller
-public class    MainController {
+public class MainController {
     private final AccessTokenService accessTokenService;
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
@@ -33,32 +36,40 @@ public class    MainController {
     public MainController(AccessTokenService accessTokenService,
                           RefreshTokenService refreshTokenService,
                           UserService userService,
-                          PasswordEncoder passwordEncoder){
+                          PasswordEncoder passwordEncoder) {
         this.accessTokenService = accessTokenService;
         this.refreshTokenService = refreshTokenService;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
-
+    /**
+     * Represents <b>"/" [GET]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.GET)
-    public String showMainPage(){
+    public String getMainPage() {
         return "main-pages/main";
     }
 
+    /**
+     * Represents <b>"/login" [GET]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/login")
-    public String showLoginPage(Model model){
+    public String getLoginPage(Model model) {
         model.addAttribute("loginDTO", new LoginDTO());
         return "main-pages/login";
     }
 
+    /**
+     * Represents <b>"/login" [POST]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     public String logIn(@ModelAttribute("loginDTO") LoginDTO loginDTO,
                         HttpServletRequest request,
                         HttpServletResponse response) {
         User user = userService.getByLoginObj(loginDTO.getLoginObj());
 
-        if(user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())){
+        if (user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             loginDTO.setFormCorrect(false);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "main-pages/login";
@@ -70,8 +81,11 @@ public class    MainController {
         return "redirect:/home";
     }
 
+    /**
+     * Represents <b>"/registration" [GET]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/registration")
-    public String showSignUpPage(Model model){
+    public String getSignUpPage(Model model) {
         model.addAttribute("registrationDTO", new RegistrationDTO());
         model.addAttribute("emailAlreadyRegistered", false);
         model.addAttribute("loginAlreadyRegistered", false);
@@ -79,23 +93,26 @@ public class    MainController {
         return "main-pages/registration";
     }
 
+    /**
+     * Represents <b>"/registration" [POST]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/registration")
     public String signUp(@ModelAttribute("registrationDTO") @Valid RegistrationDTO registrationDTO,
                          BindingResult bindingResult,
                          Model model,
                          HttpServletRequest request,
-                         HttpServletResponse response){
-        if(bindingResult.hasErrors() || !registrationDTO.getConfirmPassword().equals(registrationDTO.getPassword())){
+                         HttpServletResponse response) {
+        if (bindingResult.hasErrors() || !registrationDTO.getConfirmPassword().equals(registrationDTO.getPassword())) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "main-pages/registration";
         }
 
-        if(userService.getByEmail(registrationDTO.getEmail()) != null){
+        if (userService.getByEmail(registrationDTO.getEmail()) != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             model.addAttribute("emailAlreadyRegistered", true);
             return "main-pages/registration";
         }
-        if(userService.getByLogin(registrationDTO.getLogin()) != null){
+        if (userService.getByLogin(registrationDTO.getLogin()) != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             model.addAttribute("loginAlreadyRegistered", true);
             return "main-pages/registration";
@@ -105,12 +122,12 @@ public class    MainController {
         userService.add(user);
 
         String refreshToken = refreshTokenService.createAndGetToken(user);
-        String accessToken = accessTokenService.createToken(user.getEmail());
+        String accessToken = accessTokenService.createAndGetToken(user.getEmail());
 
         GlobalVariables.REMEMBER_ME = registrationDTO.isRememberMe();
 
-        UtilCookie.createOrUpdateCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
-        UtilCookie.createOrUpdateCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
+        UtilCookie.createOrUpdateOrDeleteCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
+        UtilCookie.createOrUpdateOrDeleteCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
 
         return "redirect:/home";
     }

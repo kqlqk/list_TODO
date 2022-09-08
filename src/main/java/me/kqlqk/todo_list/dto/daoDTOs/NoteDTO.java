@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Represents Data Transfer Object for {@link me.kqlqk.todo_list.models.Note}
+ */
 public class NoteDTO {
 
     private long id;
@@ -25,10 +28,10 @@ public class NoteDTO {
     private long userId;
 
 
-    public NoteDTO(){
+    public NoteDTO() {
     }
 
-    public NoteDTO(String title, String body){
+    public NoteDTO(String title, String body) {
         this.title = title;
         this.body = body;
     }
@@ -41,7 +44,7 @@ public class NoteDTO {
         this.userId = userId;
     }
 
-    public NoteDTO(Note note){
+    public NoteDTO(Note note) {
         this.id = note.getId();
         this.title = note.getTitle();
         this.body = note.getBody();
@@ -91,7 +94,7 @@ public class NoteDTO {
     }
 
 
-    public Note convertToNewNote(){
+    public Note convertToNewNote() {
         Note note = new Note();
 
         note.setFullTitle(title.trim());
@@ -102,22 +105,20 @@ public class NoteDTO {
 
     public Note convertToEditedNote(NoteService noteService, long id) {
         Note note = noteService.getById(id);
-        if(title == null){
+        if (title == null) {
             note.setBody(body);
-        }
-        else if(body == null) {
+        } else if (body == null) {
             note.setFullTitle(title);
-        }
-        else{
+        } else {
             note.setFullTitle(title);
             note.setBody(body);
         }
         return note;
     }
 
-    public static List<NoteDTO> convertListOfNotesToListOfNoteDTOs(List<Note> notes){
+    public static List<NoteDTO> convertListOfNotesToListOfNoteDTOs(List<Note> notes) {
         List<NoteDTO> noteDTOs = new ArrayList<>();
-        for(Note note : notes){
+        for (Note note : notes) {
             noteDTOs.add(new NoteDTO(
                     note.getId(),
                     note.getTitle(),

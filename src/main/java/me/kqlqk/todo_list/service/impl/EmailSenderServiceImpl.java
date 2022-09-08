@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
+/**
+ * Represents implementation for {@link me.kqlqk.todo_list.service.EmailSenderService}
+ */
 @Service
 public class EmailSenderServiceImpl implements EmailSenderService {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
@@ -24,11 +27,15 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         this.mailSender = mailSender;
     }
 
+
+    /**
+     * @throws MailSendException if param MailMessage isn't valid
+     */
     @Override
     public void sendEmail(MailMessage mailMessage) {
         SimpleMailMessage simpleMessage = (SimpleMailMessage) mailMessage;
 
-        if(simpleMessage.getSubject() == null || simpleMessage.getTo() == null){
+        if (simpleMessage.getSubject() == null || simpleMessage.getTo() == null) {
             throw new MailSendException("'to' and 'text' cannot be null, \n" +
                     "to = " + Arrays.toString(simpleMessage.getTo()) + "\n" +
                     "text = " + simpleMessage.getText());
@@ -39,9 +46,12 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         logger.info("Was sent mail to " + Arrays.toString(simpleMessage.getTo()));
     }
 
+    /**
+     * @throws MailSendException if param 'to' OR 'subject' are null
+     */
     @Override
     public void sendEmail(String subject, String text, String... to) {
-        if(to == null || text == null){
+        if (to == null || text == null) {
             throw new MailSendException("'to' and 'text' cannot be null, \n" +
                     "to = " + Arrays.toString(to) + "\n" +
                     "text = " + text);
@@ -53,6 +63,6 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         message.setText(text);
         mailSender.send(message);
 
-        logger.info("Was sent mail to " + to);
+        logger.info("Was sent mail to " + Arrays.toString(to));
     }
 }

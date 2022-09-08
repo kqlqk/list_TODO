@@ -27,22 +27,22 @@ public class UtilCookieTest {
 
     @Test
     public void createOrUpdateCookie_shouldCreateOrUpdateCookie() {
-        UtilCookie.createOrUpdateCookie("anyName", "anyValue", 10, request, response);
+        UtilCookie.createOrUpdateOrDeleteCookie("anyName", "anyValue", 10, request, response);
     }
 
     @Test
     public void createOrUpdateCookie_shouldThrowsAllExceptions() {
         assertThrows(IllegalArgumentException.class,
-                () -> UtilCookie.createOrUpdateCookie(null, "anyValue", 10, request, response));
+                () -> UtilCookie.createOrUpdateOrDeleteCookie(null, "anyValue", 10, request, response));
 
         assertThrows(IllegalArgumentException.class,
-                () -> UtilCookie.createOrUpdateCookie("anyName", "anyValue", -3, request, response));
+                () -> UtilCookie.createOrUpdateOrDeleteCookie("anyName", "anyValue", -3, request, response));
 
         assertThrows(IllegalArgumentException.class,
-                () -> UtilCookie.createOrUpdateCookie("anyName", "anyValue", 10, null, response));
+                () -> UtilCookie.createOrUpdateOrDeleteCookie("anyName", "anyValue", 10, null, response));
 
         assertThrows(IllegalArgumentException.class,
-                () -> UtilCookie.createOrUpdateCookie("anyName", "anyValue", 10, request, null));
+                () -> UtilCookie.createOrUpdateOrDeleteCookie("anyName", "anyValue", 10, request, null));
     }
 
     @Test

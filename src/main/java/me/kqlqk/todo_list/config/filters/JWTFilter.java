@@ -26,13 +26,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents functionality to check incoming request
+ * for the content of necessary authorization headers or cookies
+ */
 @Component
 public class JWTFilter extends OncePerRequestFilter {
     private final AccessTokenService accessTokenService;
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
-    private final RestGlobalExceptionHandler restExceptionHandler;
     private final AuthenticationService authenticationService;
+    private final RestGlobalExceptionHandler restExceptionHandler;
 
     private final List<String> URIs = Arrays.asList(
             "/home",
@@ -61,26 +65,24 @@ public class JWTFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {
         boolean isRest = request.getRequestURI().contains("/api");
-        ExceptionDTO exceptionDTO;
-        boolean setCookie;
 
-        if(!shouldCheckRequest(request)){
+        if (!shouldCheckRequest(request)) {
             filterChain.doFilter(request, response);
             return;
         }
 
         Map<String, String> tokens;
+        ExceptionDTO exceptionDTO;
+        boolean setCookie;
 
         try {
             tokens = getTokensFromCookie(request);
             setCookie = true;
-        }
-        catch (TokenNotFoundException e){
+        } catch (TokenNotFoundException e) {
             try {
                 tokens = getTokensFromHeaders(request);
                 setCookie = false;
-            }
-            catch (TokenNotFoundException nestedEx){
+            } catch (TokenNotFoundException nestedEx) {
                 exceptionDTO = restExceptionHandler.handleNotFoundAndNotValidExceptions(nestedEx);
                 postException(exceptionDTO, isRest, response);
                 return;
@@ -90,8 +92,8 @@ public class JWTFilter extends OncePerRequestFilter {
         String accessTokenString = tokens.get("access_token");
         String refreshTokenString = tokens.get("refresh_token");
 
-        if(!accessTokenService.isValid(accessTokenString)){
-            if(!refreshTokenService.isValid(refreshTokenString)){
+        if (!accessTokenService.isValid(accessTokenString)) {
+            if (!refreshTokenService.isValid(refreshTokenString)) {
                 exceptionDTO = new ExceptionDTO();
                 exceptionDTO.setInfo("Access and refresh tokens aren't valid, try to log in one more time");
                 postException(exceptionDTO, isRest, response);
@@ -105,7 +107,7 @@ public class JWTFilter extends OncePerRequestFilter {
             response.setHeader("Authorization_refresh", "Bearer_" + tokens.get("refresh_token"));
         }
 
-        if(!refreshTokenService.isValid(refreshTokenString)){
+        if (!refreshTokenService.isValid(refreshTokenString)) {
             exceptionDTO = new ExceptionDTO();
             exceptionDTO.setInfo("Refresh token aren't valid, try to log in one more time");
             postException(exceptionDTO, isRest, response);
@@ -117,14 +119,14 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean shouldCheckRequest(HttpServletRequest request){
+    private boolean shouldCheckRequest(HttpServletRequest request) {
         int count = 0;
 
-        for(String uri : URIs){
-            if(!request.getRequestURI().startsWith(uri)){
+        for (String uri : URIs) {
+            if (!request.getRequestURI().startsWith(uri)) {
                 count++;
             }
-            if(count == URIs.size()){
+            if (count == URIs.size()) {
                 return false;
             }
         }
@@ -132,8 +134,8 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     private Map<String, String> getTokensFromCookie(HttpServletRequest request) {
-        if(!UtilCookie.isCookieExistsByName("at", request) ||
-                !UtilCookie.isCookieExistsByName("rt", request)){
+        if (!UtilCookie.isCookieExistsByName("at", request) ||
+                !UtilCookie.isCookieExistsByName("rt", request)) {
             throw new TokenNotFoundException("There's no cookie with tokens");
         }
 
@@ -146,7 +148,7 @@ public class JWTFilter extends OncePerRequestFilter {
         return tokens;
     }
 
-    private Map<String, String> getTokensFromHeaders(HttpServletRequest request){
+    private Map<String, String> getTokensFromHeaders(HttpServletRequest request) {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessTokenService.resolveToken(request));
         tokens.put("refresh_token", refreshTokenService.resolveToken(request));
@@ -158,12 +160,11 @@ public class JWTFilter extends OncePerRequestFilter {
                                boolean isRest,
                                HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        if(isRest) {
+        if (isRest) {
             response.setContentType("application/json");
             response.getWriter().write(new ObjectMapper().writeValueAsString(exceptionDTO));
             response.getWriter().flush();
-        }
-        else{
+        } else {
             response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
             response.setHeader("Location", "/login");
         }

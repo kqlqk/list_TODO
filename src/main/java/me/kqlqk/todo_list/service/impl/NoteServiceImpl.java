@@ -18,6 +18,9 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Represents implementation for {@link me.kqlqk.todo_list.service.NoteService}
+ */
 @Service
 public class NoteServiceImpl implements NoteService {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
@@ -32,11 +35,18 @@ public class NoteServiceImpl implements NoteService {
     }
 
 
+    /**
+     * @return {@link me.kqlqk.todo_list.models.Note} OR null, if {@link me.kqlqk.todo_list.models.Note} not found
+     */
     @Override
     public Note getById(long id) {
         return noteRepository.findById(id);
     }
 
+    /**
+     * @return List of {@link me.kqlqk.todo_list.models.Note} OR empty list
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotValidException if {@link me.kqlqk.todo_list.models.User} isn't valid
+     */
     @Override
     public List<Note> getByUser(User user) {
         if(!userService.isValid(user)){
@@ -45,12 +55,15 @@ public class NoteServiceImpl implements NoteService {
         return noteRepository.findByUser(user);
     }
 
-
     @Override
     public boolean existsById(long id) {
         return noteRepository.existsById(id);
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotValidException if {@linkplain  Note#getFullTitle()} is null,
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteAlreadyExistsException if {@link me.kqlqk.todo_list.models.Note} already exists
+     */
     @Override
     public void add(Note note) {
         if(note.getFullTitle() == null){
@@ -76,6 +89,9 @@ public class NoteServiceImpl implements NoteService {
         logger.info("Was crated note " + note);
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotValidException if {@link me.kqlqk.todo_list.models.Note} not found
+     */
     @Override
     public void delete(Note note) {
         if(!isValid(note)) {
@@ -87,6 +103,9 @@ public class NoteServiceImpl implements NoteService {
         logger.info("Was deleted note " + note);
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotValidException if {@link me.kqlqk.todo_list.models.Note} not found
+     */
     @Override
     public void delete(long id) {
         if(!isValid(id)){
@@ -100,10 +119,14 @@ public class NoteServiceImpl implements NoteService {
         logger.info("Was deleted note " + note);
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotValidException if {@link me.kqlqk.todo_list.models.Note} not found OR isn't available for current {@link me.kqlqk.todo_list.models.User},
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotValidException if {@link me.kqlqk.todo_list.models.User} not valid
+     */
     @Override
     public boolean existsForUser(User user, long noteId){
         if(!userService.isValid(user)){
-            throw new UserNotValidException("User not found OR isn't available for current user");
+            throw new UserNotValidException("User not valid");
         }
         if(!isValid(noteId)){
             throw new NoteNotValidException("Note not found OR isn't available for current user");
@@ -112,6 +135,9 @@ public class NoteServiceImpl implements NoteService {
         return user.getNotes().stream().anyMatch(note -> noteId == note.getId());
     }
 
+    /**
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotValidException if {@link me.kqlqk.todo_list.models.Note} not found
+     */
     @Override
     public void update(Note note) {
         if(!isValid(note)){

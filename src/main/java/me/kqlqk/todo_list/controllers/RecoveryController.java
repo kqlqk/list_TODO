@@ -18,6 +18,9 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents endpoints for guests
+ */
 @Controller
 @RequestMapping("/recovery")
 public class RecoveryController {
@@ -32,13 +35,19 @@ public class RecoveryController {
         recoveryPageIdEmail = new HashMap<>();
     }
 
+    /**
+     * Represents <b>"/recovery" [GET]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.GET)
-    public String showRecoveryPage(Model model){
+    public String getRecoveryPage(Model model){
         model.addAttribute("recoveryDTO", new RecoveryDTO());
 
         return "recovery-pages/recovery";
     }
 
+    /**
+     * Represents <b>"/recovery" [POST]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.POST)
     public String sendEmail(@ModelAttribute("recoveryDTO") @Valid RecoveryDTO recoveryDTO,
                             BindingResult bindingResult,
@@ -62,8 +71,11 @@ public class RecoveryController {
         return "recovery-pages/successRecovery";
     }
 
+    /**
+     * Represents <b>"/recovery/{recovery id}" [GET]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/{pageId}")
-    public String showChangingPasswordPage(@PathVariable int pageId, Model model){
+    public String getChangingPasswordPage(@PathVariable int pageId, Model model){
         if(this.recoveryPageIdEmail.get(pageId) == null){
             return "redirect:/";
         }
@@ -74,6 +86,9 @@ public class RecoveryController {
         return "recovery-pages/changePassword";
     }
 
+    /**
+     * Represents <b>"/recovery/{recovery id}" [POST]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/{pageId}")
     public String changePassword(@ModelAttribute("recoveryDTO") @Valid RecoveryDTO recoveryDTO, BindingResult bindingResult,
                                  @PathVariable int pageId, HttpServletResponse response){
@@ -94,6 +109,9 @@ public class RecoveryController {
         return "recovery-pages/passwordWasChanged";
     }
 
+    /**
+     * @return map that contains pageId-email
+     */
     public Map<Integer, String> getRecoveryPageIdEmail() {
         return recoveryPageIdEmail;
     }

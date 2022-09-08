@@ -1,5 +1,8 @@
 package me.kqlqk.todo_list.dto;
 
+/**
+ * Represents Data Transfer Object for exceptions
+ */
 public class ExceptionDTO {
     private String info;
 

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+/**
+ * Represents Data Transfer Object for {@link me.kqlqk.todo_list.models.User}
+ */
 public class LoginDTO {
     private String loginObj;
     private String password;

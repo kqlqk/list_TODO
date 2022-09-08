@@ -4,6 +4,9 @@ package me.kqlqk.todo_list.models;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * Represents Data Access Object
+ */
 @Entity
 @Table(name = "users")
 public class User {

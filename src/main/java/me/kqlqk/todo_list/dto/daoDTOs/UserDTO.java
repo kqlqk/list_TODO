@@ -5,6 +5,9 @@ import me.kqlqk.todo_list.models.User;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents Data Transfer Object for {@link me.kqlqk.todo_list.models.User}
+ */
 public class UserDTO {
     private long id;
     private String email;
@@ -64,9 +67,9 @@ public class UserDTO {
     }
 
 
-    public static List<UserDTO> convertListOfUsersToListOfUserDTOs(List<User> users){
+    public static List<UserDTO> convertListOfUsersToListOfUserDTOs(List<User> users) {
         List<UserDTO> userDTOs = new ArrayList<>();
-        for(User user : users){
+        for (User user : users) {
             userDTOs.add(new UserDTO(
                     user.getId(),
                     user.getEmail(),

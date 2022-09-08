@@ -23,6 +23,11 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents rest endpoints for guests
+ * <p>
+ * For more information of endpoints please visit our <a href="https://github.com/kqlqk/list_TODO#rest-api">github repository</a>
+ */
 @RestController
 @RequestMapping("/api")
 public class MainRestController {
@@ -40,11 +45,19 @@ public class MainRestController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Represents <b>"/api/login" [POST]</b> endpoint
+     *
+     * @return json with access and refresh tokens OR json with exception
+     *
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserNotFoundException auto handling by
+     * {@link me.kqlqk.todo_list.exceptions_handling.RestGlobalExceptionHandler}
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         User user = userService.getByLoginObj(loginDTO.getLoginObj());
 
-        if(user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())){
+        if (user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             throw new UserNotFoundException("Email/Username or password incorrect");
         }
 
@@ -53,12 +66,20 @@ public class MainRestController {
         return ResponseEntity.accepted().body(tokens);
     }
 
+    /**
+     * Represents <b>"/api/registration" [POST]</b> endpoint
+     *
+     * @return json with access and refresh tokens OR json with exception
+     *
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.user.UserAlreadyExistsException auto handling by
+     * {@link me.kqlqk.todo_list.exceptions_handling.RestGlobalExceptionHandler}
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/registration")
-    public ResponseEntity<?> signUp(@Valid @RequestBody RegistrationDTO registrationDTO, HttpServletRequest request, HttpServletResponse response){
-        if(userService.getByEmail(registrationDTO.getEmail()) != null){
+    public ResponseEntity<?> signUp(@Valid @RequestBody RegistrationDTO registrationDTO, HttpServletRequest request, HttpServletResponse response) {
+        if (userService.getByEmail(registrationDTO.getEmail()) != null) {
             throw new UserAlreadyExistsException("Email " + registrationDTO.getEmail() + " already registered");
         }
-        if(userService.getByLogin(registrationDTO.getLogin()) != null){
+        if (userService.getByLogin(registrationDTO.getLogin()) != null) {
             throw new UserAlreadyExistsException("Login " + registrationDTO.getLogin() + " already registered");
         }
 
@@ -66,11 +87,11 @@ public class MainRestController {
         userService.add(user);
 
         String refreshToken = refreshTokenService.createAndGetToken(user);
-        String accessToken = accessTokenService.createToken(user.getEmail());
+        String accessToken = accessTokenService.createAndGetToken(user.getEmail());
 
-        if(registrationDTO.isSetCookie()) {
-            UtilCookie.createOrUpdateCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
-            UtilCookie.createOrUpdateCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
+        if (registrationDTO.isSetCookie()) {
+            UtilCookie.createOrUpdateOrDeleteCookie("at", accessToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
+            UtilCookie.createOrUpdateOrDeleteCookie("rt", refreshToken, (int) (refreshTokenService.getValidity() / 1000), request, response);
         }
 
         Map<String, String> tokens = new HashMap<>();

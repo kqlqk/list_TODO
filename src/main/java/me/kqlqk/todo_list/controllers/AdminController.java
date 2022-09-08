@@ -1,8 +1,11 @@
 package me.kqlqk.todo_list.controllers;
 
 import me.kqlqk.todo_list.Init;
+import me.kqlqk.todo_list.aspects.LoggingAspect;
 import me.kqlqk.todo_list.dto.daoDTOs.UserDTO;
 import me.kqlqk.todo_list.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,9 +16,14 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
+/**
+ * Represents endpoints for admins
+ */
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
     private final UserService userService;
     private final DataSource dataSource;
 
@@ -28,8 +36,11 @@ public class AdminController {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Represents <b>"/admin" [GET]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.GET)
-    public String getAdminMenu(Model model){
+    public String getAdminMenu(Model model) {
         SimpleDateFormat format = new SimpleDateFormat("MMMM-dd, HH:mm:ss");
 
         model.addAttribute("startTime", format.format(Init.startTime));
@@ -39,20 +50,22 @@ public class AdminController {
         return "admin-pages/main";
     }
 
+    /**
+     * Represents <b>"/admin" [PATCH]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.PATCH)
-    public String testConnectionInDb(){
+    public String testConnectionInDb() {
         try {
             dataSource.getConnection();
             connection = true;
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             connection = false;
             log = e.toString();
+            logger.warn(log);
         }
 
         return "redirect:/admin";
     }
-
 
 
 }

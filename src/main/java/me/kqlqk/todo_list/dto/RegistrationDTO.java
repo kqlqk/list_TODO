@@ -7,6 +7,9 @@ import me.kqlqk.todo_list.models.User;
 
 import javax.validation.constraints.Pattern;
 
+/**
+ * Represents Data Transfer Object for {@link me.kqlqk.todo_list.models.User}
+ */
 public class RegistrationDTO {
     @Pattern(regexp = "^[^\\s@]{3,}@[^\\s@]{2,}\\.[^\\s@]{2,}$", message = "Email must be valid")
     private String email;
@@ -77,7 +80,7 @@ public class RegistrationDTO {
         this.rememberMe = rememberMe;
     }
 
-    public User convertToUser(){
+    public User convertToUser() {
         User user = new User();
         user.setEmail(email);
         user.setLogin(login);

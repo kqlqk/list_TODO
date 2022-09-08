@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+/**
+ * Represents endpoints for authorized users
+ */
 @Controller
 @RequestMapping("/home")
 public class HomeMainController {
@@ -53,8 +56,11 @@ public class HomeMainController {
     }
 
 
+    /**
+     * Represents <b>"/home" [GET]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.GET)
-    public String showHomeMainPage(Model model){
+    public String getHomeMainPage(Model model){
         model.addAttribute("greetings", greetings[(int) (Math.random() * greetings.length)]);
         model.addAttribute("user", userService.getCurrentUser());
         model.addAttribute("notes", noteService.getByUser(userService.getCurrentUser()));
@@ -62,8 +68,14 @@ public class HomeMainController {
         return "home-main-pages/home";
     }
 
+    /**
+     * Represents <b>"/home/{id of note}" [GET]</b> endpoint
+     *
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotFoundException auto handling by
+     * {@link me.kqlqk.todo_list.exceptions_handling.GlobalExceptionHandler}
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public String showNote(@PathVariable("id") long id, Model model){
+    public String getNote(@PathVariable("id") long id, Model model){
         if(!(noteService.existsById(id) && noteService.existsForUser(userService.getCurrentUser(), id))){
             throw new NoteNotFoundException("Note with id = " + id + " not found OR note isn't available for current user");
         }
@@ -73,6 +85,12 @@ public class HomeMainController {
         return "home-main-pages/note";
     }
 
+    /**
+     * Represents <b>"/home/{id of note}" [DELETE]</b> endpoint
+     *
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotFoundException auto handling by
+     * {@link me.kqlqk.todo_list.exceptions_handling.GlobalExceptionHandler}
+     */
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
     public String deleteNote(@PathVariable("id") long id) {
         if(!(noteService.existsById(id) && noteService.existsForUser(userService.getCurrentUser(), id))){
@@ -84,12 +102,18 @@ public class HomeMainController {
         return "redirect:/home";
     }
 
+    /**
+     * Represents <b>"/home/new" [GET]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/new")
-    public String showNewForm(Model model) {
+    public String getNewForm(Model model) {
         model.addAttribute("noteDTO", new NoteDTO());
         return "home-main-pages/new";
     }
 
+    /**
+     * Represents <b>"/home/new" [POST]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.POST, value ="/new")
     public String createNote(@ModelAttribute("noteDTO") @Valid NoteDTO noteDTO,
                              BindingResult bindingResult,
@@ -105,6 +129,9 @@ public class HomeMainController {
         return "redirect:/home";
     }
 
+    /**
+     * Represents <b>"/home/{id of note}/edit" [GET]</b> endpoint
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/edit")
     public String editNote(@PathVariable("id") long id, Model model){
         if(countForTitleErrors == 0){
@@ -124,6 +151,12 @@ public class HomeMainController {
         return "home-main-pages/edit";
     }
 
+    /**
+     * Represents <b>"/home/{id of note}/edit" [Put]</b> endpoint
+     *
+     * @throws me.kqlqk.todo_list.exceptions_handling.exceptions.note.NoteNotFoundException auto handling by
+     * {@link me.kqlqk.todo_list.exceptions_handling.GlobalExceptionHandler}
+     */
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/edit")
     public String saveEditedNote(@PathVariable("id") long id, @ModelAttribute("noteDTO") NoteDTO noteDTO){
         if(!(noteService.existsById(id) && noteService.existsForUser(userService.getCurrentUser(), id))){

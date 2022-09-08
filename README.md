@@ -15,8 +15,13 @@
 TODO List is a simple way to write down all your plans, tasks, ideas in one place.
 
 <b>Devs:</b> <a href="https://github.com/kqlqk">Kqlqk</a> <br/>
-<b>Current version:</b> 2.5 <br/>
-<a href="https://github.com/kqlqk/list_TODO/tree/dev">Click</a> To see development process
+<b>Current version:</b> 2.6.FINAL <br/>
+Development finished
+
+
+## Documentation
+All javadoc documentation located in "javadoc/".
+Please, open "javadoc/index.html" to start explore documentation
 
 
 ## Technologies Used
@@ -35,7 +40,6 @@ TODO List is a simple way to write down all your plans, tasks, ideas in one plac
                     <li><p>Data jpa</p></li>
                         <ul><li><p>Hibernate</p></li></ul>
                     <li><p>Mail</p></li>
-                    <li><p>OAuth2 client</p></li>
                     <li><p>Security</p></li>
                     <li><p>Test</p></li>
                         <ul>

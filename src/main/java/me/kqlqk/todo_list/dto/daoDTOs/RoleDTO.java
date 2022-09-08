@@ -1,5 +1,8 @@
 package me.kqlqk.todo_list.dto.daoDTOs;
 
+/**
+ * Represents Data Transfer Object for {@link me.kqlqk.todo_list.models.Role}
+ */
 public class RoleDTO {
     private long id;
     private String name;

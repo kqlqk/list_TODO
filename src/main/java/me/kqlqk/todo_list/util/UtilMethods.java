@@ -13,19 +13,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Represents util methods for application
+ */
 public class UtilMethods {
 
-    public static String getImprovedUrl(String url){
-        if(url == null || url.equals("")){
+    /**
+     * Improves URL.
+     * <b>E.g getImprovedUrl("example.com//home\2") -> returns example.com/home/2</b
+     * @throws IllegalArgumentException if param urlToImprove is null
+     */
+    public static String getImprovedUrl(String urlToImprove) {
+        if (urlToImprove == null || urlToImprove.equals("")) {
             throw new IllegalArgumentException("Url cannot be null");
         }
 
         StringBuilder improvedUrl = new StringBuilder();
 
-        List<String> words = new ArrayList<>(List.of(url.split("/")));
+        List<String> words = new ArrayList<>(List.of(urlToImprove.split("/")));
 
         for (String word : words) {
-            if(word.equals("")|| word.equals("http:") || word.equals("localhost:8080")){
+            if (word.equals("") || word.equals("http:") || word.equals("localhost:8080")) {
                 continue;
             }
             improvedUrl.append(word).append("/");
@@ -36,8 +44,11 @@ public class UtilMethods {
         return improvedUrl.toString();
     }
 
-    public static String getURLPath(JoinPoint joinPoint){
-        if(joinPoint == null){
+    /**
+     * @throws IllegalArgumentException if param joinPoint is null
+     */
+    public static String getURLPath(JoinPoint joinPoint) {
+        if (joinPoint == null) {
             throw new IllegalArgumentException("JoinPoint cannot be null");
         }
 
@@ -49,7 +60,7 @@ public class UtilMethods {
 
         Class<?> declaringClass = method.getDeclaringClass();
 
-        if(declaringClass.getAnnotation(RequestMapping.class) != null) {
+        if (declaringClass.getAnnotation(RequestMapping.class) != null) {
             RequestMapping currentClassAnnotation = declaringClass.getAnnotation(RequestMapping.class);
             String[] classURIs = currentClassAnnotation.value();
 
@@ -59,8 +70,7 @@ public class UtilMethods {
             path.append(Arrays.toString(methodURIs)
                     .replace("[", "")
                     .replace("]", ""));
-        }
-        else {
+        } else {
             path.append(Arrays.toString(methodURIs)
                     .replace("[", "")
                     .replace("]", ""));
@@ -69,17 +79,19 @@ public class UtilMethods {
         return path.toString();
     }
 
-    public static String getUserFromJoinPoint(UserService userService){
-        if (userService == null){
+    /**
+     * @throws IllegalArgumentException if param joinPoint is null
+     */
+    public static String getUserFromJoinPoint(UserService userService) {
+        if (userService == null) {
             throw new IllegalArgumentException("UserService cannot be null");
         }
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        try{
+        try {
             return userService.getCurrentEmail();
-        }
-        catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return request.getRemoteAddr();
         }
     }
